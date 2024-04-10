@@ -1,0 +1,27 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "SGO - Sistema Gerenciador de Obras",
+    "description": "API de desenvolvimento do Sistema Gerenciador de Obras",
+    "version": "1.0.0"
+  },
+  "host": "localhost:4000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "apiKeyAuth": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "chaveapi",
+      "description": "Chave para autorização da API"
+    }
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "funcionario": {}
+    }
+  }
+}
