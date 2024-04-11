@@ -18,7 +18,74 @@
       "description": "Chave para autorização da API"
     }
   },
-  "paths": {},
+  "paths": {
+    "/clientes/listar": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/clientes/obter/{idCli}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idCli",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/clientes/alterar/": {
+      "put": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/clientes/gravar": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/clientes/excluir/{idCli}": {
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idCli",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
   "components": {
     "schemas": {
       "funcionario": {}

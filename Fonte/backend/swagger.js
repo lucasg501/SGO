@@ -1,5 +1,5 @@
 const swaggerAutogen = require("swagger-autogen");
-const Funcionario = require("./modelo/funcionario");
+const Funcionario = require("./model/funcionario.js");
 
 const doc = {
 
@@ -24,9 +24,9 @@ const doc = {
 }
 
 let outputJson = "./outputSwagger.json";
-let endpoints = ["./index.js"];
+let endpoints = ["./server.js"];
 
 swaggerAutogen(outputJson, endpoints, doc)
 .then(r => {
-    require('./index.js');
+    require('./server.js');
 });

@@ -1,7 +1,9 @@
-import './globals.css'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
+import { Nunito } from 'next/font/google'
+import '../public/template/css/styles.css'
+import '../public/template/css/fontawesome-free/css/all.min.css'
+import '../public/template/css/styles.css'
+import '../public/template/css/sb-admin-2.min.css'
+const nunito = Nunito({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Create Next App',
@@ -10,8 +12,18 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
+      <html lang="en">
+        <body className={nunito.className}>
+            {children}
+            <script src="/template/js/jquery.min.js"></script>
+            <script src="/template/js/bootstrap.bundle.min.js"></script>
+            <script src="/template/js/sb-admin-2.min.js"></script>
+            <script src='/template/js/scripts.js'></script>
+            <script src='/template/js/tehem-map.js'></script>
+    
+        
+        </body>
+    
+      </html>
   )
 }
