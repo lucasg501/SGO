@@ -1,5 +1,7 @@
 const swaggerAutogen = require("swagger-autogen");
 const Funcionario = require("./model/funcionario.js");
+const Etapas = require('./model/etapaModel.js');
+const AreaAtuacaop = require('./model/areaAtuacaoModel.js');
 
 const doc = {
 
@@ -18,7 +20,9 @@ const doc = {
     },
     components: {
         schemas: {
-            funcionario: new Funcionario(999, "Teste Funcionário", 99999999, "", 0)
+            funcionario: new Funcionario(999, "Teste Funcionário", 99999999, "", 0),
+            etapas: new Etapas(999, "Laje"),
+            areaAtuacao: new AreaAtuacaop(999, "Eletricista")
         }
     }
 }
