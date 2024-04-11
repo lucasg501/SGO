@@ -21,6 +21,10 @@
   "paths": {
     "/clientes/listar": {
       "get": {
+        "tags": [
+          "Clientes"
+        ],
+        "summary": "Lista os clientes cadastrados",
         "description": "",
         "responses": {
           "default": {
@@ -31,6 +35,10 @@
     },
     "/clientes/obter/{idCli}": {
       "get": {
+        "tags": [
+          "Clientes"
+        ],
+        "summary": "Lista um cliente especifico",
         "description": "",
         "parameters": [
           {
@@ -49,6 +57,10 @@
     },
     "/clientes/alterar/": {
       "put": {
+        "tags": [
+          "Clientes"
+        ],
+        "summary": "Altera um cliente especifico",
         "description": "",
         "responses": {
           "default": {
@@ -59,6 +71,10 @@
     },
     "/clientes/gravar": {
       "post": {
+        "tags": [
+          "Clientes"
+        ],
+        "summary": "Cria um novo cliente",
         "description": "",
         "responses": {
           "default": {
@@ -69,6 +85,10 @@
     },
     "/clientes/excluir/{idCli}": {
       "delete": {
+        "tags": [
+          "Clientes"
+        ],
+        "summary": "Exclui um cliente especifico",
         "description": "",
         "parameters": [
           {
@@ -84,11 +104,50 @@
           }
         }
       }
+    },
+    "/areaAtuacao/listar": {
+      "get": {
+        "tags": [
+          "Area Atuação"
+        ],
+        "summary": "Lista as áreas de atuação cadastradas",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/etapas/listar": {
+      "get": {
+        "tags": [
+          "Etapas"
+        ],
+        "summary": "Lista todas as etapas cadastradas",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "funcionario": {}
+      "funcionario": {
+        "id": 99999999,
+        "cargo": ""
+      },
+      "etapas": {
+        "idEtapa": 999,
+        "nomeEtapa": "Laje"
+      },
+      "areaAtuacao": {
+        "idArea": 999,
+        "nomeAtuacao": "Eletricista"
+      }
     }
   }
 }

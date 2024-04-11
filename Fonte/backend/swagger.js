@@ -1,5 +1,5 @@
 const swaggerAutogen = require("swagger-autogen");
-const Funcionario = require("./model/funcionario.js");
+const Funcionario = require("./model/funcionarioModel.js");
 const Etapas = require('./model/etapaModel.js');
 const AreaAtuacaop = require('./model/areaAtuacaoModel.js');
 
