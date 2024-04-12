@@ -2,7 +2,7 @@ const ClientesModel = require('../model/clientesModel.js');
 
 class ClientesController{
 
-    gravar(req,res){
+    async gravar(req,res){
         if(Object.keys(req.body).length > 0){
             let clientesModel = new ClientesModel();
 
@@ -13,7 +13,7 @@ class ClientesController{
             clientesModel.rgCli = req.body.rgCli;
             clientesModel.cpfCli = req.body.cpfCli;
             clientesModel.enderecoCli = req.body.enderecoCli;
-            let ok = clientesModel.gravar();
+            let ok = await clientesModel.gravar();
             if(ok){
                 res.status(200).json({msg:"Cliente gravado com sucesso!"});
             }else{
@@ -35,7 +35,7 @@ class ClientesController{
             clientesModel.rgCli = req.body.rgCli;
             clientesModel.cpfCli = req.body.cpfCli;
             clientesModel.enderecoCli = req.body.enderecoCli;
-            let ok = clientesModel.gravar();
+            let ok = await clientesModel.gravar();
             if(ok){
                 res.status(200).json({msg:"Cliente alterado com sucesso!"});
             }else{

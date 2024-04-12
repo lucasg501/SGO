@@ -8,6 +8,14 @@ class FuncionarioModel extends PessoaModel {
     #idFunc;
     #cargoFunc;
 
+    get idFunc() {
+        return this.#idFunc;
+    }
+
+    set idFunc(novoId) {
+        this.#idFunc = novoId;
+    }
+
     get cargoFunc() {
         return this.#cargoFunc;
     }
@@ -90,10 +98,10 @@ class FuncionarioModel extends PessoaModel {
     toJSON() {
 
         return {
-            "id": this.#idFunc,
-            "nome": super.nome,
-            "telefone": super.telefone,
-            "cargo": this.#cargoFunc
+            "idFuncionario": this.#idFunc,
+            "nomeFuncionario": super.nome,
+            "telFuncionario": super.telefone,
+            "cargoFuncionario": this.#cargoFunc
         }
     }
 }

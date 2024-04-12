@@ -19,7 +19,7 @@ class PessoaModel {
         this.#telefone = novoTel;
     }
 
-    constructor(idParceiro, idPessoa, nome, telefone) {
+    constructor(nome, telefone) {
 
         this.#nome = nome;
         this.#telefone = telefone;
