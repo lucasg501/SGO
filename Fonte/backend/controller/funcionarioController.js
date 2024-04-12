@@ -30,7 +30,7 @@ class FuncionarioController {
     async alterar(req, res) {
 
         try {
-            if (Object.keys(req.body).length == 3) {
+            if (Object.keys(req.body).length == 4) {
 
                 let funcModel = new FuncionarioModel(req.body.idFuncionario, 
                     req.body.nomeFuncionario, req.body.telFuncionario, req.body.cargoFuncionario);
@@ -71,17 +71,45 @@ class FuncionarioController {
         }
     }
 
+    async obter(req, res) {
+
+        try {
+            if (req.params.idFuncionario != undefined) {
+                let funcModel = new FuncionarioModel();
+                funcModel = await funcModel.obter(req.params.idFuncionario);
+
+                if (funcModel == null) {
+                    res.status(400).json({msg: "Funcionário não encontrado!"});
+                }
+                else {
+                    res.status(200).json(funcModel.toJSON());
+                }
+            }
+            else {
+                res.status(400).json({msg: "Parâmetros inválidos"});
+            }
+        }
+        catch(e) {
+            res.status(500).json({msg: e.message});
+        }
+    }
+
     async excluir(req, res) {
 
         try {
-            let funcModel = new FuncionarioModel();
-            let ok = await funcModel.excluir(req.params.idFuncionario);
+            if (req.params.idFuncionario != null) {
+                let funcModel = new FuncionarioModel();
+                let ok = await funcModel.excluir(req.params.idFuncionario);
 
-            if (ok) {
-                res.status(200).json({msg: "Funcionário excluído com sucesso!"});
+                if (ok) {
+                    res.status(200).json({msg: "Funcionário excluído com sucesso!"});
+                }
+                else {
+                    res.status(500).json({msg: "Erro ao excluir o funcionário!"});
+                }
             }
             else {
-                res.status(500).json({msg: "Erro ao excluir o funcionário!"});
+                res.status(400).json({msg: "Parâmetros inválidos!"});
             }
         }
         catch(e) {

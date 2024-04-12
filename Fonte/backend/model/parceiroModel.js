@@ -131,11 +131,11 @@ class ParceiroModel extends Pessoa {
     toJSON() {
 
         return {
-            "id": this.#idParceiro,
-            "nome": super.nome,
-            "telefone": super.telefone,
-            "cargo": this.#cargo,
-            "salario": this.#salario,
+            "idParceiro": this.#idParceiro,
+            "nomeParceiro": super.nome,
+            "telParceiro": super.telefone,
+            "cargoParceiro": this.#cargo,
+            "salarioParceiro": this.#salario,
             "descTrabalho": this.#descTrabalho,
             "idAreaAtuacao": this.#idAreaAtuacao
         }
