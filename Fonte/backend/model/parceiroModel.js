@@ -66,11 +66,14 @@ class ParceiroModel extends Pessoa {
 
         if (this.#idParceiro == 0) {
 
-            let sql = `insert into tb_Parceiros (cargo, salario, idAreaAtuacao, descTrabalho)
+            let sql = `insert into tb_Parceiros (nomeParceiro, telParceiro, cargoParceiro, salarioParceiro, idAreaAtuacao, descTrabalho)
             values (?, ?, ?, ?)`;
-            let valores = [this.#cargo, this.#salario, this.#idAreaAtuacao, this.#descTrabalho];
+            let valores = [super.nome, super.telefone,
+                this.#cargo, this.#salario, this.#idAreaAtuacao, this.#descTrabalho];
 
             let ok = await banco.ExecutaComandoNonQuery(sql, valores);
+
+            return ok;
         }
         else {
 

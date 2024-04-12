@@ -16,10 +16,10 @@ class FuncionarioModel extends PessoaModel {
         this.#cargoFunc = novocargoFunc;
     }
 
-    constructor(nome, telefone, idFunc, cargoFunc) {
+    constructor(idFunc, nome, telefone, cargoFunc) {
 
-        super(nome, telefone);
         this.#idFunc = idFunc;
+        super(nome, telefone);
         this.#cargoFunc = cargoFunc;
     }
 
@@ -27,8 +27,8 @@ class FuncionarioModel extends PessoaModel {
 
         if (this.#idFunc == 0) {
 
-            let sql = "insert into tb_Funcionario (cargoFuncionario) values = ?";
-            let valores = [this.#cargoFunc];
+            let sql = "insert into tb_Funcionario (nomeFuncionario, telFuncionario, cargoFuncionario) values (?, ?, ?)";
+            let valores = [super.nome, super.telefone, this.#cargoFunc];
 
             let ok = await banco.ExecutaComandoNonQuery(sql, valores);
 
@@ -36,8 +36,8 @@ class FuncionarioModel extends PessoaModel {
         }
         else {
 
-            let sql = "update tb_Funcionario set cargoFuncionario = ?";
-            let valores = [this.#cargoFunc];
+            let sql = "update tb_Funcionario set nomeFuncionario = ?, telFuncionario = ?, cargoFuncionario = ?";
+            let valores = [super.nome, super.telefone, this.#cargoFunc];
 
             let ok = await banco.ExecutaComandoNonQuery(sql, valores);
 
@@ -55,7 +55,7 @@ class FuncionarioModel extends PessoaModel {
         for (let i = 0; i < rows.length; i++) {
             
             let row = rows[i];
-            lista.push(new FuncionarioModel(this.#idFunc, this.#cargoFunc));
+            lista.push(new FuncionarioModel(row['idFuncionario'], row['nomeFuncionario'], row['telFuncionario'], row['cargoFuncionario']));
         }
 
         return lista;
@@ -71,7 +71,7 @@ class FuncionarioModel extends PessoaModel {
         if (rows.length > 0) {
             
             let row = rows[0];
-            return new FuncionarioModel("", "", row['idFunc'], row['cargoFunc']);
+            return new FuncionarioModel(row['idFuncionario'], row['nomeFuncionario'], row['telFuncionario'], row['cargoFuncionario']);
         }
 
         return null;
@@ -91,6 +91,8 @@ class FuncionarioModel extends PessoaModel {
 
         return {
             "id": this.#idFunc,
+            "nome": super.nome,
+            "telefone": super.telefone,
             "cargo": this.#cargoFunc
         }
     }
