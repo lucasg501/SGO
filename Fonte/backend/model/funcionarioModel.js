@@ -44,8 +44,8 @@ class FuncionarioModel extends PessoaModel {
         }
         else {
 
-            let sql = "update tb_Funcionario set nomeFuncionario = ?, telFuncionario = ?, cargoFuncionario = ?";
-            let valores = [super.nome, super.telefone, this.#cargoFunc];
+            let sql = "update tb_Funcionario set nomeFuncionario = ?, telFuncionario = ?, cargoFuncionario = ? where idFuncionario = ?";
+            let valores = [super.nome, super.telefone, this.#cargoFunc, this.#idFunc];
 
             let ok = await banco.ExecutaComandoNonQuery(sql, valores);
 
