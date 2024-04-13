@@ -74,7 +74,7 @@ export default function ClienteForm(props){
 
     return(
         <div>
-            <h1>{cliente.idCli != 0 ? 'Cadastrar Novo Cliente' : 'Alterar Cliente'}</h1>
+            <h1>{cliente.idCli == 0 ? 'Cadastrar Novo Cliente' : 'Alterar Cliente'}</h1>
             <div className="form-group">
                 <label>Nome:</label>
                 <input type="text" defaultValue={cliente.nomeCli} className="form-control" ref={nomeCli}/>
