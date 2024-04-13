@@ -5,7 +5,7 @@ class FuncionarioController {
     async gravar(req, res) {
 
         try {
-            if (Object.keys(req.body).length == 3) {
+            if (req.body.nomeFuncionario != "" && req.body.telFuncionario.length == 14 && req.body.cargoFuncionario != "") {
 
                 let funcModel = new FuncionarioModel(0, req.body.nomeFuncionario, req.body.telFuncionario, req.body.cargoFuncionario);
 
@@ -30,7 +30,8 @@ class FuncionarioController {
     async alterar(req, res) {
 
         try {
-            if (Object.keys(req.body).length == 4) {
+            if (req.body.idFuncionario != undefined &&
+                req.body.nomeFuncionario != "" && req.body.telFuncionario != "" && req.body.cargoFuncionario != "") {
 
                 let funcModel = new FuncionarioModel(req.body.idFuncionario, 
                     req.body.nomeFuncionario, req.body.telFuncionario, req.body.cargoFuncionario);

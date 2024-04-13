@@ -54,8 +54,8 @@ class ParceiroModel extends Pessoa {
 
     constructor(idParceiro, nome, telefone, cargo, salario, descTrabalho, idAreaAtuacao) {
 
-        this.#idParceiro = idParceiro;
         super(nome, telefone);
+        this.#idParceiro = idParceiro;
         this.#cargo = cargo;
         this.#salario = salario;
         this.#descTrabalho = descTrabalho;

@@ -1,4 +1,4 @@
-const swaggerAutogen = require("swagger-autogen");
+const swaggerAutogen = require("swagger-autogen")({openapi: "3.0.0"});
 const Funcionario = require("./model/funcionarioModel.js");
 const Etapas = require('./model/etapaModel.js');
 const AreaAtuacaop = require('./model/areaAtuacaoModel.js');
@@ -20,7 +20,7 @@ const doc = {
     },
     components: {
         schemas: {
-            funcionario: new Funcionario(999, "Teste Funcionário", 99999999, "", 0),
+            funcionario: new Funcionario(0, "Teste Funcionário", "(99)99999-9999", "Teste").toJSON(),
             etapas: new Etapas(999, "Laje"),
             areaAtuacao: new AreaAtuacaop(999, "Eletricista")
         }

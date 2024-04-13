@@ -26,8 +26,8 @@ class FuncionarioModel extends PessoaModel {
 
     constructor(idFunc, nome, telefone, cargoFunc) {
 
-        this.#idFunc = idFunc;
         super(nome, telefone);
+        this.#idFunc = idFunc;
         this.#cargoFunc = cargoFunc;
     }
 
@@ -71,7 +71,7 @@ class FuncionarioModel extends PessoaModel {
 
     async obter(id) {
 
-        let sql = "select * from tb_funcionario where idFuncionario = ?";
+        let sql = "select * from tb_Funcionario where idFuncionario = ?";
         let valores = [id];
 
         let rows = await banco.ExecutaComando(sql, valores);
@@ -87,7 +87,7 @@ class FuncionarioModel extends PessoaModel {
 
     async excluir(id) {
 
-        let sql = "delete from tb_funcionario where idFuncionario = ?";
+        let sql = "delete from tb_Funcionario where idFuncionario = ?";
         let valores = [id];
 
         let ok = await banco.ExecutaComandoNonQuery(sql, valores);

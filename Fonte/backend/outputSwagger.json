@@ -1,23 +1,15 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.0",
   "info": {
     "title": "SGO - Sistema Gerenciador de Obras",
     "description": "API de desenvolvimento do Sistema Gerenciador de Obras",
     "version": "1.0.0"
   },
-  "host": "localhost:4000",
-  "basePath": "/",
-  "schemes": [
-    "http"
-  ],
-  "securityDefinitions": {
-    "apiKeyAuth": {
-      "type": "apiKey",
-      "in": "header",
-      "name": "chaveapi",
-      "description": "Chave para autorização da API"
+  "servers": [
+    {
+      "url": "http://localhost:4000/"
     }
-  },
+  ],
   "paths": {
     "/clientes/listar": {
       "get": {
@@ -45,7 +37,9 @@
             "name": "idCli",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -95,7 +89,9 @@
             "name": "idCli",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -132,21 +128,156 @@
           }
         }
       }
+    },
+    "/funcionarios/listar": {
+      "get": {
+        "tags": [
+          "Funcionários"
+        ],
+        "summary": "Lista os funcionários cadastrados",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/funcionarios/obter/{idFuncionario}": {
+      "get": {
+        "tags": [
+          "Funcionários"
+        ],
+        "summary": "Obtem um funcionário específico",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idFuncionario",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/funcionarios/alterar": {
+      "put": {
+        "tags": [
+          "Funcionários"
+        ],
+        "summary": "Altera um funcionário",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/funcionario"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/funcionarios/gravar": {
+      "post": {
+        "tags": [
+          "Funcionários"
+        ],
+        "summary": "Grava um funcionário",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/funcionario"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/funcionarios/excluir/{idFuncionario}": {
+      "delete": {
+        "tags": [
+          "Funcionários"
+        ],
+        "summary": "Exclui um funcionário",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idFuncionario",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
       "funcionario": {
-        "id": 99999999,
-        "cargo": ""
+        "type": "object",
+        "properties": {
+          "idFuncionario": {
+            "type": "number",
+            "example": 0
+          },
+          "nomeFuncionario": {
+            "type": "string",
+            "example": "Teste Funcionário"
+          },
+          "telFuncionario": {
+            "type": "string",
+            "example": "(99)99999-9999"
+          },
+          "cargoFuncionario": {
+            "type": "string",
+            "example": "Teste"
+          }
+        }
       },
       "etapas": {
-        "idEtapa": 999,
-        "nomeEtapa": "Laje"
+        "type": "object",
+        "properties": {}
       },
       "areaAtuacao": {
-        "idArea": 999,
-        "nomeAtuacao": "Eletricista"
+        "type": "object",
+        "properties": {}
+      }
+    },
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "chaveapi",
+        "description": "Chave para autorização da API"
       }
     }
   }
