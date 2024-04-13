@@ -56,6 +56,11 @@ export default function RootLayout({ children }) {
                             <span>Funcionários</span>
                         </Link>
                     </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" href="/parceiros">
+                            <span>Parceiros</span>
+                        </Link>
+                    </li>
 
                 </ul>
 
