@@ -26,7 +26,7 @@ class AreaAtuacaoModel {
         let rows = await banco.ExecutaComando(sql);
         let lista = [];
         for(let i=0; i<rows.length; i++){
-            lista.push(new AreaAtuacaoModel(rows[i]['idArea'], rows[i]['nomeAtuacao']));
+            lista.push(new AreaAtuacaoModel(rows[i]['idAreaAtuacao'], rows[i]['nomeAtuacao']));
         }
         return lista;
     }
