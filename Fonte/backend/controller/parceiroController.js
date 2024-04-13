@@ -5,7 +5,8 @@ class ParceiroController {
     async gravar(req, res) {
 
         try {
-            if (Object.keys(req.body).length == 6) {
+            if (req.body.nomeParceiro != "" && req.body.telParceiro.length == 14 && req.body.cargoParceiro != "" &&
+                req.body.salarioParceiro > 0 && req.body.descTrabalho != "" && req.body.idAreaAtuacao != undefined) {
 
                 let parceiroModel = new ParceiroModel(0, req.body.nomeParceiro, req.body.telParceiro,
                 req.body.cargoParceiro, req.body.salarioParceiro, req.body.descTrabalho, req.body.idAreaAtuacao);
@@ -97,7 +98,7 @@ class ParceiroController {
     async excluir(req, res) {
 
         try {
-            if (res.params.idParceiro != null) {
+            if (req.params.idParceiro != null) {
                 let parceiroModel = new ParceiroModel();
                 let ok = await parceiroModel.excluir(req.params.idParceiro);
 

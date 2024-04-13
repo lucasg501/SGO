@@ -67,7 +67,7 @@ class ParceiroModel extends Pessoa {
         if (this.#idParceiro == 0) {
 
             let sql = `insert into tb_Parceiros (nomeParceiro, telParceiro, cargoParceiro, salarioParceiro, idAreaAtuacao, descTrabalho)
-            values (?, ?, ?, ?)`;
+            values (?, ?, ?, ?, ?, ?)`;
             let valores = [super.nome, super.telefone,
                 this.#cargo, this.#salario, this.#idAreaAtuacao, this.#descTrabalho];
 
@@ -77,8 +77,9 @@ class ParceiroModel extends Pessoa {
         }
         else {
 
-            let sql = "update tb_Parceiros set cargo = ?, salario = ?, idAreaAtuacao = ?, descTrabalho = ? where idParceiro = ?";
-            let valores = [this.#cargo, this.#salario, this.#idAreaAtuacao, this.#descTrabalho, this.#idParceiro];
+            let sql = `update tb_Parceiros set nomeParceiro = ?, telParceiro = ?, cargoParceiro = ?, salarioParceiro = ?, idAreaAtuacao = ?, 
+            descTrabalho = ? where idParceiro = ?`;
+            let valores = [super.nome, super.telefone, this.#cargo, this.#salario, this.#idAreaAtuacao, this.#descTrabalho, this.#idParceiro];
 
             let ok = await banco.ExecutaComandoNonQuery(sql, valores);
 
@@ -96,7 +97,8 @@ class ParceiroModel extends Pessoa {
         for (let i = 0; i < rows.length; i++) {
             let row = rows[i];
 
-            lista.push(new ParceiroModel(row['idParceiro'], "", "", row['cargo'], row['salario'], row['idPessoa'], row['idAreaAtuacao']));
+            lista.push(new ParceiroModel(row['idParceiro'], row['nomeParceiro'], row['telParceiro'], row['cargoParceiro'], 
+            row['salarioParceiro'], row['descTrabalho'], row['idAreaAtuacao']));
         }
 
         return lista;
@@ -112,7 +114,8 @@ class ParceiroModel extends Pessoa {
         if (rows.length > 0) {
 
             let row = rows[0];
-            return new ParceiroModel(row['idParceiro'], "", "", row['cargo'], row['salario'], row['idPessoa'], row['idAreaAtuacao']);
+            return new ParceiroModel(row['idParceiro'], row['nomeParceiro'], row['telParceiro'], row['cargoParceiro'], 
+            row['salarioParceiro'], row['descTrabalho'], row['idAreaAtuacao']);
         }
 
         return null;

@@ -238,6 +238,116 @@
           }
         }
       }
+    },
+    "/parceiros/listar": {
+      "get": {
+        "tags": [
+          "Parceiros"
+        ],
+        "summary": "Lista os parceiros cadastrados",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/parceiros/obter/{idParceiro}": {
+      "get": {
+        "tags": [
+          "Parceiros"
+        ],
+        "summary": "Obtem um parceiro específico",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idParceiro",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/parceiros/alterar": {
+      "put": {
+        "tags": [
+          "Parceiros"
+        ],
+        "summary": "Altera um parceiro",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/parceiro"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parceiros/gravar": {
+      "post": {
+        "tags": [
+          "Parceiros"
+        ],
+        "summary": "Grava um parceiro",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/parceiro"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parceiros/excluir/{idParceiro}": {
+      "delete": {
+        "tags": [
+          "Parceiros"
+        ],
+        "summary": "Exclui um parceiro",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idParceiro",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
@@ -260,6 +370,39 @@
           "cargoFuncionario": {
             "type": "string",
             "example": "Teste"
+          }
+        }
+      },
+      "parceiro": {
+        "type": "object",
+        "properties": {
+          "idParceiro": {
+            "type": "number",
+            "example": 0
+          },
+          "nomeParceiro": {
+            "type": "string",
+            "example": "Teste Parceiro"
+          },
+          "telParceiro": {
+            "type": "string",
+            "example": "(99)99999-9999"
+          },
+          "cargoParceiro": {
+            "type": "string",
+            "example": "Teste"
+          },
+          "salarioParceiro": {
+            "type": "number",
+            "example": 999.99
+          },
+          "descTrabalho": {
+            "type": "string",
+            "example": "Descrição teste"
+          },
+          "idAreaAtuacao": {
+            "type": "number",
+            "example": 1
           }
         }
       },
