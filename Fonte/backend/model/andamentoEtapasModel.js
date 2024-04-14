@@ -44,15 +44,16 @@ class AndamentoEtapasModel {
         return ok;
     }
 
-    async alterar() {
+    toJSON() {
+        return {
 
-        let sql = `update tb_AndamentoEtapas set dataPrevInicio = ?, dataPrevTermino = ?, dataFim = ?, descricaoEtapa = ?
-        where idObra = ? and idEtapa = ?`;
-        let valores = [this.#dataPrevInicio, this.#dataPrevTermino, this.#dataFim, this.#descricaoEtapa, this.#idObra, this.#idEtapa];
-
-        let ok = await banco.ExecutaComandoNonQuery(sql, valores);
-
-        return ok;
+            "idObra": this.#idObra,
+            "idEtapa": this.#idEtapa,
+            "dataPrevInicio": this.#dataPrevInicio,
+            "dataPrevTermino": this.#dataPrevTermino,
+            "dataFim": this.#dataFim,
+            "descricaoEtapa": this.#descricaoEtapa
+        };
     }
 }
 
