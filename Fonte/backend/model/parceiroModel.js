@@ -1,75 +1,25 @@
 const Database = require("../utils/database");
 const PessoaModel = require("./pessoaModel");
-const Pessoa = require("./pessoaModel");
 
 const banco = new Database();
 
-class ParceiroModel extends Pessoa {
+class ParceiroModel extends PessoaModel {
 
     #idParceiro;
-    #cargo;
-    #salario;
-    #descTrabalho;
     #idAreaAtuacao;
 
-    get idParceiro() {
-        return this.#idParceiro;
-    }
-
-    set idParceiro(novoId) {
-        this.#idParceiro = novoId;
-    }
-
-    get cargo() {
-        return this.#cargo;
-    }
-
-    set cargo(novoCargo) {
-        this.#cargo = novoCargo;
-    }
-
-    get salario() {
-        return this.#salario;
-    }
-
-    set salario(novoSalario) {
-        this.#salario = novoSalario;
-    }
-
-    get descTrabalho() {
-        return this.#descTrabalho;
-    }
-
-    set descTrabalho(novaDescricao) {
-        this.#descTrabalho = novaDescricao;
-    }
-
-    get idAreaAtuacao() {
-        return this.#idAreaAtuacao;
-    }
-
-    set idAreaAtuacao(novoId) {
-        this.#idAreaAtuacao = novoId;
-    }
-
-    constructor(idParceiro, nome, telefone, cargo, salario, descTrabalho, idAreaAtuacao) {
-
-        super(nome, telefone);
+    constructor(idParceiro, nome, telefone, idAreaAtuacao) {
+        super(nome, telefone); // Chamada ao construtor da classe pai PessoaModel
         this.#idParceiro = idParceiro;
-        this.#cargo = cargo;
-        this.#salario = salario;
-        this.#descTrabalho = descTrabalho;
         this.#idAreaAtuacao = idAreaAtuacao;
     }
 
     async gravar() {
 
-        if (this.#idParceiro == 0) {
+        if (this.#idParceiro === 0) {
 
-            let sql = `insert into tb_Parceiros (nomeParceiro, telParceiro, cargoParceiro, salarioParceiro, idAreaAtuacao, descTrabalho)
-            values (?, ?, ?, ?, ?, ?)`;
-            let valores = [super.nome, super.telefone,
-                this.#cargo, this.#salario, this.#idAreaAtuacao, this.#descTrabalho];
+            let sql = `INSERT INTO tb_Parceiros (nomeParceiro, telParceiro, idAreaAtuacao) VALUES (?, ?, ?)`;
+            let valores = [this.nome, this.telefone, this.#idAreaAtuacao];
 
             let ok = await banco.ExecutaComandoNonQuery(sql, valores);
 
@@ -77,9 +27,8 @@ class ParceiroModel extends Pessoa {
         }
         else {
 
-            let sql = `update tb_Parceiros set nomeParceiro = ?, telParceiro = ?, cargoParceiro = ?, salarioParceiro = ?, idAreaAtuacao = ?, 
-            descTrabalho = ? where idParceiro = ?`;
-            let valores = [super.nome, super.telefone, this.#cargo, this.#salario, this.#idAreaAtuacao, this.#descTrabalho, this.#idParceiro];
+            let sql = `UPDATE tb_Parceiros SET nomeParceiro = ?, telParceiro = ?, idAreaAtuacao = ? WHERE idParceiro = ?`;
+            let valores = [this.nome, this.telefone, this.#idAreaAtuacao, this.#idParceiro];
 
             let ok = await banco.ExecutaComandoNonQuery(sql, valores);
 
@@ -97,8 +46,7 @@ class ParceiroModel extends Pessoa {
         for (let i = 0; i < rows.length; i++) {
             let row = rows[i];
 
-            lista.push(new ParceiroModel(row['idParceiro'], row['nomeParceiro'], row['telParceiro'], row['cargoParceiro'], 
-            row['salarioParceiro'], row['descTrabalho'], row['idAreaAtuacao']));
+            lista.push(new ParceiroModel(row['idParceiro'], row['nomeParceiro'], row['telParceiro'],row['idAreaAtuacao']));
         }
 
         return lista;
@@ -114,10 +62,24 @@ class ParceiroModel extends Pessoa {
         if (rows.length > 0) {
 
             let row = rows[0];
-            return new ParceiroModel(row['idParceiro'], row['nomeParceiro'], row['telParceiro'], row['cargoParceiro'], 
-            row['salarioParceiro'], row['descTrabalho'], row['idAreaAtuacao']);
+            return new ParceiroModel(row['idParceiro'], row['nomeParceiro'], row['telParceiro'],row['idAreaAtuacao']);
         }
 
+        return null;
+    }
+
+    async obter2(id){
+        let sql = `SELECT * 
+        FROM tb_Parceiros AS p
+        INNER JOIN tb_AreaAtuacao AS a ON p.idAreaAtuacao = a.idAreaAtuacao
+        WHERE a.nomeAtuacao = ?
+        `;
+        let valores = [id];
+        let rows = await banco.ExecutaComando(sql, valores);
+        if (rows.length > 0) {
+            let row = rows[0];
+            return new ParceiroModel(row['idParceiro'], row['nomeParceiro'], row['telParceiro'],row['idAreaAtuacao']);
+        }
         return null;
     }
 
@@ -137,9 +99,6 @@ class ParceiroModel extends Pessoa {
             "idParceiro": this.#idParceiro,
             "nomeParceiro": super.nome,
             "telParceiro": super.telefone,
-            "cargoParceiro": this.#cargo,
-            "salarioParceiro": this.#salario,
-            "descTrabalho": this.#descTrabalho,
             "idAreaAtuacao": this.#idAreaAtuacao
         }
     }

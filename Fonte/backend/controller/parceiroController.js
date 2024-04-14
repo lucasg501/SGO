@@ -5,11 +5,9 @@ class ParceiroController {
     async gravar(req, res) {
 
         try {
-            if (req.body.nomeParceiro != "" && req.body.telParceiro.length == 14 && req.body.cargoParceiro != "" &&
-                req.body.salarioParceiro > 0 && req.body.descTrabalho != "" && req.body.idAreaAtuacao != undefined) {
+            if (req.body.nomeParceiro != "" && req.body.telParceiro != "" && req.body.idAreaAtuacao != undefined) {
 
-                let parceiroModel = new ParceiroModel(0, req.body.nomeParceiro, req.body.telParceiro,
-                req.body.cargoParceiro, req.body.salarioParceiro, req.body.descTrabalho, req.body.idAreaAtuacao);
+                let parceiroModel = new ParceiroModel(0, req.body.nomeParceiro, req.body.telParceiro, req.body.idAreaAtuacao);
                 let ok = await parceiroModel.gravar();
 
                 if (ok) {
@@ -31,10 +29,9 @@ class ParceiroController {
     async alterar(req, res) {
 
         try {
-            if (Object.keys(req.body).length == 7) {
+            if (Object.keys(req.body).length == 4) {
 
-                let parceiroModel = new ParceiroModel(req.body.idParceiro, req.body.nomeParceiro, req.body.telParceiro,
-                req.body.cargoParceiro, req.body.salarioParceiro, req.body.descTrabalho, req.body.idAreaAtuacao);
+                let parceiroModel = new ParceiroModel(req.body.idParceiro, req.body.nomeParceiro, req.body.telParceiro, req.body.idAreaAtuacao);
                 let ok = await parceiroModel.gravar();
 
                 if (ok) {
@@ -92,6 +89,25 @@ class ParceiroController {
         }
         catch(e) {
             res.status(500).json({msg: e.message});
+        }
+    }
+
+    async obter2(req,res){
+        try{
+            if(req.params.idAreaAtuacao != undefined){
+
+                let parceiroModel = new ParceiroModel();
+                parceiroModel = await parceiroModel.obter2(req.params.idAreaAtuacao);
+                if(parceiroModel == null){
+                    res.status(400).json({msg:"Parceiro não encontrado!"});
+                }else{
+                    res.status(200).json(parceiroModel.toJSON());
+                }
+            }else{
+                res.status(400).json({msg:"Parâmetros inválidos"});
+            }
+        }catch(e){
+            res.status(500).json({msg:e.message});
         }
     }
 

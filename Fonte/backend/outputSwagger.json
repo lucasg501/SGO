@@ -277,6 +277,30 @@
         }
       }
     },
+    "/parceiros/obter2/{idAreaAtuacao}": {
+      "get": {
+        "tags": [
+          "Parceiros"
+        ],
+        "summary": "Obtem um parceiro para uma area de atuação",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idAreaAtuacao",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/parceiros/alterar": {
       "put": {
         "tags": [
@@ -348,6 +372,186 @@
           }
         }
       }
+    },
+    "/obras/listar": {
+      "get": {
+        "tags": [
+          "Obras"
+        ],
+        "summary": "Lista as obras cadastradas",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/obras/obter/{idObra}": {
+      "get": {
+        "tags": [
+          "Obras"
+        ],
+        "summary": "Obtem uma obra especifica",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idObra",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/obras/alterar": {
+      "put": {
+        "tags": [
+          "Obras"
+        ],
+        "summary": "Altera uma obra",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/obras/gravar": {
+      "post": {
+        "tags": [
+          "Obras"
+        ],
+        "summary": "Cria uma nova obra",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/obras/excluir/{idObra}": {
+      "delete": {
+        "tags": [
+          "Obras"
+        ],
+        "summary": "Exclui uma obra",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idObra",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/servicos/listar": {
+      "get": {
+        "tags": [
+          "Servicos"
+        ],
+        "summary": "Lista todos os servicos",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/servicos/obter/{idServico}": {
+      "get": {
+        "tags": [
+          "Servicos"
+        ],
+        "summary": "Lista um servico especifico",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idServico",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/servicos/gravar": {
+      "post": {
+        "tags": [
+          "Servicos"
+        ],
+        "summary": "Cria um novo servico",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/servicos/alterar": {
+      "put": {
+        "tags": [
+          "Servicos"
+        ],
+        "summary": "Altera um servico",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/servicos/excluir/{idServico}": {
+      "delete": {
+        "tags": [
+          "Servicos"
+        ],
+        "summary": "Exclui um servico",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idServico",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
@@ -388,21 +592,9 @@
             "type": "string",
             "example": "(99)99999-9999"
           },
-          "cargoParceiro": {
+          "idAreaAtuacao": {
             "type": "string",
             "example": "Teste"
-          },
-          "salarioParceiro": {
-            "type": "number",
-            "example": 999.99
-          },
-          "descTrabalho": {
-            "type": "string",
-            "example": "Descrição teste"
-          },
-          "idAreaAtuacao": {
-            "type": "number",
-            "example": 1
           }
         }
       },

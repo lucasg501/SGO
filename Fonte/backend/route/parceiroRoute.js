@@ -19,6 +19,13 @@ router.get('/obter/:idParceiro', (req, res) => {
     ctrl.obter(req, res);
 });
 
+router.get('/obter2/:idAreaAtuacao', (req,res) =>{
+    // #swagger.tags = ['Parceiros']    
+    // #swagger.summary = 'Obtem um parceiro para uma area de atuação'
+
+    ctrl.obter2(req,res);
+});
+
 router.put('/alterar', (req, res) => {
     // #swagger.tags = ['Parceiros']
     // #swagger.summary = 'Altera um parceiro'

@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 
@@ -7,18 +6,13 @@ export default function ParceiroForm(props) {
 
     const nomeParceiro = useRef('');
     const telParceiro = useRef('');
-    const cargoParceiro = useRef('');
-    const salarioParceiro = useRef('');
-    const descTrabalho = useRef('');
     const idAreaAtuacao = useRef(0);
 
-    const [parceiro, setParceiro] = props.parceiro ? useState(parceiro) :
-    useState({idParceiro: 0, nomeParceiro: '', telParceiro: '', cargoParceiro: '', salarioParceiro: '', descTrabalho: '',
-    idAreaAtuacao: 0});
+    const [parceiro, setParceiro] = props.parceiro ? useState(props.parceiro) : useState({idParceiro:0, nomeParceiro: '', telParceiro: '', idAreaAtuacao: 0});
     const [listaAreaAtuacao, setListaAreaAtuacao] = useState([]);
 
-    function carregarAreasAtuacao() {
 
+    function carregarAreasAtuacao() {
         httpClient.get('/areaAtuacao/listar')
         .then(r => {
             return r.json();
@@ -28,23 +22,14 @@ export default function ParceiroForm(props) {
         });
     }
 
-    function alterarParceiro() {
-
-    }
-
     function cadastrarParceiro() {
+        let status = 0;
 
-        if (nomeParceiro.current.value != '' && telParceiro.current.value != '' && cargoParceiro.current.value != '' 
-        && salarioParceiro.current.value != '' && descTrabalho.current.value != ''
-        && idAreaAtuacao.current.value > 0) {
+        if (nomeParceiro.current.value != '' && telParceiro.current.value != '' && idAreaAtuacao.current.value > 0) {
             
             httpClient.post('/parceiros/gravar', {
-
                 nomeParceiro: nomeParceiro.current.value,
                 telParceiro: telParceiro.current.value,
-                cargoParceiro: cargoParceiro.current.value,
-                salarioParceiro: parseFloat(salarioParceiro.current.value),
-                descTrabalho: descTrabalho.current.value,
                 idAreaAtuacao: idAreaAtuacao.current.value
             })
             .then(r => {
@@ -53,13 +38,9 @@ export default function ParceiroForm(props) {
             })
             .then(r => {
                 alert(r.msg);
-
                 if (status == 200) {
                     nomeParceiro.current.value = '';
                     telParceiro.current.value = '';
-                    cargoParceiro.current.value = '';
-                    salarioParceiro.current.value = '';
-                    descTrabalho.current.value = '';
                     idAreaAtuacao.current.value = 0;
                 }
             });
@@ -68,6 +49,29 @@ export default function ParceiroForm(props) {
             alert('Preencha todos os campos!');
         }
     }
+
+    function alterarParceiro() {
+        let status = 0;
+        if(nomeParceiro.current.value != "" && telParceiro.current.value != "" && idAreaAtuacao.current.value > 0){
+            httpClient.put('/parceiros/alterar', {
+
+                idParceiro: parceiro.idParceiro,
+                nomeParceiro: nomeParceiro.current.value,
+                telParceiro: telParceiro.current.value,
+                idAreaAtuacao: idAreaAtuacao.current.value
+            })
+            .then(r => {
+                status = r.status;
+                return r.json();
+            })
+            .then(r=>{
+                alert(r.msg);
+                if (status == 200) {
+                    window.location.href = '/parceiros';
+                }
+            })
+        }
+        }
 
     useEffect(() => {
         carregarAreasAtuacao();
@@ -85,21 +89,6 @@ export default function ParceiroForm(props) {
             <div className="form-group">
                 <label>Telefone:</label>
                 <input type="tel" defaultValue={parceiro.telParceiro} maxLength={14} className="form-control" ref={telParceiro}/>
-            </div>
-
-            <div className="form-group">
-                <label>Cargo:</label>
-                <input type="text" defaultValue={parceiro.cargoParceiro} className="form-control" ref={cargoParceiro}/>
-            </div>
-
-            <div className="form-group">
-                <label>Salario:</label>
-                <input type="text" defaultValue={parceiro.salarioParceiro} className="form-control" ref={salarioParceiro}/>
-            </div>
-
-            <div className="form-group">
-                <label>Descrição do Trabalho:</label>
-                <textarea defaultValue={parceiro.descTrabalho} className="form-control" ref={descTrabalho}/>
             </div>
 
             <div className="form-group">
