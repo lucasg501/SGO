@@ -45,6 +45,8 @@ export default function FuncionarioForm(props) {
 
         if (nomeFuncionario.current.value != '' && telFuncionario.current.value != '' && cargoFuncionario.current.value != '') {
 
+            let status = 0;
+
             httpClient.post('/funcionarios/gravar', {
 
                 nomeFuncionario: nomeFuncionario.current.value,

@@ -40,12 +40,33 @@ export default function ServicoForm({params:{idObra}}) {
 
     function alocarParceiro() {
 
-        if (idAtuacao.current.value > 0 && idParceiro.current.value > 0) {
+        let valor = parseFloat(valorServico.current.value);
 
+        if (idAtuacao.current.value > 0 && idParceiro.current.value > 0 && descricaoServico.current.value != "" && valor > 0) {
+            
+            let status = 0;
 
+            httpClient.post('/servicos/gravar', {
+                descServico: descricaoServico.current.value,
+                valorServico: valor,
+                idObra: idObra,
+                idParceiro: idParceiro.current.value
+            })
+            .then(r => {
+                status = r.status;
+                return r.json();
+            })
+            .then(r => {
+                
+                alert(r.msg);
+
+                if (status == 200) {
+                    window.location.href = '/obras';
+                }
+            });
         }
         else {
-            alert("Por favor, selecione uma área de atuação e um parceiro.");
+            alert("Preencha todos os campos!");
         }
     }
 
@@ -57,7 +78,7 @@ export default function ServicoForm({params:{idObra}}) {
         <div>
             <h1> Alocar Parceiro na obra de Nº:{idObra}</h1>
 
-            <div>
+            <div className="form-group">
                 <label>Área de atuação</label>
                 <select className="form-control" ref={idAtuacao} onChange={(e) => listarParceiros(e.target.value)}>
                     <option value="0">Selecione</option>
@@ -71,7 +92,7 @@ export default function ServicoForm({params:{idObra}}) {
                 </select>
             </div>
 
-            <div>
+            <div className="form-group">
                 <label>Parceiro</label>
                 <select className="form-control" ref={idParceiro}>
                     <option value="0">Selecione</option>
@@ -83,11 +104,21 @@ export default function ServicoForm({params:{idObra}}) {
                         }) 
                     }
                 </select>
-
-                <button onClick={alocarParceiro} 
-                className="btn btn-primary">Alocar</button>
-                <a href="/obras"><button style={{marginLeft: 50}} className="btn btn-danger">Cancelar</button></a>
             </div>
+
+            <div className="form-group">
+                <label>Descrição do Serviço</label>
+                <textarea className="form-control" ref={descricaoServico}></textarea>
+            </div>
+
+            <div className="form-group">
+                <label>Valor do Serviço</label>
+                <input type="number" className="form-control" defaultValue={0} ref={valorServico}></input>
+            </div>
+
+            <button onClick={alocarParceiro} 
+                className="btn btn-primary">Alocar</button>
+            <a href="/obras"><button style={{marginLeft: 50}} className="btn btn-danger">Cancelar</button></a>
         </div>
     )
 }
