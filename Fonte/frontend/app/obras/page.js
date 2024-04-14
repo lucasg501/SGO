@@ -6,7 +6,6 @@ import Link from "next/link";
 export default function Obras(){
 
     const [listaObras, setListaObras] = useState([]);
-    const [listaClientes, setListaClientes] = useState([]);
 
     function carregarObras(){
         httpClient.get('/obras/listar')
@@ -29,19 +28,8 @@ export default function Obras(){
         })
     }
 
-    function carregarCliente(){
-        httpClient.get('/clientes/listar')
-        .then(r=>{
-            return r.json();
-        })
-        .then(r=>{
-            setListaClientes(r);
-        })
-    }
-
     useEffect(() =>{
         carregarObras();
-        carregarCliente();
     },[]);
 
     function formatarData(data) {
@@ -89,7 +77,7 @@ export default function Obras(){
                                         <td>{formatarData(value.dataTermino)}</td>
                                         <td>{value.contrato ? value.contrato : "Não possui"}</td>
                                         <td>{value.planta ? value.planta : "Não possui"}</td>
-                                        <td>{value.idCli}</td>
+                                        <td>{value.idCliente}</td>
                                         <td>
                                             <Link className="btn btn-primary" href={`/obras/alterar/${value.idObra}`}>
                                                 <i className="fas fa-pen"></i>
