@@ -277,7 +277,7 @@
         }
       }
     },
-    "/parceiros/obter2/{idAreaAtuacao}": {
+    "/parceiros/obterParceirosArea/{idAreaAtuacao}": {
       "get": {
         "tags": [
           "Parceiros"

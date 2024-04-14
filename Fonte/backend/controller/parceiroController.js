@@ -92,16 +92,25 @@ class ParceiroController {
         }
     }
 
-    async obter2(req,res){
+    async obterParceirosArea(req,res){
         try{
             if(req.params.idAreaAtuacao != undefined){
 
                 let parceiroModel = new ParceiroModel();
-                parceiroModel = await parceiroModel.obter2(req.params.idAreaAtuacao);
-                if(parceiroModel == null){
-                    res.status(400).json({msg:"Parceiro não encontrado!"});
-                }else{
-                    res.status(200).json(parceiroModel.toJSON());
+                let lista = await parceiroModel.obterParceirosArea(req.params.idAreaAtuacao);
+
+                if (lista.length > 0) {
+
+                    let listaJson = [];
+
+                    for (let i = 0; i < lista.length; i++) {
+                        listaJson.push(lista[i].toJSON());
+                    }
+
+                    res.status(200).json(listaJson);
+                }
+                else {
+                    res.status(400).json({msg:"Parceiros não encontrados!"});
                 }
             }else{
                 res.status(400).json({msg:"Parâmetros inválidos"});

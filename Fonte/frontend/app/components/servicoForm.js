@@ -22,25 +22,26 @@ export default function ServicoForm({params:{idObra}}) {
         })
     }
 
-    function listarParceiros(idAreaAtuacao){
-        httpClient.get(`/parceiros/obter2/${idAreaAtuacao}`)
+    function listarParceiros(idAreaAtuacao) {
+        httpClient.get(`/parceiros/obterParceirosArea/${idAreaAtuacao}`)
         .then(r=>{
             return r.json();
         })
         .then(r=>{
-            setListaParceiros(Array.isArray(r) ? r : []);
+            if (r.length > 0) {
+                setListaParceiros(r);
+            }
         })
+    }
+
+    function alocarParceiro() {
+
+        
     }
 
     useEffect(() => {
         listarAtuacao();
     }, []);
-
-    useEffect(() => {
-        if (idAtuacao.current !== '') {
-            listarParceiros(idAtuacao.current);
-        }
-    }, [idAtuacao.current]);
 
     return(
         <div>
@@ -53,7 +54,7 @@ export default function ServicoForm({params:{idObra}}) {
                     {
                         listaAtuacao.map(function(value,index){
                             return(
-                                <option key={index} value={value.idAreaAtuacao}>{value.nomeAtuacao}</option>
+                                <option key={index} value={value.idArea}>{value.nomeAtuacao}</option>
                             )
                         }) 
                     }
@@ -72,6 +73,10 @@ export default function ServicoForm({params:{idObra}}) {
                         }) 
                     }
                 </select>
+
+                <button onClick={alocarParceiro} 
+                className="btn btn-primary">Alocar</button>
+                <a href="/Obras"><button style={{marginLeft: 50}} className="btn btn-danger">Cancelar</button></a>
             </div>
         </div>
     )

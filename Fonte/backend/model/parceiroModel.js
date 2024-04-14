@@ -68,19 +68,23 @@ class ParceiroModel extends PessoaModel {
         return null;
     }
 
-    async obter2(id){
+    async obterParceirosArea(id){
         let sql = `SELECT * 
         FROM tb_Parceiros AS p
         INNER JOIN tb_AreaAtuacao AS a ON p.idAreaAtuacao = a.idAreaAtuacao
-        WHERE a.nomeAtuacao = ?
+        WHERE p.idAreaAtuacao = ?
         `;
         let valores = [id];
         let rows = await banco.ExecutaComando(sql, valores);
-        if (rows.length > 0) {
-            let row = rows[0];
-            return new ParceiroModel(row['idParceiro'], row['nomeParceiro'], row['telParceiro'],row['idAreaAtuacao']);
+        
+        let listaRetorno = [];
+
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            listaRetorno.push(new ParceiroModel(row['idParceiro'], row['nomeParceiro'], row['telParceiro'],row['idAreaAtuacao']));
         }
-        return null;
+
+        return listaRetorno;
     }
 
     async excluir(id) {
