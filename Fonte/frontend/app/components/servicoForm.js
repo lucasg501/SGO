@@ -31,12 +31,22 @@ export default function ServicoForm({params:{idObra}}) {
             if (r.length > 0) {
                 setListaParceiros(r);
             }
+            else {
+                idParceiro.current.value = 0;
+                setListaParceiros([]);
+            }
         })
     }
 
     function alocarParceiro() {
 
-        
+        if (idAtuacao.current.value > 0 && idParceiro.current.value > 0) {
+
+
+        }
+        else {
+            alert("Por favor, selecione uma área de atuação e um parceiro.");
+        }
     }
 
     useEffect(() => {
@@ -76,7 +86,7 @@ export default function ServicoForm({params:{idObra}}) {
 
                 <button onClick={alocarParceiro} 
                 className="btn btn-primary">Alocar</button>
-                <a href="/Obras"><button style={{marginLeft: 50}} className="btn btn-danger">Cancelar</button></a>
+                <a href="/obras"><button style={{marginLeft: 50}} className="btn btn-danger">Cancelar</button></a>
             </div>
         </div>
     )
