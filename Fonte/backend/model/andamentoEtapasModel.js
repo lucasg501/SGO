@@ -44,6 +44,23 @@ class AndamentoEtapasModel {
         return ok;
     }
 
+    async obterEtapasPorObra(idObra) {
+
+        let sql = "select * from tb_AndamentoEtapas where idObra = ?";
+        let valores = [idObra];
+
+        let rows = await banco.ExecutaComando(sql, valores);
+        let listaRetorno = [];
+
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            listaRetorno.push(new AndamentoEtapasModel(row['idObra'], row['idEtapa'], row['dataPrevInicio'], row['dataPrevTermino'], 
+            row['dataFim'], row['descricaoEtapa']));
+        }
+
+        return listaRetorno;
+    }
+
     toJSON() {
         return {
 

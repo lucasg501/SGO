@@ -45,6 +45,35 @@ class AndamentoEtapasController {
             res.status(500).json({msg: ex.message});
         }
     }
+
+    async obterEtapasPorObra(req, res) {
+
+        try {
+            if (req.params.idObra != undefined) {
+                let andamentoEtapasModel = new AndamentoEtapasModel();
+                let lista = await andamentoEtapasModel.obterEtapasPorObra(req.params.idObra);
+
+                if (lista.length > 0) {
+                    let listaJson = [];
+
+                    for (let i = 0; i < lista.length; i++) {
+                        listaJson.push(lista[i].toJSON());
+                    }
+
+                    res.status(200).json({listaJson});
+                }
+                else {
+                    res.status(404).json({msg: "Obra não encontrada!"});
+                }
+            }
+            else {
+                res.status(400).json({msg: "Parâmetros inválidos!"});
+            }
+        }
+        catch(ex) {
+            res.status(500).json({msg: ex.message});
+        }
+    }
 }
 
 module.exports = AndamentoEtapasController;

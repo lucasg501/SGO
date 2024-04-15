@@ -552,6 +552,44 @@
           }
         }
       }
+    },
+    "/andamentoEtapas/gravar": {
+      "post": {
+        "tags": [
+          "Andamento Etapas"
+        ],
+        "summary": "Grava etapas para uma obra",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/andamentoEtapas/obterEtapasPorObra/{idObra}": {
+      "get": {
+        "tags": [
+          "Andamento Etapas"
+        ],
+        "summary": "Obtem etapas da obra especificada",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idObra",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
