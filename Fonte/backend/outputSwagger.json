@@ -604,6 +604,44 @@
           }
         }
       }
+    },
+    "/parcelas/gravar": {
+      "post": {
+        "tags": [
+          "Parcelas"
+        ],
+        "summary": "Grava parcelas para uma obra",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/parcelas/obterParcelasPorObra/{idObra}": {
+      "get": {
+        "tags": [
+          "Parcelas"
+        ],
+        "summary": "Obtem parcelas da obra especificada",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idObra",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {

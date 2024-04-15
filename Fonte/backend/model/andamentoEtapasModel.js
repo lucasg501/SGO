@@ -40,16 +40,23 @@ class AndamentoEtapasModel {
     }
 
     async gravar() {
+        let sql;
+        let valores;
+
         if (this.#idAndamento == 0) {
-            let sql = "insert into tb_AndamentoEtapas (idObra, idEtapa, dataPrevInicio, dataPrevTermino, dataFim, descricaoEtapa) values(?, ?, ?, ?, ?, ?)";
-            let valores = [this.#idObra, this.#idEtapa, this.#dataPrevInicio, this.#dataPrevTermino, this.#dataFim, this.#descricaoEtapa];
-            let ok = await banco.ExecutaComandoNonQuery(sql, valores);
-            return ok;
+            sql = "INSERT INTO tb_AndamentoEtapas (idObra, idEtapa, dataPrevInicio, dataPrevTermino, dataFim, descricaoEtapa) VALUES (?, ?, ?, ?, ?, ?)";
+            valores = [this.#idObra, this.#idEtapa, this.#dataPrevInicio, this.#dataPrevTermino, this.#dataFim, this.#descricaoEtapa];
         } else {
-            let sql = "update tb_AndamentoEtapas set idObra = ?, idEtapa = ?, dataPrevInicio = ?, dataPrevTermino = ?, dataFim = ?, descricaoEtapa = ? where idAndamento = ?";
-            let valores = [this.#idObra, this.#idEtapa, this.#dataPrevInicio, this.#dataPrevTermino, this.#dataFim, this.#descricaoEtapa, this.#idAndamento];
-            let ok = await banco.ExecutaComandoNonQuery(sql, valores);
+            sql = "UPDATE tb_AndamentoEtapas SET idObra = ?, idEtapa = ?, dataPrevInicio = ?, dataPrevTermino = ?, dataFim = ?, descricaoEtapa = ? WHERE idAndamento = ?";
+            valores = [this.#idObra, this.#idEtapa, this.#dataPrevInicio, this.#dataPrevTermino, this.#dataFim, this.#descricaoEtapa, this.#idAndamento];
+        }
+
+        try {
+            const ok = await banco.ExecutaComandoNonQuery(sql, valores);
             return ok;
+        } catch (error) {
+            console.error("Erro ao gravar o andamento da etapa:", error);
+            return false;
         }
     }
 

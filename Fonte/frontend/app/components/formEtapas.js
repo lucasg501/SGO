@@ -5,14 +5,14 @@ import Link from "next/link";
 
 export default function FormEtapas(props) {
 
-    const idObra = useRef(0);
-    const idEtapa = useRef(0);
-    const dataPrevInicio = useRef('');
-    const dataPrevTermino = useRef('');
-    const dataFim = useRef('');
-    const descricaoEtapa = useRef('');
+    const idObra = useRef([]);
+    const idEtapa = useRef([]);
+    const dataPrevInicio = useRef([]);
+    const dataPrevTermino = useRef([]);
+    const dataFim = useRef([]);
+    const descricaoEtapa = useRef([]);
 
-    const [etapas, setEtapas] = props.etapas ? useState(props.etapas) : useState({ idEtapa: 0, idObra: 0, dataPrevInicio: '', dataPrevFim: '', dataFim: '', descricaoEtapa: '' });
+    const [etapas, setEtapas] = useState(props.etapas ? props.etapas : { idEtapa: 0, idObra: 0, dataPrevInicio: '', dataPrevFim: '', dataFim: '', descricaoEtapa: '' });
     const [listaObras, setListaObras] = useState([]);
     const [listaEtapas, setListaEtapas] = useState([]);
 
@@ -24,9 +24,11 @@ export default function FormEtapas(props) {
     const adicionarCampo = () => {
         setEtapas(prevState => ({
             ...prevState,
-            idEtapa: prevState.idEtapa + 1
+            idEtapa: prevState.idEtapa + 1,
+            idObra: prevState.idObra || (listaObras.length > 0 ? listaObras[0].idObra : 0) // Definindo um valor padrão para idObra
         }));
     };
+    
 
     const removerCampo = () => {
         if (etapas.idEtapa > 0) {
@@ -39,9 +41,7 @@ export default function FormEtapas(props) {
 
     function listarObras() {
         httpClient.get('/obras/listar')
-            .then(r => {
-                return r.json();
-            })
+            .then(r => r.json())
             .then(r => {
                 setListaObras(r);
             });
@@ -49,9 +49,7 @@ export default function FormEtapas(props) {
 
     function listarEtapas() {
         httpClient.get('/etapas/listar')
-            .then(r => {
-                return r.json();
-            })
+            .then(r => r.json())
             .then(r => {
                 setListaEtapas(r);
             });
@@ -59,31 +57,44 @@ export default function FormEtapas(props) {
 
     function gravarEtapas(){
         let status = 0;
-        const dataFimValue = dataFim.current.value !== '' ? dataFim.current.value : null;
+        let etapasArray = [];
     
-        if(idObra.current.value > 0 && idEtapa.current.value > 0 && dataPrevInicio.current.value !== '' && dataPrevTermino.current.value !== '' && descricaoEtapa.current.value !== ''){
-            httpClient.post('/andamentoEtapas/gravar',{
-                idObra: idObra.current.value,
-                idEtapa: idEtapa.current.value,
-                dataPrevTermino: dataPrevTermino.current.value,
-                dataPrevInicio: dataPrevInicio.current.value,
+        // Verifique se o idObra do primeiro elemento não é undefined
+        const idObraValue = idObra.current[0] ? idObra.current[0].value : null;
+    
+        // Use etapas.length para percorrer todos os elementos presentes em etapas
+        for(let i = 0; i < etapas.idEtapa + 1; i++){
+            const idEtapaValue = idEtapa.current[i] ? idEtapa.current[i].value : null;
+            const dataPrevInicioValue = dataPrevInicio.current[i] ? dataPrevInicio.current[i].value : null;
+            const dataPrevTerminoValue = dataPrevTermino.current[i] ? dataPrevTermino.current[i].value : null;
+            const dataFimValue = dataFim.current[i] ? (dataFim.current[i].value !== '' ? dataFim.current[i].value : null) : null;
+            const descricaoEtapaValue = descricaoEtapa.current[i] ? descricaoEtapa.current[i].value : null;
+            
+            const etapa = {
+                idObra: idObraValue, // Use o idObra do primeiro elemento
+                idEtapa: idEtapaValue,
+                dataPrevInicio: dataPrevInicioValue,
+                dataPrevTermino: dataPrevTerminoValue,
                 dataFim: dataFimValue,
-                descricaoEtapa: descricaoEtapa.current.value
-            })
-            .then(r=>{
+                descricaoEtapa: descricaoEtapaValue
+            };
+            etapasArray.push(etapa);
+        }
+    
+        httpClient.post('/andamentoEtapas/gravar', etapasArray)
+            .then(r => {
                 status = r.status;
                 return r.json();
             })
-            .then(r=>{
+            .then(r => {
                 alert(r.msg);
-                if(status == 200){
-                    window.location.href = '/etapas';
+                if(status === 200){
+                    window.location.reload();
                 }
-            })
-        }
+            });
     }
     
-
+    
     return (
         <div>
             <h1>Gerenciar Etapas da Obra</h1>
@@ -91,7 +102,7 @@ export default function FormEtapas(props) {
             <div>
                 <div className="from-group">
                     <label>Obra:</label>
-                    <select ref={idObra} style={{ width: '10%', textAlign: 'center' }} defaultValue={etapas.idObra} className="form-control">
+                    <select ref={el => idObra.current[0] = el} style={{ width: '10%', textAlign: 'center' }} defaultValue={etapas.idObra} className="form-control">
                         <option value={0}>Selecione</option>
                         {listaObras.map((value, index) => (
                             <option key={index} value={value.idObra}>{value.bairro}</option>
@@ -104,31 +115,31 @@ export default function FormEtapas(props) {
                     <div key={index}>
                         <div className="form-group">
                             <label>Etapa {index + 1}:</label>
-                            <select ref={idEtapa} style={{ width: '10%', textAlign: 'center' }} className="form-control">
+                            <select ref={el => idEtapa.current[index] = el} style={{ width: '10%', textAlign: 'center' }} className="form-control">
                                 <option value={0}>Selecione</option>
-                                {listaEtapas.map((value, index) => (
-                                    <option key={index} value={value.idEtapa}>{value.nomeEtapa}</option>
+                                {listaEtapas.map((value, idx) => (
+                                    <option key={idx} value={value.idEtapa}>{value.nomeEtapa}</option>
                                 ))}
                             </select>
                         </div>
 
                         <div className="form-group" style={{ display: 'inline-block', width: '15%', marginRight: '10px' }}>
                             <label>Início:</label>
-                            <input ref={dataPrevInicio} style={{ width: '80%' }} type="date" className="form-control" placeholder="Início" />
+                            <input ref={el => dataPrevInicio.current[index] = el} style={{ width: '80%' }} type="date" className="form-control" placeholder="Início" />
                         </div>
                         <div className="form-group" style={{ display: 'inline-block', width: '25%' }}>
                             <label>Previsão de Término:</label>
-                            <input ref={dataPrevTermino} style={{ width: '40%' }} type="date" className="form-control" placeholder="Previsão de Término" />
+                            <input ref={el => dataPrevTermino.current[index] = el} style={{ width: '40%' }} type="date" className="form-control" placeholder="Previsão de Término" />
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'baseline' }}>
                             <div className="form-group" style={{ width: '15%', marginRight: '10px' }}>
                                 <label style={{ display: 'block' }}>Fim:</label>
-                                <input ref={dataFim} style={{ width: '80%' }} type="date" className="form-control" placeholder="Fim" />
+                                <input ref={el => dataFim.current[index] = el} style={{ width: '80%' }} type="date" className="form-control" placeholder="Fim" />
                             </div>
                             <div className="form-group" style={{ width: '25%' }}>
                                 <label style={{ display: 'block' }}>Descrição:</label>
-                                <textarea ref={descricaoEtapa} style={{ width: '100%', minHeight: '100px' }} className="form-control" placeholder="Descrição" />
+                                <textarea ref={el => descricaoEtapa.current[index] = el} style={{ width: '100%', minHeight: '100px' }} className="form-control" placeholder="Descrição" />
                             </div>
                         </div>
                     </div>

@@ -3,26 +3,50 @@ const AndamentoEtapasModel = require("../model/andamentoEtapasModel");
 class AndamentoEtapasController {
 
     async gravar(req, res) {
-        if(Object.keys(req.body).length > 0){
-            let andamentoEtapasModel = new AndamentoEtapasModel();
+        if (req.body.length > 0) { // Verifica se o corpo da requisição é um array
+            const andamentoEtapasModel = new AndamentoEtapasModel();
+            const promises = [];
 
-            andamentoEtapasModel.idObra = req.body.idObra;
-            andamentoEtapasModel.idEtapa = req.body.idEtapa;
-            andamentoEtapasModel.dataPrevInicio = req.body.dataPrevInicio;
-            andamentoEtapasModel.dataPrevTermino = req.body.dataPrevTermino;
-            andamentoEtapasModel.dataFim = req.body.dataFim;
-            andamentoEtapasModel.descricaoEtapa = req.body.descricaoEtapa;
-            andamentoEtapasModel.idAndamento = 0;
-            let ok = await andamentoEtapasModel.gravar();
-            if(ok){
-                res.status(200).json({msg:"Andamento da etapa gravado com sucesso!"});
-            }else{
-                res.status(500).json({msg:"Erro ao gravar o andamento da etapa!"});
+            // Itera sobre o array de etapas recebido
+            for (const etapa of req.body) {
+                const {
+                    idObra,
+                    idEtapa,
+                    dataPrevInicio,
+                    dataPrevTermino,
+                    dataFim,
+                    descricaoEtapa
+                } = etapa;
+
+                // Cria uma nova instância do modelo para cada etapa
+                const novaEtapa = new AndamentoEtapasModel(
+                    idObra,
+                    idEtapa,
+                    dataPrevInicio,
+                    dataPrevTermino,
+                    dataFim,
+                    descricaoEtapa,
+                    0 // idAndamento
+                );
+                
+
+                // Chama o método gravar do modelo e armazena a promise resultante
+                promises.push(novaEtapa.gravar());
             }
-        }else{
-            res.status(400).json({msg:"Parâmetros inválidos!"});
+
+            // Aguarda todas as operações de gravação serem concluídas
+            Promise.all(promises)
+                .then(() => {
+                    res.status(200).json({ msg: "Andamentos das etapas gravados com sucesso!" });
+                })
+                .catch(() => {
+                    res.status(500).json({ msg: "Erro ao gravar os andamentos das etapas!" });
+                });
+        } else {
+            res.status(400).json({ msg: "Nenhum dado recebido ou formato inválido!" });
         }
     }
+
 
     async obterEtapasPorObra(req, res) {
 
