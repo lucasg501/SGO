@@ -590,6 +590,20 @@
           }
         }
       }
+    },
+    "/andamentoEtapas/listar": {
+      "get": {
+        "tags": [
+          "Andamento Etapas"
+        ],
+        "summary": "Lista todas as etapas",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {

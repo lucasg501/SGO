@@ -71,6 +71,11 @@ export default function RootLayout({ children }) {
                             <span>Serviços</span>
                         </Link>
                     </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" href="/etapas">
+                            <span>Etapas</span>
+                        </Link>
+                    </li>
 
                 </ul>
 

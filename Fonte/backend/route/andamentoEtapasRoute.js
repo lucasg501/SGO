@@ -21,4 +21,11 @@ router.get('/obterEtapasPorObra/:idObra', (req, res) => {
     ctrl.obterEtapasPorObra(req, res);
 });
 
+router.get('/listar', (req,res)=>{
+
+    // #swagger.tags = ['Andamento Etapas']
+    // #swagger.summary = 'Lista todas as etapas'
+    ctrl.listar(req,res);
+});
+
 module.exports = router;
