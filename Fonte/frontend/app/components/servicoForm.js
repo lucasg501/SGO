@@ -76,7 +76,7 @@ export default function ServicoForm({params:{idObra}}) {
 
     return(
         <div>
-            <h1> Alocar Parceiro na obra de Nº:{idObra}</h1>
+            <h1> Alocar Parceiro</h1>
 
             <div className="form-group">
                 <label>Área de atuação</label>

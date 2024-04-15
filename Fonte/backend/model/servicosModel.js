@@ -53,6 +53,7 @@ class servicosModel {
         for (let i = 0; i < rows.length; i++) {
             lista.push(new servicosModel(rows[i]['idServico'], rows[i]['descricaoServico'], rows[i]['valorServico'], rows[i]['idObra'], rows[i]['idParceiro']));
         }
+        return lista;
     }
 
     async obter(idServico) {
