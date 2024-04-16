@@ -76,7 +76,7 @@ export default function Recebimentos() {
                                         <th>Data de Vencimento</th>
                                         <th>Data de Recebimento</th>
                                         <th>Valor</th>
-                                        <th>Marcar como Paga</th>
+                                        <th>Marcar como Recebida</th>
                                     </tr>
                                 </thead>
 
@@ -88,7 +88,7 @@ export default function Recebimentos() {
                                             <tr key={index}>
                                                 <td>{index + 1}</td>
                                                 <td>{formatarData(parcela.dataVencimento)}</td>
-                                                <td>{parcela.dataRecebimento ? formatarData(parcela.dataRecebimento) : ""}</td>
+                                                <td>{parcela.dataRecebimento ? formatarData(parcela.dataRecebimento) : "Não foi recebida"}</td>
                                                 <td>{parcela.valorParcela}</td>
                                                 <td style={{display: 'flex', alignContent: 'center'}}>
                                                     <Link style={{margin: 'auto'}} className="btn btn-success"
