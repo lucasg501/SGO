@@ -35,6 +35,7 @@ export default function obraForm(props){
                 idCliente: idCliente.current.value
             })
             .then(r=>{
+                status = r.status;
                 return r.json();
             })
             .then(r=>{
@@ -49,6 +50,7 @@ export default function obraForm(props){
                     contrato.current.value = '';
                     planta.current.value = '';
                     idCliente.current.value = 0;
+                    window.location.href = '/obras';
                 }
             })
         }else{
