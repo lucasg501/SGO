@@ -28,4 +28,12 @@ router.get('/listar', (req, res) => {
     ctrl.listar(req, res);
 })
 
+router.get('/obter/:numParcela', (req, res) => {
+
+    // #swagger.tags = ['Parcelas']
+    // #swagger.summary = 'Obtem uma parcela específica'
+
+    ctrl.obter(req, res);
+});
+
 module.exports = router;

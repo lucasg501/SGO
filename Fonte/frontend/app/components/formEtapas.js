@@ -131,7 +131,7 @@ export default function FormEtapas(props) {
             <h1>{props.etapa != null ? 'Marcar Como Finalizada' : 'Gerenciar Etapas da Obra'}</h1>
 
             <div>
-                <div className="from-group">
+                <div className="form-group">
                     <label>Obra:</label>
                     <select ref={el => idObra.current[0] = el} style={{ width: '10%', textAlign: 'center' }} defaultValue={props.etapa.idObra} className="form-control" disabled={props.etapa !== null}>
                         <option value={0}>Selecione</option>
