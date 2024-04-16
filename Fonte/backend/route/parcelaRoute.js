@@ -20,4 +20,12 @@ router.get('/obterParcelasPorObra/:idObra', (req, res) => {
     ctrl.obterParcelasPorObra(req, res);
 })
 
+router.get('/listar', (req, res) => {
+
+    // #swagger.tags = ['Parcelas']
+    // #swagger.summary = 'Obtem todas as parcelas'
+
+    ctrl.listar(req, res);
+})
+
 module.exports = router;

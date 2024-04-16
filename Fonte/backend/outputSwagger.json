@@ -680,6 +680,20 @@
           }
         }
       }
+    },
+    "/parcelas/listar": {
+      "get": {
+        "tags": [
+          "Parcelas"
+        ],
+        "summary": "Obtem todas as parcelas",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {

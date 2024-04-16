@@ -68,6 +68,22 @@ class ParcelaModel {
         return listaRetorno;
     }
 
+    async listar() {
+
+        let sql = "select * from tb_Parcelas";
+        let rows = await banco.ExecutaComando(sql);
+
+        let listaRetorno = [];
+
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            listaRetorno.push(new ParcelaModel(row['numParcela'], row['dataVencimento'], row['dataRecebimento'], row['valorParcela'], 
+            row['idObra']))
+        }
+
+        return listaRetorno;
+    }
+
     toJSON() {
 
         return {
