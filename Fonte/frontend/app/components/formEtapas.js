@@ -137,17 +137,18 @@ export default function FormEtapas(props) {
             <div>
                 <div className="from-group">
                     <label>Obra:</label>
-                    <select ref={el => idObra.current[0] = el} style={{ width: '10%', textAlign: 'center' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa !== null}>
+                    <select ref={el => idObra.current[0] = el} style={{ width: '10%', textAlign: 'center' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
+
                         <option value={0}>Selecione</option>
-                        {
-                            listaObras.map(function (value, index) {
-                                if (value.idObra === props.etapa.idObra) {
-                                    return <option key={index} value={value.idObra} selected>{value.bairro}</option>
-                                } else {
-                                    return <option key={index} value={value.idObra}>{value.bairro}</option>
-                                }
-                            })
-                        }
+                        {listaObras.map(function (value, index) {
+                            const isSelected = props.etapa && value.idObra === props.etapa.idObra;
+                            return (
+                                <option key={index} value={value.idObra} selected={isSelected}>
+                                    {value.bairro}
+                                </option>
+                            );
+                        })}
+
                     </select>
                 </div>
                 <br></br>
@@ -156,17 +157,17 @@ export default function FormEtapas(props) {
                     <div key={index}>
                         <div className="form-group">
                             <label>Etapa {index + 1}:</label>
-                            <select defaultValue={props.etapa ? props.etapa.idEtapa : 0} ref={el => idEtapa.current[index] = el} style={{ width: '10%', textAlign: 'center' }} className="form-control" disabled={props.etapa !== null}>
+                            <select defaultValue={props.etapa ? props.etapa.idEtapa : 0} ref={el => idEtapa.current[index] = el} style={{ width: '10%', textAlign: 'center' }} className="form-control" disabled={props.etapa != null}>
                                 <option value={0}>Selecione</option>
-                                {
-                                    listaEtapas.map(function (value, index) {
-                                        if (value.idEtapa === props.etapa.idEtapa) {
-                                            return <option key={index} value={value.idEtapa} selected>{value.nomeEtapa}</option>
-                                        } else {
-                                            return <option key={index} value={value.idEtapa}>{value.nomeEtapa}</option>
-                                        }
-                                    })
-                                }
+                                {listaEtapas.map(function (value, index) {
+                                    const isSelected = props.etapa && value.idEtapa === props.etapa.idEtapa;
+                                    return (
+                                        <option key={index} value={value.idEtapa} selected={isSelected}>
+                                            {value.nomeEtapa}
+                                        </option>
+                                    );
+                                })}
+
                             </select>
                         </div>
 
@@ -186,7 +187,7 @@ export default function FormEtapas(props) {
                             </div>
                             <div className="form-group" style={{ width: '25%' }}>
                                 <label style={{ display: 'block' }}>Descrição:</label>
-                                <textarea defaultValue={props.etapa ? props.etapa.descricaoEtapa : ''} ref={el => descricaoEtapa.current[index] = el} style={{ width: '100%', minHeight: '100px' }} className="form-control" placeholder="Descrição" disabled={props.etapa !== null} />
+                                <textarea defaultValue={props.etapa ? props.etapa.descricaoEtapa : ''} ref={el => descricaoEtapa.current[index] = el} style={{ width: '100%', minHeight: '100px' }} className="form-control" placeholder="Descrição" disabled={props.etapa != null} />
                             </div>
                         </div>
                     </div>
