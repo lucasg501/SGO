@@ -71,7 +71,7 @@ export default function Etapas(){
         <div>
             <h1>Etapas</h1>
 
-            <div>
+            <div style={{marginBottom: 25}}>
                 <a href="/etapas/gravar"><button className="btn btn-primary">Cadastrar</button></a>
             </div>
 
@@ -100,7 +100,11 @@ export default function Etapas(){
                                         <td>{etapa.dataFim ? formatarData(etapa.dataFim) : ''}</td>
                                         <td>{etapa.descricaoEtapa}</td>
                                         <td style={{display: 'flex', alignContent: 'center'}}>
-                                            <Link style={{margin: 'auto'}} className="btn btn-success" href={`/etapas/alterar/${etapa.idAndamento}`}><i className="fas fa-check"></i></Link>
+                                            {etapa.dataFim ? (
+                                                <button disabled style={{margin: 'auto'}} className="btn btn-success"><i className="fas fa-check"></i></button>
+                                            ) : (
+                                                <Link style={{margin: 'auto'}} className="btn btn-success" href={`/etapas/alterar/${etapa.idAndamento}`}><i className="fas fa-check"></i></Link>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}
