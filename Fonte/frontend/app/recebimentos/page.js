@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from "react"
 import httpClient from "../utils/httpClient";
+import Link from "next/link";
 
 export default function Recebimentos() {
 
@@ -42,6 +43,11 @@ export default function Recebimentos() {
         return obra ? obra.bairro : "Desconhecido";
     }
 
+    // Função para formatar a data no formato dd/mm/aaaa
+    function formatarData(data) {
+        return new Date(data).toLocaleDateString('pt-BR');
+    }
+
     useEffect(() => {
         carregarAcompParcelas();
         carregarObras();
@@ -60,7 +66,7 @@ export default function Recebimentos() {
                 {
                     Object.keys(listaAcompParcelas).map(idObra => (
                         
-                        <div key={idObra}>
+                        <div key={idObra} style={{margin: 30}}>
                             <h2>Obra: {encontrarBairro(Number(idObra))}</h2>
 
                             <table className="table table-hover">
@@ -70,18 +76,26 @@ export default function Recebimentos() {
                                         <th>Data de Vencimento</th>
                                         <th>Data de Recebimento</th>
                                         <th>Valor</th>
+                                        <th>Marcar como Paga</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
                                     {
                                         listaAcompParcelas[idObra].map((parcela, index) => {
+
+                                            return (
                                             <tr key={index}>
                                                 <td>{index + 1}</td>
                                                 <td>{formatarData(parcela.dataVencimento)}</td>
-                                                <td>{formatarData(parcela.dataRecebimento)}</td>
-                                                <td>{formatarValor(parcela.valorParcela)}</td>
+                                                <td>{parcela.dataRecebimento ? formatarData(parcela.dataRecebimento) : ""}</td>
+                                                <td>{parcela.valorParcela}</td>
+                                                <td style={{display: 'flex', alignContent: 'center'}}>
+                                                    <Link style={{margin: 'auto'}} className="btn btn-success"
+                                                     href={`/recebimentos/alterar/${parcela.numParcela}`}><i className="fas fa-check"></i></Link>
+                                                </td>
                                             </tr>
+                                            )
                                         })
                                     }
                                 </tbody>

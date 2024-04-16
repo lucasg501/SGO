@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
-import { format } from 'date-fns';
 
 export default function FormEtapas(props) {
     const idObra = useRef([]);
@@ -134,7 +133,7 @@ export default function FormEtapas(props) {
             <h1>{props.etapa.idAndamento != null ? <h1>Marcar como finalizada</h1> : <h1>Gerenciar Etapas da Obra</h1>}</h1>
 
             <div>
-                <div className="from-group">
+                <div className="form-group">
                     <label>Obra:</label>
                     <select ref={el => idObra.current[0] = el} style={{ width: '10%', textAlign: 'center' }} defaultValue={props.etapa.idObra} className="form-control">
                         <option value={0}>Selecione</option>

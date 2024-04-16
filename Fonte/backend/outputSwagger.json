@@ -694,6 +694,30 @@
           }
         }
       }
+    },
+    "/parcelas/obter/{numParcela}": {
+      "get": {
+        "tags": [
+          "Parcelas"
+        ],
+        "summary": "Obtem uma parcela específica",
+        "description": "",
+        "parameters": [
+          {
+            "name": "numParcela",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {

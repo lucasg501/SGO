@@ -84,6 +84,24 @@ class ParcelaModel {
         return listaRetorno;
     }
 
+    async obter(numParcela) {
+        
+        let sql = "select * from tb_Parcelas where numParcela = ?";
+        let valores = [numParcela];
+
+        let rows = await banco.ExecutaComando(sql, valores);
+
+        if (rows.length > 0) {
+            let row = rows[0];
+            let parcela = new ParcelaModel(row['numParcela'], row['dataVencimento'], row['dataRecebimento'], row['valorParcela'], 
+            row['idObra']);
+
+            return parcela;
+        }
+
+        return null;
+    }
+
     toJSON() {
 
         return {

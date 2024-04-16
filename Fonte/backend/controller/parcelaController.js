@@ -85,6 +85,26 @@ class ParcelaController {
             res.status(500).json({msg: message});
         }
     }
+
+    async obter(req, res) {
+
+        try {
+            if (req.params.numParcela != undefined) {
+                let parcelaModel = new ParcelaModel();
+                parcelaModel = await parcelaModel.obter(numParcela);
+
+                if (parcelaModel == null) {
+                    res.status(404).json({msg: "Parcela não encontrada!"});
+                }
+                else {
+                    res.status(200).json(parcelaModel.toJSON());
+                }
+            }
+        }
+        catch(ex) {
+            res.status(500).json({msg: message});
+        }
+    }
 }
 
 module.exports = ParcelaController;
