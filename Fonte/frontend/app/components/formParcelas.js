@@ -7,11 +7,10 @@ import Link from "next/link";
 export default function FormParcelas(props) {
 
     const idObra = useRef([]);
-    const numParcela = useRef([]);
     const dataVencimento = useRef([]);
     const valorParcela = useRef([]);
 
-    const [parcelas, setParcelas] = useState({
+    const [parcelas, setParcelas] = useState(props.parcelas ? props.parcelas : {
         numParcela: 0,
         dataVencimento: '',
         valorParcela: 0,
@@ -56,39 +55,43 @@ export default function FormParcelas(props) {
 
     function gravarParcelas() {
 
-        let status = 0;
-        let parcelasArray = [];
+        if (idObra.current.value > 0) {
 
-        const idObraValue = idObra.current[0] ? idObra.current.value : null;
+            let status = 0;
+            let parcelasArray = [];
 
-        for (let i = 0; i < parcelas.numParcela + 1; i++) {
-            const numParcelaValue = numParcela.current[i] ? numParcela.current[i].value : null;
-            const dataVencimentoValue = dataVencimento.current[i] ? dataVencimento.current[i].value : null;
-            const valorParcelaValue = valorParcela.current[i] ? valorParcela.current[i].value : null;
+            const idObraValue = idObra.current.value;
 
-            const parcela = {
-                numParcela: numParcelaValue,
-                dataVencimento: convertIsoToDateString(dataVencimentoValue),
-                dataPagamento: null,
-                valorParcela: valorParcelaValue,
-                idObra: idObraValue
-            };
+            for (let i = 0; i < parcelas.numParcela + 1; i++) {
+                const dataVencimentoValue = dataVencimento.current[i] ? dataVencimento.current[i].value : null;
+                const valorParcelaValue = valorParcela.current[i] ? valorParcela.current[i].value : null;
 
-            parcelasArray.push(parcela);
+                const parcela = {
+                    dataVencimento: convertIsoToDateString(dataVencimentoValue),
+                    dataPagamento: null,
+                    valorParcela: valorParcelaValue,
+                    idObra: idObraValue
+                };
+
+                parcelasArray.push(parcela);
+            }
+
+            httpClient.post('/parcelas/gravar', parcelasArray)
+                .then(r => {
+                    status = r.status;
+                    return r.json();
+                })
+                .then(r => {
+                    alert(r.json);
+
+                    if (status === 200) {
+                        window.location.reload();
+                    }
+                });
         }
-
-        httpClient.post('/parcelas/gravar', parcelasArray)
-            .then(r => {
-                status = r.status;
-                return r.json();
-            })
-            .then(r => {
-                alert(r.json);
-
-                if (status === 200) {
-                    window.location.reload();
-                }
-            });
+        else {
+            alert("Escolha uma obra para as parcelas!");
+        }
     }
 
     useEffect(() => {
@@ -102,7 +105,7 @@ export default function FormParcelas(props) {
             <div>
                 <div className="form-group">
                     <label>Obra:</label>
-                    <select style={{width: '25%', textAlign: 'center'}} ref={idObra} className="form-control" >
+                    <select style={{width: '25%', textAlign: 'center'}} ref={idObra} className="form-control">
                         <option value={0}>Selecione</option>
                         {
                             listaObras.map(function(value, index) {
@@ -126,12 +129,13 @@ export default function FormParcelas(props) {
                                 <div className="form-group">
                                     <label>Vencimento:</label>
                                     <input onChange={(e) => setParcelas({ ...parcelas, dataVencimento: e.target.value })} 
-                                    style={{ width: '80%' }} type="date" className="form-control" />
+                                    style={{ width: '80%' }} type="date" className="form-control" ref={el => dataVencimento.current[index] = el} />
                                 </div>
                                 <div className="form-group">
                                     <label>Valor:</label>
                                     <input type="number" className="form-control" defaultValue={0} onChange={(e) =>
-                                    setParcelas({...parcelas, valorParcela: e.target.value})} style={{ width: '80%' }}></input>
+                                    setParcelas({...parcelas, valorParcela: e.target.value})} style={{ width: '80%' }} 
+                                    ref={el => valorParcela.current[index] = el}></input>
                                 </div>
                             </div>
                         </div>
