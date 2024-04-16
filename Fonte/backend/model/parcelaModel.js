@@ -67,6 +67,18 @@ class ParcelaModel {
 
         return listaRetorno;
     }
+
+    toJSON() {
+
+        return {
+
+            "numParcela": this.#numParcela,
+            "dataVencimento": this.#dataVencimento,
+            "dataRecebimento": this.#dataRecebimento,
+            "valorParcela": this.#valorParcela,
+            "idObra": this.#idObra
+        }
+    }
 }
 
 module.exports = ParcelaModel;

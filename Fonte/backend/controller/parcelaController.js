@@ -5,30 +5,34 @@ class ParcelaController {
     async gravar(req, res) {
 
         try {
-            if (req.body.parcelas.length > 0) {
+            if (req.body.length > 0) {
                 
-                let i = 0;
-                let ok = true;
+                const promises = [];
 
-                while (ok && i < req.body.parcelas.length) {
-                    
-                    let parcela = req.body.parcelas[i];
-                    let parcelaModel = new ParcelaModel(parcela.idParcela, parcela.dataVencimento, parcela.dataRecebimento, 
-                    parcela.valorParcela, parcela.idObra);
-                    
-                    ok = await parcelaModel.gravar();
-                    i++;
+                for (const parcela of req.body) {
+
+                    const {
+                        dataVencimento,
+                        dataRecebimento,
+                        valorParcela,
+                        idObra
+                    } = parcela;
+
+                    const novaParcela = new ParcelaModel(0, dataVencimento, dataRecebimento, valorParcela, idObra);
+
+                    promises.push(novaParcela.gravar());
                 }
 
-                if (ok) {
+                Promise.all(promises)
+                .then(() => {
                     res.status(200).json({msg: "Parcelas gravadas com sucesso!"});
-                }
-                else {
+                })
+                .catch(() => {
                     res.status(500).json({msg: "Erro na gravação de parcelas!"});
-                }
+                })
             }
             else {
-                res.status(400).json({msg: "Parâmetros inválidos!"});
+                res.status(400).json({msg: "Nenhum dado recebido ou formato inválido!"});
             }
         }
         catch(ex) {
