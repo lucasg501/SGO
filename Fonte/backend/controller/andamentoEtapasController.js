@@ -86,6 +86,42 @@ class AndamentoEtapasController {
         }
         res.status(200).json(listaRetorno);
     }
+
+    async obter(req,res){
+        if(req.params.idAndamento != undefined){
+            let andamentoEtapasModel = new AndamentoEtapasModel();
+            andamentoEtapasModel = await andamentoEtapasModel.obter(req.params.idAndamento);
+            if(andamentoEtapasModel == null){
+                res.status(404).json({msg: "Andamento não encontrado!"});
+            }else{
+                res.status(200).json(andamentoEtapasModel.toJSON());
+            }
+        }else{
+            res.status(400).json({msg: "Parâmetros inválidos!"});
+        }
+    }
+
+    async alterar(req,res){
+        if(Object.keys(req.body).length > 0){
+            let andamentoEtapasModel = new AndamentoEtapasModel();
+
+            andamentoEtapasModel.idAndamento = req.body.idAndamento;
+            andamentoEtapasModel.idObra = req.body.idObra;
+            andamentoEtapasModel.idEtapa = req.body.idEtapa;
+            andamentoEtapasModel.dataPrevInicio = req.body.dataPrevInicio;
+            andamentoEtapasModel.dataPrevTermino = req.body.dataPrevTermino;
+            andamentoEtapasModel.dataFim = req.body.dataFim;
+            andamentoEtapasModel.descricaoEtapa = req.body.descricaoEtapa;
+            let ok = await andamentoEtapasModel.gravar();
+            if(ok){
+                res.status(200).json({msg:"Etapa marcada como finalizada!"})
+            }else{
+                res.status(500).json({msg:"Erro ao marcar etapa como finalizada!"})
+            }
+        }else{
+            res.status(400).json({msg: "Parâmetros inválidos!"});
+        }
+    }
 }
 
 module.exports = AndamentoEtapasController;

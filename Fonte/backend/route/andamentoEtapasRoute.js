@@ -28,4 +28,18 @@ router.get('/listar', (req,res)=>{
     ctrl.listar(req,res);
 });
 
+router.get('/obter/:idAndamento', (req,res) =>{
+
+    // #swagger.tags = ['Andamento Etapas']
+    // #swagger.summary = 'Obtem um andamento especifico'
+    ctrl.obter(req,res);
+});
+
+router.put('/alterar', (req,res) =>{
+
+    // #swagger.tags = ['Andamento Etapas']
+    // #swagger.summary = 'Altera um andamento'
+    ctrl.alterar(req,res);
+})
+
 module.exports = router;

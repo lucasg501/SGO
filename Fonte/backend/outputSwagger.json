@@ -605,6 +605,44 @@
         }
       }
     },
+    "/andamentoEtapas/obter/{idAndamento}": {
+      "get": {
+        "tags": [
+          "Andamento Etapas"
+        ],
+        "summary": "Obtem um andamento especifico",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idAndamento",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/andamentoEtapas/alterar": {
+      "put": {
+        "tags": [
+          "Andamento Etapas"
+        ],
+        "summary": "Altera um andamento",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/parcelas/gravar": {
       "post": {
         "tags": [

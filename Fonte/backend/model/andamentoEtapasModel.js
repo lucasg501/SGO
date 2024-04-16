@@ -87,6 +87,18 @@ class AndamentoEtapasModel {
         return lista;
     }
 
+    async obter(idAndamento){
+        let sql = 'select * from tb_AndamentoEtapas where idAndamento = ?';
+        let valores = [idAndamento];
+        let rows = await banco.ExecutaComando(sql, valores);
+        if(rows.length>0){
+            let etapa = new AndamentoEtapasModel(rows[0]['idObra'], rows[0]['idEtapa'], rows[0]['dataPrevInicio'], rows[0]['dataPrevTermino'],
+                rows[0]['dataFim'], rows[0]['descricaoEtapa'], rows[0]['idAndamento']);
+            return etapa;
+        }
+        return null;
+    }
+
     toJSON() {
         return {
 
