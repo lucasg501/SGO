@@ -718,6 +718,20 @@
           }
         }
       }
+    },
+    "/parcelas/alterar": {
+      "put": {
+        "tags": [
+          "Parcelas"
+        ],
+        "summary": "Altera uma parcela",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {

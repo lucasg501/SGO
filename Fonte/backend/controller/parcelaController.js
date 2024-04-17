@@ -88,11 +88,9 @@ class ParcelaController {
     }
 
     async obter(req, res) {
-
-        try {
             if (req.params.numParcela != undefined) {
                 let parcelaModel = new ParcelaModel();
-                parcelaModel = await parcelaModel.obter(numParcela);
+                parcelaModel = await parcelaModel.obter(req.params.numParcela);
 
                 if (parcelaModel == null) {
                     res.status(404).json({msg: "Parcela não encontrada!"});
@@ -100,10 +98,28 @@ class ParcelaController {
                 else {
                     res.status(200).json(parcelaModel.toJSON());
                 }
+            }else{
+                res.status(400).json({msg: "Parâmetros inválidos!"});
             }
         }
-        catch(ex) {
-            res.status(500).json({msg: message});
+
+    async alterar(req,res){
+        if(Object.keys(req.body).length > 0){
+            let parcelaModel = new ParcelaModel();
+
+            parcelaModel.numParcela = req.body.numParcela;
+            parcelaModel.dataVencimento = req.body.dataVencimento;
+            parcelaModel.dataRecebimento = req.body.dataRecebimento;
+            parcelaModel.valorParcela = req.body.valorParcela;
+            parcelaModel.idObra = req.body.idObra;
+            let ok = await parcelaModel.gravar();
+            if(ok){
+                res.status(200).json({msg: "Parcela alterada com sucesso!"});
+            }else{
+                res.status(500).json({msg: "Erro ao alterar a parcela!"});
+            }
+        }else{
+            res.status(400).json({msg: "Nenhum dado recebido ou formato inválido!"});
         }
     }
 }

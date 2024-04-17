@@ -36,4 +36,11 @@ router.get('/obter/:numParcela', (req, res) => {
     ctrl.obter(req, res);
 });
 
+router.put('/alterar', (req,res) =>{
+
+    // #swagger.tags = ['Parcelas']
+    // #swagger.summary = 'Altera uma parcela'
+    ctrl.alterar(req,res);
+})
+
 module.exports = router;

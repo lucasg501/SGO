@@ -9,6 +9,7 @@ export default function FormParcelas(props) {
     const idObra = useRef([]);
     const dataVencimento = useRef([]);
     const valorParcela = useRef([]);
+    const dataRecebimento = useRef([]);
 
     const [parcelas, setParcelas] = useState(props.parcelas ? props.parcelas : {
         numParcela: 0,
@@ -83,13 +84,34 @@ export default function FormParcelas(props) {
                     alert(r.msg);
 
                     if (status === 200) {
-                        window.location.reload();
+                        window.location.href = '/recebimentos';
                     }
                 });
         }
         else {
             alert("Escolha uma obra para as parcelas!");
         }
+    }
+
+    function alterarParcela() {
+        let status = 0;
+        httpClient.put('/parcelas/alterar', {
+            numParcela: props.parcela.numParcela,
+            dataVencimento: formatarData(props.parcela.dataVencimento),
+            dataRecebimento: formatarData(dataRecebimento.current[0].value),
+            valorParcela: props.parcela.valorParcela,
+            idObra: props.parcela.idObra
+        })
+            .then(r => {
+                status = r.status;
+                return r.json();
+            })
+            .then(r => {
+                alert(r.msg);
+                if (status === 200) {
+                    window.location.href = '/recebimentos';
+                }
+            })
     }
 
     useEffect(() => {
@@ -103,11 +125,23 @@ export default function FormParcelas(props) {
             <div>
                 <div className="form-group">
                     <label>Obra:</label>
-                    <select style={{width: '25%', textAlign: 'center'}} ref={idObra} className="form-control">
+                    <select style={{ width: '25%', textAlign: 'center' }} ref={idObra} className="form-control">
                         <option value={0}>Selecione</option>
                         {
-                            listaObras.map(function(value, index) {
-                                return <option value={value.idObra}>{value.bairro}</option>
+                            listaObras.map(function (value, index) {
+                                if (value.idObra === props.parcela.idObra) {
+                                    return (
+                                        <option key={index} value={value.idObra} selected>
+                                            {value.bairro}
+                                        </option>
+                                    );
+                                } else {
+                                    return (
+                                        <option key={index} value={value.idObra}>
+                                            {value.bairro}
+                                        </option>
+                                    );
+                                }
                             })
                         }
                     </select>
@@ -123,17 +157,30 @@ export default function FormParcelas(props) {
                             </div>
 
                             <div className="form-group" style={{ display: 'inline-flex', width: '45%', marginRight: '10px' }}>
-                                
+
                                 <div className="form-group">
                                     <label>Vencimento:</label>
-                                    <input onChange={(e) => setParcelas({ ...parcelas, dataVencimento: e.target.value })} 
-                                    style={{ width: '80%' }} type="date" className="form-control" ref={el => dataVencimento.current[index] = el} />
+                                    <input
+                                        defaultValue={props.parcela && props.parcela.dataVencimento ? formatarData(props.parcela.dataVencimento) : ''}
+                                        onChange={(e) => setParcelas({ ...parcelas, dataVencimento: e.target.value })}
+                                        style={{ width: '80%' }}
+                                        type="date"
+                                        className="form-control"
+                                        ref={el => dataVencimento.current[index] = el}
+                                    />
+
                                 </div>
+
+                                <div className="form-group">
+                                    <label>Recebimento:</label>
+                                    <input type="date" ref={el => dataRecebimento.current[index] = el} className="form-control"></input>
+                                </div>
+
                                 <div className="form-group">
                                     <label>Valor:</label>
-                                    <input type="number" className="form-control" defaultValue={0} onChange={(e) =>
-                                    setParcelas({...parcelas, valorParcela: e.target.value})} style={{ width: '80%' }} 
-                                    ref={el => valorParcela.current[index] = el}></input>
+                                    <input type="number" className="form-control" defaultValue={props.parcela.valorParcela} onChange={(e) =>
+                                        setParcelas({ ...parcelas, valorParcela: e.target.value })} style={{ width: '80%' }}
+                                        ref={el => valorParcela.current[index] = el}></input>
                                 </div>
                             </div>
                         </div>
@@ -152,7 +199,7 @@ export default function FormParcelas(props) {
 
                 <div>
                     <Link style={{ marginRight: 25 }} href="/recebimentos"><button className="btn btn-secondary">Voltar</button></Link>
-                    <button className="btn btn-primary" onClick={gravarParcelas}>Gravar</button>
+                    <button className="btn btn-primary" onClick={props.parcela == null ? gravarParcelas : alterarParcela}>Gravar</button>
                 </div>
             </div>
         </div>
