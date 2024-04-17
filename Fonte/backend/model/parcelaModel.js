@@ -34,8 +34,8 @@ class ParcelaModel {
 
         if (this.#numParcela == 0) {
             
-            let sql = "insert into tb_Parcelas (dataVencimento, dataRecebimento, valorParcela, idObra) values (?, ?, ?, ?)";
-            let valores = [this.#dataVencimento, this.#dataRecebimento, this.#valorParcela, this.#idObra];
+            let sql = "insert into tb_Parcelas (dataVencimento, valorParcela, idObra) values (?, ?, ?)";
+            let valores = [this.#dataVencimento, this.#valorParcela, this.#idObra];
 
             let ok = await banco.ExecutaComandoNonQuery(sql, valores);
 
@@ -70,7 +70,7 @@ class ParcelaModel {
 
     async listar() {
 
-        let sql = "select * from tb_Parcelas";
+        let sql = "select * from tb_Parcelas order by dataVencimento";
         let rows = await banco.ExecutaComando(sql);
 
         let listaRetorno = [];
