@@ -3,11 +3,7 @@ import { useRef, useState, useEffect } from "react"
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
 
-export default function ObraForm(props) {
-    const [obra, setObra] = props.obra ? useState(props.obra) : useState({idObra:0, endereco:'', bairro:'', cidade:'', valorTotal:0, dataInicio:'', dataTermino:'', contrato:'', planta:'', idCliente:0});
-    const [contratoFile, setContratoFile] = useState(null);
-    const [plantaFile, setPlantaFile] = useState(null);
-    const [listaClientes, setListaClientes] = useState([]);
+export default function obraForm(props){
 
     const idObra = useRef(0);
     const endereco = useRef('');
@@ -19,6 +15,11 @@ export default function ObraForm(props) {
     const contrato = useRef('');
     const planta = useRef('');
     const idCliente = useRef(0);
+
+    const [obra, setObra] = props.obra ? useState(props.obra) : useState({idObra:0, endereco:'', bairro:'', cidade:'', valorTotal:0, dataInicio:'', dataTermino:'', contrato:'', planta:'', idCliente:0});
+
+    let [listaClientes, setListaClientes] = useState([]);
+
     function cadastrarObra(){
         let status = 0;
         if(endereco.current.value != '' && bairro.current.value != '' && cidade.current.value != '' && dataInicio.current.value != '' && dataTermino.current.value != '' && idCliente.current.value > 0){
@@ -49,6 +50,7 @@ export default function ObraForm(props) {
                     contrato.current.value = '';
                     planta.current.value = '';
                     idCliente.current.value = 0;
+                    window.location.href = '/obras';
                 }
             })
         }else{
@@ -72,12 +74,20 @@ export default function ObraForm(props) {
                 idCliente: idCliente.current.value
             })
             .then(r=>{
-                status = r.status;
                 return r.json();
             })
             .then(r=>{
                 alert(r.msg);
                 if(status == 200){
+                    endereco.current.value = '';
+                    bairro.current.value = '';
+                    cidade.current.value = '';
+                    valorTotal.current.value = '';
+                    dataInicio.current.value = '';
+                    dataTermino.current.value = '';
+                    contrato.current.value = '';
+                    planta.current.value = '';
+                    idCliente.current.value = 0;
                     window.location.href = '/obras';
                 }
             })
@@ -86,9 +96,6 @@ export default function ObraForm(props) {
         }
     }
 
-    function formatarData(data) {
-        return new Date(data).toISOString().slice(0, 10);
-    }
 
     function carregarCliente(){
         httpClient.get('/clientes/listar')
@@ -132,28 +139,27 @@ export default function ObraForm(props) {
 
             <div className="form-group">
                 <label>Data Inicio</label>
-                <input type="date" className="form-control" ref={dataInicio} defaultValue={obra.dataInicio ? formatarData(obra.dataInicio) : ''}/>
+                <input type="date" className="form-control" ref={dataInicio} defaultValue={obra.dataInicio}/>
             </div>
 
             <div className="form-group">
                 <label>Data Prevista de Término</label>
-                <input type="date" className="form-control" ref={dataTermino} defaultValue={obra.dataTermino ? formatarData(obra.dataTermino) : ''}/>
+                <input type="date" className="form-control" ref={dataTermino} defaultValue={obra.dataTermino}/>
             </div>
 
             <div className="form-group">
                 <label>Contrato</label>
-                <input type="file" className="form-control" ref={contrato} />
+                <input type="file" className="form-control" ref={contrato} defaultValue={obra.contrato}/>
             </div>
 
             <div className="form-group">
                 <label>Planta</label>
-                <input type="file" className="form-control" ref={planta} />
+                <input type="file" className="form-control" ref={planta} defaultValue={obra.planta}/>
             </div>
 
             <div className="form-group">
                 <label>Cliente</label>
                 <select className="form-control" ref={idCliente}>
-                    <option value="0">Selecione</option>
                     {
                         listaClientes.map(function(value, index){
                             if(obra != null && value.idCli == obra.idCli){
