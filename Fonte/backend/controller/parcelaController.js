@@ -23,13 +23,14 @@ class ParcelaController {
                     promises.push(novaParcela.gravar());
                 }
 
-                Promise.all(promises)
-                .then(() => {
+                let ok = await Promise.all(promises);
+                
+                if (ok){
                     res.status(200).json({msg: "Parcelas gravadas com sucesso!"});
-                })
-                .catch(() => {
+                }
+                else {
                     res.status(500).json({msg: "Erro na gravação de parcelas!"});
-                })
+                }
             }
             else {
                 res.status(400).json({msg: "Nenhum dado recebido ou formato inválido!"});
