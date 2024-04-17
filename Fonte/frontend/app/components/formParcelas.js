@@ -19,13 +19,12 @@ export default function FormParcelas(props) {
 
     const [listaObras, setListaObras] = useState([]);
 
-    const convertIsoToDateString = (isoDate) => {
-        if (!isoDate) return '';
-        const date = new Date(isoDate);
-        const year = date.getFullYear();
-        let month = (date.getMonth() + 1).toString().padStart(2, '0');
-        let day = date.getDate().toString().padStart(2, '0');
-        return `${year}-${month}-${day}`;
+    const formatarData = (data) => {
+        const dataObj = new Date(data);
+        const ano = dataObj.getUTCFullYear();
+        const mes = ('0' + (dataObj.getUTCMonth() + 1)).slice(-2);
+        const dia = ('0' + dataObj.getUTCDate()).slice(-2);
+        return `${ano}-${mes}-${dia}`;
     };
 
     function listarObras() {
@@ -45,8 +44,8 @@ export default function FormParcelas(props) {
     };
 
     const removerCampo = () => {
-        if (parcelas.idEtapa > 0) {
-            setEtapas(prevState => ({
+        if (parcelas.numParcela > 0) {
+            setParcelas(prevState => ({
                 ...prevState,
                 numParcela: prevState.numParcela - 1
             }));
@@ -67,8 +66,7 @@ export default function FormParcelas(props) {
                 const valorParcelaValue = valorParcela.current[i] ? valorParcela.current[i].value : null;
 
                 const parcela = {
-                    dataVencimento: convertIsoToDateString(dataVencimentoValue),
-                    dataPagamento: null,
+                    dataVencimento: formatarData(dataVencimentoValue),
                     valorParcela: valorParcelaValue,
                     idObra: idObraValue
                 };
@@ -82,7 +80,7 @@ export default function FormParcelas(props) {
                     return r.json();
                 })
                 .then(r => {
-                    alert(r.json);
+                    alert(r.msg);
 
                     if (status === 200) {
                         window.location.reload();
