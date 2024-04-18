@@ -6,19 +6,11 @@ import Link from "next/link";
 
 export default function FormParcelas(props) {
 
-    const idObra = useRef([]);
     const dataVencimento = useRef([]);
     const valorParcela = useRef([]);
     const dataRecebimento = useRef([]);
 
-    const [parcelas, setParcelas] = useState(props.parcelas ? props.parcelas : {
-        numParcela: 0,
-        dataVencimento: '',
-        valorParcela: 0,
-        idObra: 0
-    });
-
-    const [listaObras, setListaObras] = useState([]);
+    const [parcelas, setParcelas] = useState(props.parcelas ? props.parcelas : []);
 
     const formatarData = (data) => {
         const dataObj = new Date(data);
@@ -28,28 +20,29 @@ export default function FormParcelas(props) {
         return `${ano}-${mes}-${dia}`;
     };
 
-    function listarObras() {
-        httpClient.get('/obras/listar')
-            .then(r => r.json())
-            .then(r => {
-                setListaObras(r);
-            });
-    }
+    function adicionarCampo() {
 
-    const adicionarCampo = () => {
-        setParcelas(prevState => ({
-            ...prevState,
-            numParcela: prevState.numParcela + 1,
-            idObra: prevState.idObra || (listaObras.length > 0 ? listaObras[0].idObra : 0)
-        }));
+        let novaParcela = {
+            numParcela: 0,
+            dataVencimento: "",
+            dataRecebimento: "",
+            valorParcela: 0,
+            idObra: props.parcelas.idObra
+        };
+
+        setParcelas((parcelas) => [
+            ...parcelas, novaParcela
+        ]);
     };
 
-    const removerCampo = () => {
-        if (parcelas.numParcela > 0) {
-            setParcelas(prevState => ({
-                ...prevState,
-                numParcela: prevState.numParcela - 1
-            }));
+    function removerCampo() {
+        if (parcelas.length > 1) {
+            
+            let parcelaExcluir = parcelas[parcelas.length - 1];
+
+            setParcelas((parcelas) => 
+                parcelas.filter((parcela) => parcela != parcelaExcluir)
+            );
         }
     };
 
@@ -114,43 +107,16 @@ export default function FormParcelas(props) {
             })
     }
 
-    useEffect(() => {
-        listarObras();
-    }, [])
-
     return (
         <div>
             <h1>Gerenciar Parcelas da Obra</h1>
+            <h2>Obra: {props.obra.bairro}</h2>
 
             <div>
-                <div className="form-group">
-                    <label>Obra:</label>
-                    <select style={{ width: '25%', textAlign: 'center' }} ref={idObra} className="form-control">
-                        <option value={0}>Selecione</option>
-                        {
-                            listaObras.map(function (value, index) {
-                                if (value.idObra === props.parcela.idObra) {
-                                    return (
-                                        <option key={index} value={value.idObra} selected>
-                                            {value.bairro}
-                                        </option>
-                                    );
-                                } else {
-                                    return (
-                                        <option key={index} value={value.idObra}>
-                                            {value.bairro}
-                                        </option>
-                                    );
-                                }
-                            })
-                        }
-                    </select>
-                </div>
-
                 <br></br>
 
                 {
-                    [...Array(parcelas.numParcela + 1)].map((_, index) => (
+                    parcelas.map((parcela, index) => (
                         <div key={index}>
                             <div className="form-group">
                                 <label><b>Parcela {index + 1}</b></label>
@@ -161,7 +127,7 @@ export default function FormParcelas(props) {
                                 <div className="form-group">
                                     <label>Vencimento:</label>
                                     <input
-                                        defaultValue={props.parcela && props.parcela.dataVencimento ? formatarData(props.parcela.dataVencimento) : ''}
+                                        defaultValue={parcela.dataVencimento ? formatarData(parcela.dataVencimento) : ''}
                                         onChange={(e) => setParcelas({ ...parcelas, dataVencimento: e.target.value })}
                                         style={{ width: '80%' }}
                                         type="date"
@@ -178,7 +144,7 @@ export default function FormParcelas(props) {
 
                                 <div className="form-group">
                                     <label>Valor:</label>
-                                    <input type="number" className="form-control" defaultValue={props.parcela.valorParcela} onChange={(e) =>
+                                    <input type="number" className="form-control" defaultValue={parcela.valorParcela} onChange={(e) =>
                                         setParcelas({ ...parcelas, valorParcela: e.target.value })} style={{ width: '80%' }}
                                         ref={el => valorParcela.current[index] = el}></input>
                                 </div>

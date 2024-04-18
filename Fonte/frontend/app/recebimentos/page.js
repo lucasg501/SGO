@@ -59,7 +59,7 @@ export default function Recebimentos() {
             <h1>Recebimentos</h1>
 
             <div>
-                <a href="/recebimentos/gravar"><button className="btn btn-primary">Agendar</button></a>
+                <a href="/recebimentos/gravar"></a>
             </div>
 
             <div>
@@ -67,7 +67,8 @@ export default function Recebimentos() {
                     Object.keys(listaAcompParcelas).map(idObra => (
 
                         <div key={idObra} style={{ margin: 30 }}>
-                            <h2>Obra: {encontrarBairro(Number(idObra))}</h2>
+                            <h2><a style={{marginRight: 30}} href={`/recebimentos/gravar/${idObra}`}><button className="btn btn-primary">Gerenciar</button></a>
+                            Obra: {encontrarBairro(Number(idObra))}</h2>
 
                             <table className="table table-hover">
                                 <thead>
