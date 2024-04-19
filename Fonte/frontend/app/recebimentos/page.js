@@ -64,48 +64,56 @@ export default function Recebimentos() {
 
             <div>
                 {
-                    Object.keys(listaAcompParcelas).map(idObra => (
+                    listaObras.map((obra, index) => (
 
-                        <div key={idObra} style={{ margin: 30 }}>
-                            <h2><a style={{marginRight: 30}} href={`/recebimentos/gravar/${idObra}`}><button className="btn btn-primary">Gerenciar</button></a>
-                            Obra: {encontrarBairro(Number(idObra))}</h2>
+                        <div key={index} style={{ margin: 30, padding: 20 }} className="card">
+                            <h2 className="card-header"><a style={{marginRight: 30}} href={`/recebimentos/gravar/${obra.idObra}`}>
+                                <button className="btn btn-primary">Gerenciar</button></a>
+                                Obra: {encontrarBairro(obra.idObra)}
+                            </h2>
 
-                            <table className="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Parcela</th>
-                                        <th>Data de Vencimento</th>
-                                        <th>Data de Recebimento</th>
-                                        <th>Valor</th>
-                                        <th>Marcar como Recebida</th>
-                                    </tr>
-                                </thead>
+                            {
+                                listaAcompParcelas[obra.idObra] ?
+                                <table className="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Parcela</th>
+                                            <th>Data de Vencimento</th>
+                                            <th>Data de Recebimento</th>
+                                            <th>Valor</th>
+                                            <th>Marcar como Recebida</th>
+                                        </tr>
+                                    </thead>
 
-                                <tbody>
-                                    {
-                                        listaAcompParcelas[idObra].map((parcela, index) => {
+                                    <tbody>
+                                        {
+                                            listaAcompParcelas[obra.idObra].map((parcela, index) => {
 
-                                            return (
-                                                <tr key={index}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{formatarData(parcela.dataVencimento)}</td>
-                                                    <td>{parcela.dataRecebimento ? formatarData(parcela.dataRecebimento) : "Não foi recebida"}</td>
-                                                    <td>{parcela.valorParcela}</td>
-                                                    <td style={{ display: 'flex', alignContent: 'center' }}>
-                                                        {
-                                                            parcela.dataRecebimento ?
-                                                                <button style={{ margin: 'auto' }} className="btn btn-success" disabled><i className="fas fa-check"></i></button>
-                                                                :
-                                                                <Link style={{ margin: 'auto' }} className="btn btn-success" href={`/recebimentos/alterar/${parcela.numParcela}`}><i className="fas fa-check"></i></Link>
-                                                        }
-                                                    </td>
+                                                return (
+                                                    <tr key={index}>
+                                                        <td>{index + 1}</td>
+                                                        <td>{formatarData(parcela.dataVencimento)}</td>
+                                                        <td>{parcela.dataRecebimento ? formatarData(parcela.dataRecebimento) : "Não foi recebida"}</td>
+                                                        <td>{parcela.valorParcela}</td>
+                                                        <td style={{ display: 'flex', alignContent: 'center' }}>
+                                                            {
+                                                                parcela.dataRecebimento ?
+                                                                    <button style={{ margin: 'auto' }} className="btn btn-success" disabled><i className="fas fa-check"></i></button>
+                                                                    :
+                                                                    <Link style={{ margin: 'auto' }} className="btn btn-success" href={`/recebimentos/alterar/${parcela.numParcela}`}><i className="fas fa-check"></i></Link>
+                                                            }
+                                                        </td>
 
-                                                </tr>
-                                            )
-                                        })
-                                    }
-                                </tbody>
-                            </table>
+                                                    </tr>
+                                                )
+                                            })
+                                        }
+                                        
+                                    </tbody>
+                                </table>
+                                : 
+                                <div style={{textAlign: 'center'}}><b>Não há parcelas para essa obra</b></div>
+                            }
                         </div>
                     ))
                 }

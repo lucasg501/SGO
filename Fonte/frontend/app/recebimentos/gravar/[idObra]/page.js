@@ -41,7 +41,7 @@ export default function CriarParcelas({params: {idObra}}) {
         
         <div>
             {
-                obra != null && listaParcelas != null ?
+                obra != null ?
                 <FormParcelas obra={obra} parcelas={listaParcelas}></FormParcelas>
                 :
                 <div>Carregando...</div>

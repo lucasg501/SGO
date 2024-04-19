@@ -10,7 +10,13 @@ export default function FormParcelas(props) {
     const valorParcela = useRef([]);
     const dataRecebimento = useRef([]);
 
-    const [parcelas, setParcelas] = useState(props.parcelas ? props.parcelas : []);
+    const [parcelas, setParcelas] = useState(props.parcelas ? props.parcelas : [{
+        numParcela: 0,
+        dataVencimento: "",
+        dataRecebimento: "",
+        valorParcela: 0,
+        idObra: props.obra.idObra
+    }]);
 
     const formatarData = (data) => {
         const dataObj = new Date(data);
@@ -27,7 +33,7 @@ export default function FormParcelas(props) {
             dataVencimento: "",
             dataRecebimento: "",
             valorParcela: 0,
-            idObra: props.parcelas.idObra
+            idObra: props.obra.idObra
         };
 
         setParcelas((parcelas) => [
@@ -46,23 +52,37 @@ export default function FormParcelas(props) {
         }
     };
 
+    function datasPreenchidas() {
+
+        for (const parcela of parcelas) {
+
+            return parcela.dataVencimento != "";
+        }
+    }
+
+    function datasPreenchidas() {
+
+        for (const parcela of parcelas) {
+
+            return parcela.valorParcela != "";
+        }
+    }
+
     function gravarParcelas() {
 
-        if (idObra.current.value > 0) {
+        if (datasPreenchidas() && valoresPreenchidos()) {
 
             let status = 0;
             let parcelasArray = [];
 
-            const idObraValue = idObra.current.value;
-
-            for (let i = 0; i < parcelas.numParcela + 1; i++) {
+            for (let i = 0; i < parcelas.length; i++) {
                 const dataVencimentoValue = dataVencimento.current[i] ? dataVencimento.current[i].value : null;
                 const valorParcelaValue = valorParcela.current[i] ? valorParcela.current[i].value : null;
 
                 const parcela = {
                     dataVencimento: formatarData(dataVencimentoValue),
                     valorParcela: valorParcelaValue,
-                    idObra: idObraValue
+                    idObra: props.obra.idObra
                 };
 
                 parcelasArray.push(parcela);
@@ -82,29 +102,8 @@ export default function FormParcelas(props) {
                 });
         }
         else {
-            alert("Escolha uma obra para as parcelas!");
+            alert("Preencha todos os dados das parcelas!");
         }
-    }
-
-    function alterarParcela() {
-        let status = 0;
-        httpClient.put('/parcelas/alterar', {
-            numParcela: props.parcela.numParcela,
-            dataVencimento: formatarData(props.parcela.dataVencimento),
-            dataRecebimento: formatarData(dataRecebimento.current[0].value),
-            valorParcela: props.parcela.valorParcela,
-            idObra: props.parcela.idObra
-        })
-            .then(r => {
-                status = r.status;
-                return r.json();
-            })
-            .then(r => {
-                alert(r.msg);
-                if (status === 200) {
-                    window.location.href = '/recebimentos';
-                }
-            })
     }
 
     return (
@@ -117,14 +116,14 @@ export default function FormParcelas(props) {
 
                 {
                     parcelas.map((parcela, index) => (
-                        <div key={index}>
-                            <div className="form-group">
+                        <div key={index} className="card" style={{padding: 20, marginBottom: 10, width: '55%', textAlign: 'center'}}>
+                            <div className="form-group card-header">
                                 <label><b>Parcela {index + 1}</b></label>
                             </div>
 
-                            <div className="form-group" style={{ display: 'inline-flex', width: '45%', marginRight: '10px' }}>
+                            <div className="form-group" style={{ display: 'inline-flex' }}>
 
-                                <div className="form-group">
+                                <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold'}}>
                                     <label>Vencimento:</label>
                                     <input
                                         defaultValue={parcela.dataVencimento ? formatarData(parcela.dataVencimento) : ''}
@@ -137,12 +136,12 @@ export default function FormParcelas(props) {
 
                                 </div>
 
-                                <div className="form-group">
+                                <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold'}}>
                                     <label>Recebimento:</label>
                                     <input type="date" ref={el => dataRecebimento.current[index] = el} className="form-control"></input>
                                 </div>
 
-                                <div className="form-group">
+                                <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold', marginLeft: 30}}>
                                     <label>Valor:</label>
                                     <input type="number" className="form-control" defaultValue={parcela.valorParcela} onChange={(e) =>
                                         setParcelas({ ...parcelas, valorParcela: e.target.value })} style={{ width: '80%' }}
