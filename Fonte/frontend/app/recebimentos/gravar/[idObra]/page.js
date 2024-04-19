@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 export default function CriarParcelas({params: {idObra}}) {
 
     const [obra, setObra] = useState(null);
-    const [listaParcelas, setListaParcelas] = useState([]);
+    const [listaParcelas, setListaParcelas] = useState(null);
 
     function carregarObra() {
 
@@ -28,7 +28,12 @@ export default function CriarParcelas({params: {idObra}}) {
             return r.json();
         })
         .then(r => {
-            setListaParcelas(r.listaJson);
+            if (r.listaJson) {
+                setListaParcelas(r.listaJson);
+            }
+            else {
+                setListaParcelas([])
+            }
         })
     }
 
@@ -41,7 +46,7 @@ export default function CriarParcelas({params: {idObra}}) {
         
         <div>
             {
-                obra != null && listaParcelas != null ?
+                obra && listaParcelas ? 
                 <FormParcelas obra={obra} parcelas={listaParcelas}></FormParcelas>
                 :
                 <div>Carregando...</div>

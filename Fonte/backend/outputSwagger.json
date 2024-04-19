@@ -777,6 +777,30 @@
         }
       }
     },
+    "/parcelas/excluirParcelasObra/{idObra}": {
+      "delete": {
+        "tags": [
+          "Parcelas"
+        ],
+        "summary": "Exclui parcelas da obra especificada",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idObra",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/cargos/listar": {
       "get": {
         "tags": [
