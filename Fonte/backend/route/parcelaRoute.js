@@ -41,6 +41,14 @@ router.put('/alterar', (req,res) =>{
     // #swagger.tags = ['Parcelas']
     // #swagger.summary = 'Altera uma parcela'
     ctrl.alterar(req,res);
-})
+});
+
+router.delete('/excluirParcelasObra/:idObra', (req, res) => {
+
+    // #swagger.tags = ['Parcelas']
+    // #swagger.summary = 'Exclui parcelas da obra especificada'
+    
+    ctrl.excluirParcelasObra(req, res);
+});
 
 module.exports = router;

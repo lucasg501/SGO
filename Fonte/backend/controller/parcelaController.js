@@ -57,10 +57,10 @@ class ParcelaController {
                         listaJson.push(lista[i].toJSON());
                     }
 
-                    res.status(200).json(listaJson);
+                    res.status(200).json({listaJson});
                 }
                 else {
-                    res.status(404).json({msg: "Obra não encontrada ou não possui parcelas!"});
+                    res.status(404).json({msg: "Obra não encontrada!"});
                 }
             }
         }
@@ -120,6 +120,31 @@ class ParcelaController {
             }
         }else{
             res.status(400).json({msg: "Nenhum dado recebido ou formato inválido!"});
+        }
+    }
+
+    async excluirParcelasObra(req, res) {
+
+        try {
+
+            if (req.params.idObra != undefined) {
+
+                let parcelaModel = new ParcelaModel();
+                let ok = await parcelaModel.excluirParcelasObra(req.params.idObra);
+
+                if (ok) {
+                    res.status(200).json({msg: "Parcelas da obra " + req.params.idObra + " excluídas com sucesso!"});
+                }
+                else {
+                    res.status(500).json({msg: "Erro na exclusão de parcelas da obra!"});
+                }
+            }
+            else {
+                res.status(400).json({msg: "Parâmetros inválidos!"});
+            }
+        }
+        catch(ex) {
+            res.status(500).json({msg: ex.message});
         }
     }
 }

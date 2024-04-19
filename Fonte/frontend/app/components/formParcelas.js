@@ -77,9 +77,24 @@ export default function FormParcelas(props) {
         return !faltaValor;
     }
 
+    function excluirParcelasDaObra() {
+
+        httpClient.delete(`/parcelas/excluirParcelasObra/${props.obra.idObra}`)
+        .then(r => {
+            return r.json();
+        })
+        .then(r => {
+            console.log(r.msg);
+        });
+    }
+
     function gravarParcelas() {
 
         if (datasPreenchidas() && valoresPreenchidos()) {
+
+            if (props.parcelas.length > 0) {
+                excluirParcelasDaObra();
+            }
 
             let status = 0;
             let parcelasArray = [];
@@ -127,12 +142,12 @@ export default function FormParcelas(props) {
 
                 {
                     parcelas.map((parcela, index) => (
-                        <div key={index} className="card" style={{padding: 15, marginBottom: 10, width: '50%', textAlign: 'center'}}>
+                        <div key={index} className="card" style={{marginBottom: 20, width: '50%', textAlign: 'center'}}>
                             <div className="form-group card-header">
                                 <label><b>Parcela {index + 1}</b></label>
                             </div>
 
-                            <div className="form-group" style={{ display: 'inline-flex', marginTop: 10 }}>
+                            <div className="form-group" style={{ display: 'inline-flex', marginTop: 10, padding: 15, }}>
 
                                 <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold'}}>
                                     <label>Vencimento:</label>

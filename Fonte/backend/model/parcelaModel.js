@@ -53,7 +53,7 @@ class ParcelaModel {
 
     async obterParcelasPorObra(idObra) {
 
-        let sql = "select * from tb_Parcelas where idObra = ?";
+        let sql = "select * from tb_Parcelas where idObra = ? order by dataVencimento";
         let valores = [idObra];
 
         let rows = await banco.ExecutaComando(sql, valores);
@@ -100,6 +100,16 @@ class ParcelaModel {
         }
 
         return null;
+    }
+
+    async excluirParcelasObra(idObra) {
+
+        let sql = "delete from tb_Parcelas where idObra = ?";
+        let valores = [idObra];
+
+        let ok = await banco.ExecutaComandoNonQuery(sql, valores);
+        
+        return ok;
     }
 
     toJSON() {
