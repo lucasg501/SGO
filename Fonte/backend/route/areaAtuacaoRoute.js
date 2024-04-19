@@ -11,4 +11,10 @@ router.get('/listar', (req,res) =>{
     ctrl.listar(req,res);
 });
 
+router.get(`/obter/:idAreaAtuacao`, (req,res) =>{
+    // #swagger.tags = ['Area Atenção']
+    // #swagger.summary = 'Obtem uma area de atenção especifica'
+    ctrl.obter(req,res);
+});
+
 module.exports = router;
