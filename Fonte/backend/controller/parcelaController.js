@@ -57,10 +57,10 @@ class ParcelaController {
                         listaJson.push(lista[i].toJSON());
                     }
 
-                    res.status(200).json({listaJson});
+                    res.status(200).json(listaJson);
                 }
                 else {
-                    res.status(404).json({msg: "Obra não encontrada!"});
+                    res.status(404).json({msg: "Obra não encontrada ou não possui parcelas!"});
                 }
             }
         }
