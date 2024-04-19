@@ -10,7 +10,7 @@ export default function FormParcelas(props) {
     const valorParcela = useRef([]);
     const dataRecebimento = useRef([]);
 
-    const [parcelas, setParcelas] = useState(props.parcelas ? props.parcelas : [{
+    const [parcelas, setParcelas] = useState(props.parcelas.length > 0 ? props.parcelas : [{
         numParcela: 0,
         dataVencimento: "",
         dataRecebimento: "",

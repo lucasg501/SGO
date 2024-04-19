@@ -28,7 +28,12 @@ export default function CriarParcelas({params: {idObra}}) {
             return r.json();
         })
         .then(r => {
-            setListaParcelas(r.listaJson);
+            if (r.listaJson) {
+                setListaParcelas(r.listaJson);
+            }
+            else {
+                setListaParcelas([])
+            }
         })
     }
 
