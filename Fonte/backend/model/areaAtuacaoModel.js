@@ -30,6 +30,15 @@ class AreaAtuacaoModel {
         }
         return lista;
     }
+
+    async obter(idArea){
+        let sql = 'select * from tb_AreaAtuacao where idAreaAtuacao = ?';
+        let rows = await banco.ExecutaComando(sql, [idArea]);
+        if(rows.length > 0){
+            return new AreaAtuacaoModel(rows[0]['idAreaAtuacao'], rows[0]['nomeAtuacao']);
+        }
+        return null;
+    }
 }
 
 module.exports = AreaAtuacaoModel;

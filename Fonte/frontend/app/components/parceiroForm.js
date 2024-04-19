@@ -11,7 +11,6 @@ export default function ParceiroForm(props) {
     const [parceiro, setParceiro] = props.parceiro ? useState(props.parceiro) : useState({idParceiro:0, nomeParceiro: '', telParceiro: '', idAreaAtuacao: 0});
     const [listaAreaAtuacao, setListaAreaAtuacao] = useState([]);
 
-
     function carregarAreasAtuacao() {
         httpClient.get('/areaAtuacao/listar')
         .then(r => {
@@ -75,6 +74,7 @@ export default function ParceiroForm(props) {
 
     useEffect(() => {
         carregarAreasAtuacao();
+        carregarObra();
     }, []);
 
     return (

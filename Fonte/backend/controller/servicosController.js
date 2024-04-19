@@ -68,7 +68,7 @@ class ServicosController{
 
     async excluir(req,res){
         try{
-            if(idServico != null){
+            if(req.params.idServico != null){
                 let servicosModel = new ServicosModel();
                 let ok = await servicosModel.excluir(req.params.idServico);
                 if(ok){

@@ -1,5 +1,6 @@
 'use client'
 import httpClient from "@/app/utils/httpClient";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Servicos(){
@@ -86,6 +87,8 @@ export default function Servicos(){
                             <th>Valor</th>
                             <th>Obra</th>
                             <th>Parceiro</th>
+                            <th>Alterar</th>
+                            <th>Excluir</th>
                         </tr>
                     </thead>
 
@@ -100,6 +103,22 @@ export default function Servicos(){
                                         <td>{value.valorServico.toFixed(2)}</td>
                                         <td>{obterBairroObra(value.idObra)}</td>
                                         <td>{obterNomeParceiro(value.idParceiro)}</td>
+                                        <td>
+                                            <Link className="btn btn-primary" href={`servicos/alterar/${value.idServico}`}>< i className="fas fa-pen"></i></Link>
+                                        </td>
+                                        <td>
+                                            <button className="btn btn-danger" onClick={() => {
+                                                if(confirm('Deseja excluir o serviço e todos os dados relacionados a ele?')){
+                                                    httpClient.delete(`/servicos/excluir/${value.idServico}`)
+                                                    .then(r=>{
+                                                        alert('Serviço excluido com sucesso!');
+                                                        carregarServicos();
+                                                    })
+                                                }
+                                            }}>
+                                                <i className="fas fa-trash"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))
                         }

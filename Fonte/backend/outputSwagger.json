@@ -135,6 +135,30 @@
         }
       }
     },
+    "/areaAtuacao/obter/{idAreaAtuacao}": {
+      "get": {
+        "tags": [
+          "Area Atenção"
+        ],
+        "summary": "Obtem uma area de atenção especifica",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idAreaAtuacao",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/etapas/listar": {
       "get": {
         "tags": [
