@@ -17,6 +17,12 @@ router.get('/obter/:idCli', (req,res) =>{
     ctrl.obter(req,res);
 });
 
+router.get('/obterNome/:nomeCli', (req,res) =>{
+    // #swagger.tags = ['Clientes'])
+    // #swagger.summary = 'Lista um cliente pelo nome'
+    ctrl.obterNome(req,res);
+});
+
 router.put('/alterar/', (req,res) =>{
     // #swagger.tags = ['Clientes']
     // #swagger.summary = 'Altera um cliente especifico'

@@ -19,14 +19,17 @@ export default function Obras() {
     }
 
     function excluirObra(idObra) {
-        httpClient.delete(`/obras/excluir/${idObra}`)
-            .then(r => {
-                return r.json();
-            })
-            .then(r => {
-                alert(r.msg);
-                carregarObras();
-            })
+        const confirmacao = window.confirm("Tem certeza que deseja excluir esta obra e todos os dados ligados a ela?");
+        if (confirmacao) {
+            httpClient.delete(`/obras/excluir/${idObra}`)
+                .then(r => {
+                    return r.json();
+                })
+                .then(r => {
+                    alert(r.msg);
+                    carregarObras();
+                })
+        }
     }
 
     function listarClientes() {
@@ -65,13 +68,16 @@ export default function Obras() {
                             <th>Endereço</th>
                             <th>Bairro</th>
                             <th>Cidade</th>
+                            <th>CEP</th>
                             <th>Valor Total</th>
                             <th>Data Inicio</th>
                             <th>Data Prevista de Término</th>
                             <th>Contrato</th>
                             <th>Planta</th>
                             <th>Cliente</th>
-                            <th>Ações</th>
+                            <th>Editar</th>
+                            <th>Excluir</th>
+                            <th>Alocar</th>
                         </tr>
                     </thead>
 
@@ -86,6 +92,7 @@ export default function Obras() {
                                     <td>{value.endereco}</td>
                                     <td>{value.bairro}</td>
                                     <td>{value.cidade}</td>
+                                    <td>{value.cepObra}</td>
                                     <td>{parseFloat(value.valorTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                                     <td>{formatarData(value.dataInicio)}</td>
                                     <td>{formatarData(value.dataTermino)}</td>
@@ -108,9 +115,14 @@ export default function Obras() {
                                         <Link className="btn btn-primary" href={`/obras/alterar/${value.idObra}`}>
                                             <i className="fas fa-pen"></i>
                                         </Link>
+                                    </td>
 
+                                    <td>
                                         <button style={{ marginLeft: 10, marginRight: 10 }} onClick={() => excluirObra(value.idObra)} className="btn btn-danger"><i className="fas fa-trash"></i></button>
-                                        <Link href={`/obras/servicos/${value.idObra}`}><button className="btn btn-success"><i class="fas fa-users"></i></button></Link>
+                                    </td>
+
+                                    <td>
+                                        <Link href={`/obras/servicos/${value.idObra}`}><button className="btn btn-success"><i className="fas fa-users"></i></button></Link>
                                     </td>
                                 </tr>
                             )

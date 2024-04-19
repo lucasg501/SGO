@@ -12,6 +12,7 @@ class obraModel{
     #contrato;
     #planta;
     #idCliente;
+    #cepObra;
 
     get idObra(){return this.#idObra;} set idObra(idObra){this.#idObra = idObra};
     get endereco(){return this.#endereco;} set endereco(endereco){this.#endereco = endereco};
@@ -23,8 +24,9 @@ class obraModel{
     get contrato(){return this.#contrato;} set contrato(contrato){this.#contrato = contrato};
     get planta(){return this.#planta;} set planta(planta){this.#planta = planta};
     get idCliente(){return this.#idCliente;} set idCliente(idCliente){this.#idCliente = idCliente};
+    get cepObra(){return this.#cepObra;} set cepObra(cepObra){this.#cepObra = cepObra};
 
-    constructor(idObra, endereco, bairro, cidade, valorTotal, dataInicio, dataTermino, contrato, planta, idCliente){
+    constructor(idObra, endereco, bairro, cidade, valorTotal, dataInicio, dataTermino, contrato, planta, idCliente, cepObra){
         this.#idObra = idObra;
         this.#endereco = endereco;
         this.#bairro = bairro;
@@ -35,6 +37,7 @@ class obraModel{
         this.#contrato = contrato;
         this.#planta = planta;
         this.#idCliente = idCliente;
+        this.#cepObra = cepObra;
     }
 
     toJSON(){
@@ -48,30 +51,31 @@ class obraModel{
             'dataTermino': this.#dataTermino,
             'contrato': this.#contrato,
             'planta': this.#planta,
-            'idCliente': this.#idCliente
+            'idCliente': this.#idCliente,
+            'cepObra': this.#cepObra
         }
     }
 
     async gravar(){
         if(this.#idObra == 0){
-            let sql = 'insert into tb_Obras (endereco, bairro, cidade, valorTotal, dataInicio, dataTermino, contrato, planta, idCliente) values(?, ?, ?, ?, ?, ?, ?, ?, ?)';
-            let valores = [this.#endereco, this.#bairro, this.#cidade, this.#valorTotal, this.#dataInicio, this.#dataTermino, this.#contrato, this.#planta, this.#idCliente];
+            let sql = 'insert into tb_Obras (endereco, bairro, cidade, valorTotal, dataInicio, dataTermino, contrato, planta, idCliente, cep) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            let valores = [this.#endereco, this.#bairro, this.#cidade, this.#valorTotal, this.#dataInicio, this.#dataTermino, this.#contrato, this.#planta, this.#idCliente, this.#cepObra];
             let ok = await banco.ExecutaComandoNonQuery(sql, valores);
             return ok;
         }else{
-            let sql = 'update tb_Obras set endereco = ?, bairro = ?, cidade = ?, valorTotal = ?, dataInicio = ?, dataTermino = ?, contrato = ?, planta = ?, idCliente = ? where idObra = ?';
-            let valores = [this.#endereco, this.#bairro, this.#cidade, this.#valorTotal, this.#dataInicio, this.#dataTermino, this.#contrato, this.#planta, this.#idCliente, this.#idObra];
+            let sql = 'update tb_Obras set endereco = ?, bairro = ?, cidade = ?, valorTotal = ?, dataInicio = ?, dataTermino = ?, contrato = ?, planta = ?, idCliente = ?, cep = ? where idObra = ?';
+            let valores = [this.#endereco, this.#bairro, this.#cidade, this.#valorTotal, this.#dataInicio, this.#dataTermino, this.#contrato, this.#planta, this.#idCliente, this.#cepObra, this.#idObra];
             let ok = await banco.ExecutaComandoNonQuery(sql, valores);
             return ok;
         }
     }
 
     async listar(){
-        let sql = 'select * from tb_Obras';
+        let sql = 'select * from tb_Obras order by dataInicio desc';
         let rows = await banco.ExecutaComando(sql);
         let lista = [];
         for(let i=0; i<rows.length; i++){
-            lista.push(new obraModel(rows[i]['idObra'],rows[i]['endereco'],rows[i]['bairro'],rows[i]['cidade'],rows[i]['valorTotal'],rows[i]['dataInicio'],rows[i]['dataTermino'],rows[i]['contrato'],rows[i]['planta'],rows[i]['idCliente']));
+            lista.push(new obraModel(rows[i]['idObra'],rows[i]['endereco'],rows[i]['bairro'],rows[i]['cidade'],rows[i]['valorTotal'],rows[i]['dataInicio'],rows[i]['dataTermino'],rows[i]['contrato'],rows[i]['planta'],rows[i]['idCliente'], rows[i]['cep']));
         }
         return lista;
     }
@@ -81,18 +85,32 @@ class obraModel{
         let valores = [idObra];
         let rows = await banco.ExecutaComando(sql, valores);
         if(rows.length > 0){
-            let obra = new obraModel(rows[0]['idObra'],rows[0]['endereco'],rows[0]['bairro'],rows[0]['cidade'],rows[0]['valorTotal'],rows[0]['dataInicio'],rows[0]['dataTermino'],rows[0]['contrato'],rows[0]['planta'],rows[0]['idCliente']);
+            let obra = new obraModel(rows[0]['idObra'],rows[0]['endereco'],rows[0]['bairro'],rows[0]['cidade'],rows[0]['valorTotal'],rows[0]['dataInicio'],rows[0]['dataTermino'],rows[0]['contrato'],rows[0]['planta'],rows[0]['idCliente'], rows[0]['cep']);
             return obra;
         }
         return null;
     }
 
-    async excluir(idObra){
-        let sql = 'delete from tb_Obras where idObra = ?';
-        let valores = [idObra];
-        let ok = await banco.ExecutaComandoNonQuery(sql, valores);
-        return ok;
+    async excluir(idObra) {
+        try {
+            // Excluir registros da tabela tb_Servicos que estão vinculados à obra
+            let sqlServicos = 'DELETE FROM tb_Servicos WHERE idObra = ?';
+            let valoresServicos = [idObra];
+            await banco.ExecutaComandoNonQuery(sqlServicos, valoresServicos);
+    
+            // Agora que os registros da tabela tb_Servicos foram excluídos, podemos excluir a obra
+            let sqlObras = 'DELETE FROM tb_Obras WHERE idObra = ?';
+            let valoresObras = [idObra];
+            let ok = await banco.ExecutaComandoNonQuery(sqlObras, valoresObras);
+    
+            return ok;
+        } catch (error) {
+            console.error("Erro ao excluir obra:", error);
+            return false;
+        }
     }
+    
+    
 }
 
 module.exports = obraModel;

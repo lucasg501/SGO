@@ -13,6 +13,9 @@ class ClientesController{
             clientesModel.rgCli = req.body.rgCli;
             clientesModel.cpfCli = req.body.cpfCli;
             clientesModel.enderecoCli = req.body.enderecoCli;
+            clientesModel.bairroCli = req.body.bairroCli;
+            clientesModel.cidadeCli = req.body.cidadeCli;
+            clientesModel.cepCli = req.body.cepCli;
             let ok = await clientesModel.gravar();
             if(ok){
                 res.status(200).json({msg:"Cliente gravado com sucesso!"});
@@ -35,6 +38,9 @@ class ClientesController{
             clientesModel.rgCli = req.body.rgCli;
             clientesModel.cpfCli = req.body.cpfCli;
             clientesModel.enderecoCli = req.body.enderecoCli;
+            clientesModel.bairroCli = req.body.bairroCli;
+            clientesModel.cidadeCli = req.body.cidadeCli;
+            clientesModel.cepCli = req.body.cepCli;
             let ok = await clientesModel.gravar();
             if(ok){
                 res.status(200).json({msg:"Cliente alterado com sucesso!"});
@@ -78,6 +84,20 @@ class ClientesController{
         if(req.params.idCli != undefined){
             let clientesModel = new ClientesModel();
             clientesModel = await clientesModel.obter(req.params.idCli);
+            if(clientesModel == null){
+                res.status(400).json({msg:"Cliente não encontrado!"});
+            }else{
+                res.status(200).json(clientesModel.toJSON());
+            }
+        }else{
+            res.status(400).json({msg:"Parâmetros inválidos!"});
+        }
+    }
+
+    async obterNome(req,res){
+        if(req.params.nomeCli != undefined){
+            let clientesModel = new ClientesModel();
+            clientesModel = await clientesModel.obterPorNome(req.params.nomeCli);
             if(clientesModel == null){
                 res.status(400).json({msg:"Cliente não encontrado!"});
             }else{

@@ -49,6 +49,26 @@
         }
       }
     },
+    "/clientes/obterNome/{nomeCli}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "nomeCli",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/clientes/alterar/": {
       "put": {
         "tags": [
@@ -725,6 +745,20 @@
           "Parcelas"
         ],
         "summary": "Altera uma parcela",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/cargos/listar": {
+      "get": {
+        "tags": [
+          "Cargos"
+        ],
+        "summary": "Lista todos os cargos",
         "description": "",
         "responses": {
           "default": {

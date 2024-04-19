@@ -22,12 +22,12 @@ export default function clientes({children}){
         carregarClientes();
     },[])
 
-    return(
+    return (
         <div>
             <h1>Clientes</h1>
             <a href="/clientes/criar"><button className="btn btn-primary">Cadastrar</button></a>
-
-            <div style={{marginTop: 30}} className="table-responsive">
+    
+            <div style={{marginTop: 30, overflowX: 'auto'}} className="table-responsive">
                 <table className="table table-hover">
                     <thead>
                         <tr>
@@ -37,10 +37,14 @@ export default function clientes({children}){
                             <th>RG</th>
                             <th>CPF</th>
                             <th>Endereço</th>
-                            <th>Ações</th>
+                            <th>Bairro</th>
+                            <th>Cidade</th>
+                            <th>CEP</th>
+                            <th>Editar</th>
+                            <th>Excluir</th>
                         </tr>
                     </thead>
-
+    
                     <tbody>
                         {
                             listaClientes.map(function(value,index){
@@ -52,10 +56,15 @@ export default function clientes({children}){
                                         <td>{value.rgCli}</td>
                                         <td>{value.cpfCli}</td>
                                         <td>{value.enderecoCli}</td>
+                                        <td>{value.bairroCli}</td>
+                                        <td>{value.cidadeCli}</td>
+                                        <td>{value.cepCli}</td>
                                         <td>
                                             <Link className="btn btn-primary" href={`/clientes/alterar/${value.idCli}`}><i className="fas fa-pen"></i></Link>
-                                            <button style={{marginLeft: 15}} className="btn btn-danger" onClick={()=>{
-                                                if(confirm(`Deseja excluir o cliente ${value.nomeCli}?`)){
+                                        </td>
+                                        <td>
+                                        <button style={{marginLeft: 15}} className="btn btn-danger" onClick={()=>{
+                                                if(confirm(`Deseja excluir o cliente ${value.nomeCli} e todos os seus dados relacionados: "Serviços, Parcelas e Obras"?`)){
                                                     httpClient.delete(`/clientes/excluir/${value.idCli}`)
                                                     .then(r=>{
                                                         alert('Cliente excluído com sucesso!');
@@ -73,4 +82,5 @@ export default function clientes({children}){
             </div>
         </div>
     )
+    
 }

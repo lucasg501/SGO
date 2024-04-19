@@ -15,6 +15,7 @@ class ObrasController {
             obrasModel.contrato = req.body.contrato;
             obrasModel.planta = req.body.planta;
             obrasModel.idCliente = req.body.idCliente;
+            obrasModel.cepObra = req.body.cepObra;
             let ok = obrasModel.gravar();
             if(ok){
                 res.status(200).json({msg:"Obra gravada com sucesso!"});
@@ -40,6 +41,7 @@ class ObrasController {
             obrasModel.contrato = req.body.contrato;
             obrasModel.planta = req.body.planta;
             obrasModel.idCliente = req.body.idCliente;
+            obrasModel.cepObra = req.body.cepObra;
             let ok = obrasModel.gravar();
             if(ok){
                 res.status(200).json({msg:"Obra alterada com sucesso!"});
