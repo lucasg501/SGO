@@ -104,22 +104,28 @@ class ParcelaController {
         }
 
     async alterar(req,res){
-        if(Object.keys(req.body).length > 0){
-            let parcelaModel = new ParcelaModel();
 
-            parcelaModel.numParcela = req.body.numParcela;
-            parcelaModel.dataVencimento = req.body.dataVencimento;
-            parcelaModel.dataRecebimento = req.body.dataRecebimento;
-            parcelaModel.valorParcela = req.body.valorParcela;
-            parcelaModel.idObra = req.body.idObra;
-            let ok = await parcelaModel.gravar();
-            if(ok){
-                res.status(200).json({msg: "Parcela marcada como paga com sucesso!"});
+        try {
+            if(Object.keys(req.body).length > 0){
+                let parcelaModel = new ParcelaModel();
+    
+                parcelaModel.numParcela = req.body.numParcela;
+                parcelaModel.dataVencimento = req.body.dataVencimento;
+                parcelaModel.dataRecebimento = req.body.dataRecebimento;
+                parcelaModel.valorParcela = req.body.valorParcela;
+                parcelaModel.idObra = req.body.idObra;
+                let ok = await parcelaModel.gravar();
+                if(ok){
+                    res.status(200).json({msg: "Parcela marcada como paga com sucesso!"});
+                }else{
+                    res.status(500).json({msg: "Erro ao marcar pagamento da parcela!"});
+                }
             }else{
-                res.status(500).json({msg: "Erro ao marcar pagamento da parcela!"});
+                res.status(400).json({msg: "Nenhum dado recebido ou formato inválido!"});
             }
-        }else{
-            res.status(400).json({msg: "Nenhum dado recebido ou formato inválido!"});
+        }
+        catch(ex) {
+            res.status(500).json({msg: ex.message});
         }
     }
 

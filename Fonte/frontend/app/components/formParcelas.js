@@ -1,4 +1,5 @@
 'use client'
+
 import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
@@ -8,29 +9,13 @@ export default function FormParcelas(props) {
     const dataVencimento = useRef([]);
     const valorParcela = useRef([]);
     const dataRecebimento = useRef([]);
-    const [listaObras, setListaObras] = useState([]);
-    const [bairroObra, setBairroObra] = useState('');
 
-
-    function listarObras() {
-        httpClient.get('/obras/listar')
-            .then(r => r.json())
-            .then(r => {
-                const obraEncontrada = r.find(obra => obra.idObra === props.parcela.idObra);
-                if (obraEncontrada) {
-                    setBairroObra(obraEncontrada.bairro);
-                }
-                setListaObras(r);
-            });
-    }
-    
-
-    const [parcelas, setParcelas] = useState(props.parcelas ? props.parcelas : [{
+    const [parcelas, setParcelas] = useState(props.parcelas.length > 0 ? props.parcelas : [{
         numParcela: 0,
         dataVencimento: "",
         dataRecebimento: "",
         valorParcela: parseFloat(0).toFixed(2),
-        idObra: 0
+        idObra: props.obra.idObra
     }]);
 
     const formatarData = (data) => {
@@ -58,10 +43,10 @@ export default function FormParcelas(props) {
 
     function removerCampo() {
         if (parcelas.length > 1) {
-
+            
             let parcelaExcluir = parcelas[parcelas.length - 1];
 
-            setParcelas((parcelas) =>
+            setParcelas((parcelas) => 
                 parcelas.filter((parcela) => parcela != parcelaExcluir)
             );
         }
@@ -95,12 +80,12 @@ export default function FormParcelas(props) {
     function excluirParcelasDaObra() {
 
         httpClient.delete(`/parcelas/excluirParcelasObra/${props.obra.idObra}`)
-            .then(r => {
-                return r.json();
-            })
-            .then(r => {
-                console.log(r.msg);
-            });
+        .then(r => {
+            return r.json();
+        })
+        .then(r => {
+            console.log(r.msg);
+        });
     }
 
     function gravarParcelas() {
@@ -123,7 +108,7 @@ export default function FormParcelas(props) {
                     dataVencimento: formatarData(dataVencimentoValue),
                     dataRecebimento: dataRecebimentoValue != "" ? formatarData(dataRecebimentoValue) : null,
                     valorParcela: parseFloat(valorParcelaValue).toFixed(2),
-                    idObra: props.obra.idObra // Alterado para usar o ID da obra selecionada
+                    idObra: props.obra.idObra
                 };
 
                 parcelasArray.push(parcela);
@@ -147,75 +132,39 @@ export default function FormParcelas(props) {
         }
     }
 
-    function alterarParcela() {
-        let status = 0;
-        httpClient.put('/parcelas/alterar', {
-            numParcela: props.parcela.numParcela,
-            dataVencimento: formatarData(props.parcela.dataVencimento),
-            dataRecebimento: formatarData(dataRecebimento.current[0].value),
-            valorParcela: props.parcela.valorParcela,
-            idObra: props.parcela.idObra
-        })
-            .then(r => {
-                status = r.status;
-                return r.json();
-            })
-            .then(r => {
-                alert(r.msg);
-                if (status === 200) {
-                    window.location.href = '/recebimentos';
-                }
-            })
-    }
-
-    useEffect(() => {
-        listarObras();
-    }, []);
-
     return (
         <div>
-<<<<<<< HEAD
             <h1>Gerenciar Parcelas da Obra</h1>
-            <h3>Obra: {props.obra.bairro}</h3>
-            <h3><b>Valor Total: R$ {parseFloat(props.obra.valorTotal).toFixed(2).replace('.', ',')}</b></h3>
-=======
-            <h1>{props.parcela ? 'Marcar data de recebimento' : 'Gerenciar Parcelas da Obra'}</h1>
-            <h2>Obra: {bairroObra}</h2>
->>>>>>> f4951f7452eae436c045065875523f5a647c4173
+            <h2><b>Obra: {props.obra.bairro}</b></h2>
+            <h2><b>Valor: R$ {parseFloat(props.obra.valorTotal).toFixed(2).replace('.', ',')}</b></h2>
 
             <div>
                 <br></br>
 
                 {
                     parcelas.map((parcela, index) => (
-                        <div key={index} className="card" style={{ marginBottom: 20, width: '50%', textAlign: 'center' }}>
+                        <div key={index} className="card" style={{marginBottom: 20, width: '35%', textAlign: 'center'}}>
                             <div className="form-group card-header">
                                 <label><b>Parcela {index + 1}</b></label>
                             </div>
 
                             <div className="form-group" style={{ display: 'inline-flex', marginTop: 10, padding: 15, }}>
 
-                                <div className="form-group" style={{ textAlign: 'start', fontWeight: 'bold' }}>
+                                <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold'}}>
                                     <label>Vencimento:</label>
-                                    <input disabled={props.parcela ? true : false}
-                                        defaultValue={props.parcela ? formatarData(props.parcela.dataVencimento) : ""}
+                                    <input
+                                        defaultValue={parcela.dataVencimento ? formatarData(parcela.dataVencimento) : ''}
                                         style={{ width: '80%' }}
                                         type="date"
                                         className="form-control"
                                         ref={el => dataVencimento.current[index] = el}
                                     />
+
                                 </div>
 
-                                <div className="form-group" style={{ textAlign: 'start', fontWeight: 'bold' }}>
-                                    <label>Recebimento:</label>
-                                    <input
-                                        type="date" ref={el => dataRecebimento.current[index] = el} className="form-control"
-                                    />
-                                </div>
-
-                                <div className="form-group" style={{ textAlign: 'start', fontWeight: 'bold', marginLeft: 30 }}>
+                                <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold', marginLeft: 30}}>
                                     <label>Valor:</label>
-                                    <input disabled={props.parcela ? true : false} type="number" className="form-control" defaultValue={props.parcela ? props.parcela.valorParcela : 0}
+                                    <input type="number" className="form-control" defaultValue={parcela.valorParcela ? parcela.valorParcela : 0} 
                                         style={{ width: '80%' }} ref={el => valorParcela.current[index] = el}
                                     />
                                 </div>
@@ -225,19 +174,18 @@ export default function FormParcelas(props) {
                 }
 
                 <div className="form-group">
-                    <div style={{ display: props.parcela ? 'none' : 'inline-block' }}>
+                    <div style={{ display: 'inline-block' }}>
                         <button className="btn btn-danger" onClick={removerCampo}>-</button>
                     </div>
 
-
-                    <div style={{ display: props.parcela ? 'none' : 'inline-block' }}>
+                    <div style={{ display: 'inline-block', marginLeft: 15 }}>
                         <button className="btn btn-primary" onClick={adicionarCampo}>+</button>
                     </div>
                 </div>
 
                 <div>
                     <Link style={{ marginRight: 25 }} href="/recebimentos"><button className="btn btn-secondary">Voltar</button></Link>
-                    <button className="btn btn-primary" onClick={props.parcela ? alterarParcela : gravarParcelas}>Gravar</button>
+                    <button className="btn btn-primary" onClick={props.parcela == null ? gravarParcelas : alterarParcela}>Gravar</button>
                 </div>
             </div>
         </div>
