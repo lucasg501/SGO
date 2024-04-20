@@ -67,75 +67,78 @@ export default function Etapas(){
         return new Date(data).toLocaleDateString('pt-BR');
     }
 
-    return(
+    return (
         <div>
             <h1>Etapas</h1>
-
-            <div style={{marginBottom: 25}}>
+    
+            <div style={{ marginBottom: 25 }}>
                 <a href="/etapas/gravar"><button className="btn btn-primary">Cadastrar</button></a>
             </div>
-
+    
             <div>
                 {Object.keys(listaAcompEtapas).map(idObra => (
-                    <div key={idObra}>
-                        <h2>Obra: {encontrarBairro(Number(idObra))}</h2>
-                        <table className="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Etapa</th>
-                                    <th>Data Início</th>
-                                    <th>Data Término</th>
-                                    <th>Data Fim</th>
-                                    <th>Descrição</th>
-                                    <th>Alterar</th>
-                                    <th>Marcar como terminada</th>
-                                    <th>Excluir</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {listaAcompEtapas[idObra].map((etapa, index) => (
-                                    <tr key={index}>
-                                        <td>{encontrarEtapa(etapa.idEtapa)}</td>
-                                        <td>{formatarData(etapa.dataPrevInicio)}</td>
-                                        <td>{formatarData(etapa.dataPrevTermino)}</td>
-                                        <td>{etapa.dataFim ? formatarData(etapa.dataFim) : ''}</td>
-                                        <td>{etapa.descricaoEtapa}</td>
-                                        <td>
-                                            {
-                                                etapa.dataFim ? (
-                                                    <button disabled style={{margin: 'auto'}} className="btn btn-success"><i className="fas fa-pen"></i></button>
-                                                ) : (
-                                                    <Link style={{margin: 'auto'}} className="btn btn-primary" href={`/etapas/alterar/${etapa.idAndamento}`}><i className="fas fa-pen"></i></Link>
-                                                )
-                                            }
-                                        </td>
-                                        <td style={{display: 'flex', alignContent: 'center'}}>
-                                            {etapa.dataFim ? (
-                                                <button disabled style={{margin: 'auto'}} className="btn btn-success"><i className="fas fa-check"></i></button>
-                                            ) : (
-                                                <Link style={{margin: 'auto'}} className="btn btn-success" href={`/etapas/alterar/${etapa.idAndamento}`}><i className="fas fa-check"></i></Link>
-                                            )}
-                                        </td>
-                                        <td>
-                                            <button className="btn btn-danger" onClick={()=>{
-                                                if(confirm('Tem certeza que deseja excluir esta etapa e todos os dados relacionados a ela?')){
-                                                    httpClient.delete(`/andamentoEtapas/excluir/${etapa.idAndamento}`)
-                                                        .then(r => {
-                                                            carregarEtapas();
-                                                            carregarAcompEtapas();
-                                                        })
-                                                        .catch(error => console.error('Erro ao excluir etapa:', error));
-                                                }
-                                            }}><i className="fas fa-trash"></i></button>
-                                        </td>
+                    <div key={idObra} style={{ marginBottom: 20 }}>
+                        <details style={{ border: '1px solid #ccc', borderRadius: 5, padding: 10 }}>
+                            <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>Obra: {encontrarBairro(Number(idObra))}</summary>
+                            <table className="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Etapa</th>
+                                        <th>Data Início</th>
+                                        <th>Data Término</th>
+                                        <th>Data Fim</th>
+                                        <th>Descrição</th>
+                                        <th>Alterar</th>
+                                        <th>Marcar como terminada</th>
+                                        <th>Excluir</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+    
+                                <tbody>
+                                    {listaAcompEtapas[idObra].map((etapa, index) => (
+                                        <tr key={index}>
+                                            <td>{encontrarEtapa(etapa.idEtapa)}</td>
+                                            <td>{formatarData(etapa.dataPrevInicio)}</td>
+                                            <td>{formatarData(etapa.dataPrevTermino)}</td>
+                                            <td>{etapa.dataFim ? formatarData(etapa.dataFim) : ''}</td>
+                                            <td>{etapa.descricaoEtapa}</td>
+                                            <td>
+                                                {
+                                                    etapa.dataFim ? (
+                                                        <button disabled style={{ margin: 'auto' }} className="btn btn-success"><i className="fas fa-pen"></i></button>
+                                                    ) : (
+                                                        <Link style={{ margin: 'auto' }} className="btn btn-primary" href={`/etapas/alterar/${etapa.idAndamento}`}><i className="fas fa-pen"></i></Link>
+                                                    )
+                                                }
+                                            </td>
+                                            <td style={{ display: 'flex', alignContent: 'center' }}>
+                                                {etapa.dataFim ? (
+                                                    <button disabled style={{ margin: 'auto' }} className="btn btn-success"><i className="fas fa-check"></i></button>
+                                                ) : (
+                                                    <Link style={{ margin: 'auto' }} className="btn btn-success" href={`/etapas/alterar/${etapa.idAndamento}`}><i className="fas fa-check"></i></Link>
+                                                )}
+                                            </td>
+                                            <td>
+                                                <button className="btn btn-danger" onClick={() => {
+                                                    if (confirm('Tem certeza que deseja excluir esta etapa e todos os dados relacionados a ela?')) {
+                                                        httpClient.delete(`/andamentoEtapas/excluir/${etapa.idAndamento}`)
+                                                            .then(r => {
+                                                                carregarEtapas();
+                                                                carregarAcompEtapas();
+                                                            })
+                                                            .catch(error => console.error('Erro ao excluir etapa:', error));
+                                                    }
+                                                }}><i className="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </details>
                     </div>
                 ))}
             </div>
         </div>
     );
+    
 }
