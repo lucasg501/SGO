@@ -42,4 +42,11 @@ router.put('/alterar', (req,res) =>{
     ctrl.alterar(req,res);
 })
 
+router.delete('/excluir/:idAndamento', (req,res) =>{
+
+    // #swagger.tags = ['Andamento Etapas']
+    // #swagger.summary = 'Exclui um andamento'
+    ctrl.excluir(req,res);
+})
+
 module.exports = router;

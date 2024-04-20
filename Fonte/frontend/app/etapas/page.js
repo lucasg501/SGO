@@ -87,7 +87,9 @@ export default function Etapas(){
                                     <th>Data Término</th>
                                     <th>Data Fim</th>
                                     <th>Descrição</th>
+                                    <th>Alterar</th>
                                     <th>Marcar como terminada</th>
+                                    <th>Excluir</th>
                                 </tr>
                             </thead>
 
@@ -99,12 +101,33 @@ export default function Etapas(){
                                         <td>{formatarData(etapa.dataPrevTermino)}</td>
                                         <td>{etapa.dataFim ? formatarData(etapa.dataFim) : ''}</td>
                                         <td>{etapa.descricaoEtapa}</td>
+                                        <td>
+                                            {
+                                                etapa.dataFim ? (
+                                                    <button disabled style={{margin: 'auto'}} className="btn btn-success"><i className="fas fa-pen"></i></button>
+                                                ) : (
+                                                    <Link style={{margin: 'auto'}} className="btn btn-primary" href={`/etapas/alterar/${etapa.idAndamento}`}><i className="fas fa-pen"></i></Link>
+                                                )
+                                            }
+                                        </td>
                                         <td style={{display: 'flex', alignContent: 'center'}}>
                                             {etapa.dataFim ? (
                                                 <button disabled style={{margin: 'auto'}} className="btn btn-success"><i className="fas fa-check"></i></button>
                                             ) : (
                                                 <Link style={{margin: 'auto'}} className="btn btn-success" href={`/etapas/alterar/${etapa.idAndamento}`}><i className="fas fa-check"></i></Link>
                                             )}
+                                        </td>
+                                        <td>
+                                            <button className="btn btn-danger" onClick={()=>{
+                                                if(confirm('Tem certeza que deseja excluir esta etapa e todos os dados relacionados a ela?')){
+                                                    httpClient.delete(`/andamentoEtapas/excluir/${etapa.idAndamento}`)
+                                                        .then(r => {
+                                                            carregarEtapas();
+                                                            carregarAcompEtapas();
+                                                        })
+                                                        .catch(error => console.error('Erro ao excluir etapa:', error));
+                                                }
+                                            }}><i className="fas fa-trash"></i></button>
                                         </td>
                                     </tr>
                                 ))}

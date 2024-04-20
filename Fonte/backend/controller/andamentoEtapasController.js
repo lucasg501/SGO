@@ -49,31 +49,14 @@ class AndamentoEtapasController {
 
 
     async obterEtapasPorObra(req, res) {
-
-        try {
-            if (req.params.idObra != undefined) {
-                let andamentoEtapasModel = new AndamentoEtapasModel();
-                let lista = await andamentoEtapasModel.obterEtapasPorObra(req.params.idObra);
-
-                if (lista.length > 0) {
-                    let listaJson = [];
-
-                    for (let i = 0; i < lista.length; i++) {
-                        listaJson.push(lista[i].toJSON());
-                    }
-
-                    res.status(200).json({listaJson});
-                }
-                else {
-                    res.status(404).json({msg: "Obra não encontrada!"});
-                }
+        if(req.params.idObra != null){
+            let andamentoEtapasModel = new AndamentoEtapasModel();
+            andamentoEtapasModel = await andamentoEtapasModel.obterEtapasPorObra(req.params.idObra);
+            let listaRetorno = [];
+            for(let i=0; i<andamentoEtapasModel.length; i++){
+                listaRetorno.push(andamentoEtapasModel[i].toJSON());
             }
-            else {
-                res.status(400).json({msg: "Parâmetros inválidos!"});
-            }
-        }
-        catch(ex) {
-            res.status(500).json({msg: ex.message});
+            res.status(200).json(listaRetorno);
         }
     }
 
@@ -110,13 +93,27 @@ class AndamentoEtapasController {
             andamentoEtapasModel.idEtapa = req.body.idEtapa;
             andamentoEtapasModel.dataPrevInicio = req.body.dataPrevInicio;
             andamentoEtapasModel.dataPrevTermino = req.body.dataPrevTermino;
-            andamentoEtapasModel.dataFim = req.body.dataFim;
+            andamentoEtapasModel.dataFim = req.body.dataFim !=null ? req.body.dataFim : null;
             andamentoEtapasModel.descricaoEtapa = req.body.descricaoEtapa;
             let ok = await andamentoEtapasModel.gravar();
             if(ok){
                 res.status(200).json({msg:"Etapa marcada como finalizada!"})
             }else{
                 res.status(500).json({msg:"Erro ao marcar etapa como finalizada!"})
+            }
+        }else{
+            res.status(400).json({msg: "Parâmetros inválidos!"});
+        }
+    }
+
+    async excluir(req,res){
+        if(req.params.idAndamento != undefined){
+            let andamentoEtapasModel = new AndamentoEtapasModel();
+            let ok = await andamentoEtapasModel.excluir(req.params.idAndamento);
+            if(ok){
+                res.status(200).json({msg:"Etapa excluída com sucesso!"})
+            }else{
+                res.status(500).json({msg:"Erro ao excluir etapa!"})
             }
         }else{
             res.status(400).json({msg: "Parâmetros inválidos!"});

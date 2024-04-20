@@ -11,6 +11,7 @@ export default function FormEtapas(props) {
     const dataPrevTermino = useRef([]);
     const dataFim = useRef([]);
     const descricaoEtapa = useRef([]);
+    const [listaAndamentoEtapas, setListaAndamentoEtapas] = useState([]);
 
     const formatarData = (data) => {
         const dataObj = new Date(data);
@@ -69,19 +70,49 @@ export default function FormEtapas(props) {
             });
     }
 
+    const listarAndamentoEtapas = (idObra) => {
+        if (idObra !== 0) {
+            httpClient.get(`/andamentoEtapas/obterEtapasPorObra/${idObra}`)
+                .then(r => r.json())
+                .then(r => {
+                    const lista = Array.isArray(r) ? r : [r]; // Garante que r seja uma lista
+                    setListaAndamentoEtapas(lista);
+                });
+        }
+    };
+
     function gravarEtapas() {
         let status = 0;
         let etapasArray = [];
-
+        let hasInvalidDate = false;
+    
         const idObraValue = idObra.current[0] ? idObra.current[0].value : null;
-
+    
         for (let i = 0; i < etapas.idEtapa + 1; i++) {
             const idEtapaValue = idEtapa.current[i] ? idEtapa.current[i].value : null;
             const dataPrevInicioValue = dataPrevInicio.current[i] ? dataPrevInicio.current[i].value : null;
             const dataPrevTerminoValue = dataPrevTermino.current[i] ? dataPrevTermino.current[i].value : null;
             const dataFimValue = dataFim.current[i] ? (dataFim.current[i].value !== '' ? dataFim.current[i].value : null) : null;
             const descricaoEtapaValue = descricaoEtapa.current[i] ? descricaoEtapa.current[i].value : null;
-
+    
+            if (dataPrevInicioValue && dataPrevTerminoValue && dataPrevInicioValue >= dataPrevTerminoValue) {
+                alert("A data de previsão de início deve ser menor do que a data de previsão de término.");
+                hasInvalidDate = true;
+                break;
+            }
+    
+            if (dataFimValue < dataPrevInicioValue) {
+                alert("A data de fim não pode ser anterior à data de início.");
+                hasInvalidDate = true;
+                break;
+            }
+    
+            if (dataFimValue < dataPrevTerminoValue) {
+                alert("A data de fim não pode ser anterior à data de previsão de término.");
+                hasInvalidDate = true;
+                break;
+            }
+    
             const etapa = {
                 idObra: idObraValue,
                 idEtapa: idEtapaValue,
@@ -92,19 +123,22 @@ export default function FormEtapas(props) {
             };
             etapasArray.push(etapa);
         }
-
-        httpClient.post('/andamentoEtapas/gravar', etapasArray)
-            .then(r => {
-                status = r.status;
-                return r.json();
-            })
-            .then(r => {
-                alert(r.msg);
-                if (status === 200) {
-                    window.location.href = '/etapas';
-                }
-            });
+    
+        if (!hasInvalidDate) {
+            httpClient.post('/andamentoEtapas/gravar', etapasArray)
+                .then(r => {
+                    status = r.status;
+                    return r.json();
+                })
+                .then(r => {
+                    alert(r.msg);
+                    if (status === 200) {
+                        window.location.href = '/etapas';
+                    }
+                });
+        }
     }
+    
 
     function alterarEtapas() {
         let status = 0;
@@ -137,7 +171,7 @@ export default function FormEtapas(props) {
             <div>
                 <div className="from-group">
                     <label>Obra:</label>
-                    <select ref={el => idObra.current[0] = el} style={{ width: '10%', textAlign: 'center' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
+                    <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: '10%', textAlign: 'center' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
 
                         <option value={0}>Selecione</option>
                         {listaObras.map(function (value, index) {
@@ -161,9 +195,10 @@ export default function FormEtapas(props) {
                                 <option value={0}>Selecione</option>
                                 {listaEtapas.map(function (value, index) {
                                     const isSelected = props.etapa && value.idEtapa === props.etapa.idEtapa;
+                                    const isDisabled = listaAndamentoEtapas.some(andamentoEtapa => andamentoEtapa.idEtapa === value.idEtapa);
                                     return (
-                                        <option key={index} value={value.idEtapa} selected={isSelected}>
-                                            {value.nomeEtapa}
+                                        <option style={{ textAlign: 'left' }} key={index} value={value.idEtapa} selected={isSelected} disabled={isDisabled}>
+                                            {value.idEtapa} {value.nomeEtapa}
                                         </option>
                                     );
                                 })}
@@ -210,6 +245,30 @@ export default function FormEtapas(props) {
                 <Link style={{ marginRight: 25 }} href="/etapas"><button className="btn btn-secondary">Voltar</button></Link>
                 <button className="btn btn-primary" onClick={props.etapa == null ? gravarEtapas : alterarEtapas}>Gravar</button>
             </div>
+
+            <br></br><br></br>
+            <h3>Etapas já cadastradas</h3>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>Nº</th>
+                        <th>Descrição</th>
+                    </tr>
+                    {
+                        listaAndamentoEtapas.map(function (value, index) {
+                            if (value.idObra == idObra.current[0].value) {
+                                return (
+                                    <tr key={index}>
+                                        <th>{value.idEtapa}</th>
+                                        <th>{value.descricaoEtapa}</th>
+                                    </tr>
+                                );
+                            }
+                        })
+                    }
+                </tbody>
+            </table>
+
         </div>
     );
 }

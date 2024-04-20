@@ -61,20 +61,14 @@ class AndamentoEtapasModel {
     }
 
     async obterEtapasPorObra(idObra) {
-
-        let sql = "select * from tb_AndamentoEtapas where idObra = ?";
+        let sql = 'select * from tb_AndamentoEtapas where idObra = ?';
         let valores = [idObra];
-
         let rows = await banco.ExecutaComando(sql, valores);
-        let listaRetorno = [];
-
+        let lista = [];
         for (let i = 0; i < rows.length; i++) {
-            let row = rows[i];
-            listaRetorno.push(new AndamentoEtapasModel(row['idObra'], row['idEtapa'], row['dataPrevInicio'], row['dataPrevTermino'],
-                row['dataFim'], row['descricaoEtapa']));
+            lista.push(new AndamentoEtapasModel(rows[i]['idObra'], rows[i]['idEtapa'], rows[i]['dataPrevInicio'], rows[i]['dataPrevTermino'],rows[i]['dataFim'], rows[i]['descricaoEtapa'], rows[i]['idAndamento']));
         }
-
-        return listaRetorno;
+        return lista;
     }
 
     async listar() {
@@ -97,6 +91,13 @@ class AndamentoEtapasModel {
             return etapa;
         }
         return null;
+    }
+
+    async excluir(idAndamento){
+        let sql = 'delete from tb_AndamentoEtapas where idAndamento = ?';
+        let valores = [idAndamento];
+        let ok = await banco.ExecutaComandoNonQuery(sql, valores);
+        return ok;
     }
 
     toJSON() {

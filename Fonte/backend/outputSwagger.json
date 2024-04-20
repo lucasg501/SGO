@@ -687,6 +687,30 @@
         }
       }
     },
+    "/andamentoEtapas/excluir/{idAndamento}": {
+      "delete": {
+        "tags": [
+          "Andamento Etapas"
+        ],
+        "summary": "Exclui um andamento",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idAndamento",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/parcelas/gravar": {
       "post": {
         "tags": [
