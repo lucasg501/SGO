@@ -135,7 +135,8 @@ export default function FormParcelas(props) {
     return (
         <div>
             <h1>Gerenciar Parcelas da Obra</h1>
-            <h2>Obra: {props.obra.bairro}</h2>
+            <h3>Obra: {props.obra.bairro}</h3>
+            <h3><b>Valor Total: R$ {parseFloat(props.obra.valorTotal).toFixed(2).replace('.', ',')}</b></h3>
 
             <div>
                 <br></br>

@@ -21,7 +21,7 @@ class CargoModel {
     }
 
     async listar(){
-        let sql = 'select * from tb_Cargos';
+        let sql = 'select * from tb_Cargo';
         let rows = await banco.ExecutaComando(sql);
         let lista = [];
         for(let i=0; i<rows.length; i++){

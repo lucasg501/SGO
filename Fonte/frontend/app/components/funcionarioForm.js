@@ -1,20 +1,34 @@
 'use client'
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 
 export default function FuncionarioForm(props) {
 
     const nomeFuncionario = useRef('');
     const telFuncionario = useRef('');
-    const cargoFuncionario = useRef('');
+    const cargoFuncionario = useRef(0);
+    const [listaCargos, setListaCargos] = useState([]);
 
     const [funcionario, setFuncionario] = props.funcionario ? useState(props.funcionario)
-    : useState({idFuncionario: 0, nomeFuncionario: '', telFuncionario: '', cargoFuncionario: ''});
+    : useState({idFuncionario: 0, nomeFuncionario: '', telFuncionario: '', cargoFuncionario: 0});
+
+    function carregarCargos() {
+
+        httpClient.get('/cargos/listar')
+        .then(r => {
+            return r.json();
+        })
+        .then(r => {
+            setListaCargos(r);
+        });
+    }
 
     function alterarFuncionario() {
         
         if (nomeFuncionario.current.value != '' && telFuncionario.current.value != '' && cargoFuncionario.current.value != '') {
+
+            let status = 0;
 
             httpClient.put('/funcionarios/alterar', {
                 idFuncionario: funcionario.idFuncionario,
@@ -30,9 +44,7 @@ export default function FuncionarioForm(props) {
                 alert(r.msg);
                 
                 if (status == 200) {
-                    nomeFuncionario.current.value = '';
-                    telFuncionario.current.value = '';
-                    cargoFuncionario.current.value = '';
+                    window.location.href = '/funcionarios';
                 }
             });
         }
@@ -43,7 +55,7 @@ export default function FuncionarioForm(props) {
 
     function cadastrarFuncionario() {
 
-        if (nomeFuncionario.current.value != '' && telFuncionario.current.value != '' && cargoFuncionario.current.value != '') {
+        if (nomeFuncionario.current.value != '' && telFuncionario.current.value != '' && cargoFuncionario.current.value > 0) {
 
             let status = 0;
 
@@ -61,9 +73,7 @@ export default function FuncionarioForm(props) {
                 alert(r.msg);
                 
                 if (status == 200) {
-                    nomeFuncionario.current.value = '';
-                    telFuncionario.current.value = '';
-                    cargoFuncionario.current.value = '';
+                    window.location.href = '/funcionarios';
                 }
             });
         }
@@ -71,6 +81,10 @@ export default function FuncionarioForm(props) {
             alert('Preencha todos os campos!');
         }
     }
+
+    useEffect(() => {
+        carregarCargos();
+    }, []);
 
     return (
         <div>
@@ -88,7 +102,19 @@ export default function FuncionarioForm(props) {
 
             <div className="form-group">
                 <label>Cargo:</label>
-                <input type="text" defaultValue={funcionario.cargoFuncionario} className="form-control" ref={cargoFuncionario}/>
+                <select style={{width: 250, textAlign: 'center'}} defaultValue={funcionario.cargoFuncionario} className="form-control" ref={cargoFuncionario}>
+                    <option value={0}>Selecione</option>
+                    {
+                        listaCargos.map((cargo, index) => {
+                            if (funcionario.cargoFuncionario == cargo.idCargo) {
+                                return <option value={cargo.idCargo} selected={true}>{cargo.nomeCargo}</option>
+                            }
+                            else {
+                                return <option value={cargo.idCargo}>{cargo.nomeCargo}</option>
+                            }
+                        })
+                    }
+                </select>
             </div>
 
             <div>
