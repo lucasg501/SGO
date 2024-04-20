@@ -56,7 +56,7 @@ export default function FormParcelas(props) {
 
         let faltaData = false;
 
-        for (let i = 0; i < dataVencimento.current.length; i++) {
+        for (let i = 0; i < parcelas.length; i++) {
 
             if (dataVencimento.current[i].value == "") {
                 faltaData = true;
@@ -70,7 +70,7 @@ export default function FormParcelas(props) {
 
         let faltaValor = false;
 
-        for (let i = 0; i < valorParcela.current.length; i++) {
+        for (let i = 0; i < parcelas.length; i++) {
             faltaValor = valorParcela.current[i].value == "0";
         }
 
