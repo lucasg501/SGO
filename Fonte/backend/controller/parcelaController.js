@@ -114,9 +114,9 @@ class ParcelaController {
             parcelaModel.idObra = req.body.idObra;
             let ok = await parcelaModel.gravar();
             if(ok){
-                res.status(200).json({msg: "Parcela alterada com sucesso!"});
+                res.status(200).json({msg: "Parcela marcada como paga com sucesso!"});
             }else{
-                res.status(500).json({msg: "Erro ao alterar a parcela!"});
+                res.status(500).json({msg: "Erro ao marcar pagamento da parcela!"});
             }
         }else{
             res.status(400).json({msg: "Nenhum dado recebido ou formato inválido!"});
