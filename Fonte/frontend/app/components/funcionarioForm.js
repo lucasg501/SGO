@@ -9,6 +9,9 @@ export default function FuncionarioForm(props) {
     const telFuncionario = useRef('');
     const cargoFuncionario = useRef(0);
     const [listaCargos, setListaCargos] = useState([]);
+    const [nomeVazio, setNomeVazio] = useState(false);
+    const [telVazio, setTelVazio] = useState(false);
+    const [cargoVazio, setCargoVazio] = useState(false);
 
     const [funcionario, setFuncionario] = props.funcionario ? useState(props.funcionario)
     : useState({idFuncionario: 0, nomeFuncionario: '', telFuncionario: '', cargoFuncionario: 0});
@@ -24,9 +27,24 @@ export default function FuncionarioForm(props) {
         });
     }
 
+    function camposVazios() {
+
+        let nomeNaoPreenchido = nomeFuncionario.current.value == "";
+        let telNaoPreenchido = telFuncionario.current.value == "";
+        let cargoNaoPreenchido = cargoFuncionario.current.value == 0;
+
+        setNomeVazio(nomeNaoPreenchido);
+        setTelVazio(telNaoPreenchido);
+        setCargoVazio(cargoNaoPreenchido);
+
+        return nomeNaoPreenchido || telNaoPreenchido || cargoNaoPreenchido;
+    }
+
     function alterarFuncionario() {
+
+        let camposPreenchidos = !camposVazios();
         
-        if (nomeFuncionario.current.value != '' && telFuncionario.current.value != '' && cargoFuncionario.current.value != '') {
+        if (camposPreenchidos) {
 
             let status = 0;
 
@@ -55,7 +73,7 @@ export default function FuncionarioForm(props) {
 
     function cadastrarFuncionario() {
 
-        if (nomeFuncionario.current.value != '' && telFuncionario.current.value != '' && cargoFuncionario.current.value > 0) {
+        if (!camposVazios()) {
 
             let status = 0;
 
@@ -90,32 +108,75 @@ export default function FuncionarioForm(props) {
         <div>
             <h1>{funcionario.idFuncionario == 0 ? 'Cadastrar Novo Funcionário' : 'Alterar Funcionário'}</h1>
 
-            <div className="form-group">
-                <label>Nome:</label>
-                <input type="text" defaultValue={funcionario.nomeFuncionario} className="form-control" ref={nomeFuncionario}/>
-            </div>
+            <div style={{marginTop: 20, marginBottom: 20}}><b>* - Obrigatório</b></div>
 
-            <div className="form-group">
-                <label>Telefone:</label>
-                <input type="tel" defaultValue={funcionario.telFuncionario} maxLength={14} className="form-control" ref={telFuncionario}/>
-            </div>
+            {
+                nomeVazio ?
+                <div className="form-group">
+                    <label>*Nome:</label>
+                    <input type="text" defaultValue={funcionario.nomeFuncionario} className="form-control" 
+                    ref={el => nomeFuncionario.current = el} style={{border: "2px solid red"}} />
+                    <div style={{color: "red"}}>Por favor, digite o nome.</div>
+                </div>
+                :
+                <div className="form-group">
+                <label>*Nome:</label>
+                    <input type="text" defaultValue={funcionario.nomeFuncionario} className="form-control" 
+                    ref={el => nomeFuncionario.current = el} />
+                </div>
+            }
 
-            <div className="form-group">
-                <label>Cargo:</label>
-                <select style={{width: 250, textAlign: 'center'}} defaultValue={funcionario.cargoFuncionario} className="form-control" ref={cargoFuncionario}>
-                    <option value={0}>Selecione</option>
-                    {
-                        listaCargos.map((cargo, index) => {
-                            if (funcionario.cargoFuncionario == cargo.idCargo) {
-                                return <option value={cargo.idCargo} selected={true}>{cargo.nomeCargo}</option>
-                            }
-                            else {
+            {
+                telVazio ?
+                <div className="form-group">
+                    <label>*Telefone:</label>
+                    <input type="tel" defaultValue={funcionario.telFuncionario} maxLength={14} className="form-control" 
+                    ref={el => telFuncionario.current = el} style={{border: "2px solid red"}} />
+                    <div style={{color: "red"}}>Por favor, digite o telefone.</div>
+                </div>
+                :
+                <div className="form-group">
+                    <label>*Telefone:</label>
+                    <input type="tel" defaultValue={funcionario.telFuncionario} maxLength={14} className="form-control" 
+                    ref={el => telFuncionario.current = el}/>
+                </div>
+            }
+
+            {
+                cargoVazio ?
+                <div className="form-group">
+                    <label>*Cargo:</label>
+                    <select style={{width: 250, textAlign: 'center', border: "2px solid red"}} 
+                    defaultValue={funcionario.cargoFuncionario} className="form-control" ref={el => cargoFuncionario.current = el}>
+                        <option value={0}>Selecione</option>
+                        {
+                            listaCargos.map((cargo, index) => {
                                 return <option value={cargo.idCargo}>{cargo.nomeCargo}</option>
-                            }
-                        })
-                    }
-                </select>
-            </div>
+                            })
+                        }
+                    </select>
+                    <div style={{color: "red"}}>Por favor, selecione o cargo.</div>
+                </div>
+                :
+                <div className="form-group">
+                    <label>*Cargo:</label>
+                    <select style={{width: 250, textAlign: 'center'}} defaultValue={funcionario.cargoFuncionario} className="form-control" 
+                    ref={el => cargoFuncionario.current = el}>
+                        <option value={0}>Selecione</option>
+                        {
+                            listaCargos.map((cargo, index) => {
+                                if (funcionario.cargoFuncionario == cargo.idCargo) {
+                                    return <option value={cargo.idCargo} selected={true}>{cargo.nomeCargo}</option>
+                                }
+                                else {
+                                    return <option value={cargo.idCargo}>{cargo.nomeCargo}</option>
+                                }
+                            })
+                        }
+                    </select>
+                </div>
+            }
+            
 
             <div>
                 <button onClick={funcionario.idFuncionario != 0 ? alterarFuncionario : cadastrarFuncionario} 
