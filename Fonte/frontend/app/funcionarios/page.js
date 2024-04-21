@@ -1,12 +1,16 @@
 'use client'
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
 
 export default function funcionarios() {
 
     const [listaFuncionarios, setListaFuncionarios] = useState([]);
+    const [listaCargos, setListaCargos] = useState([]);
+    const [busca, setBusca] = useState("");
+    const [listaBusca, setListaBusca] = useState([]);
+    const termoBusca = useRef("");
 
     function carregarFuncionarios() {
 
@@ -19,13 +23,50 @@ export default function funcionarios() {
         });
     }
 
+    function carregarCargos() {
+
+        httpClient.get('/cargos/listar')
+        .then(r => {
+            return r.json();
+        })
+        .then(r => {
+            setListaCargos(r);
+        });
+    }
+
+    function filtrarBusca() {
+
+        setBusca(termoBusca.current.value.toLowerCase());
+
+        if (busca != "" && listaFuncionarios) {
+
+            setListaBusca(listaFuncionarios.filter((funcionario) => 
+                funcionario.nomeFuncionario.toLowerCase().includes(busca)
+            ));
+        }
+    }
+
+    function encontrarCargo(idCargo) {
+
+        const cargo = listaCargos.find(cargo => cargo.idCargo == idCargo);
+        return cargo ? cargo.nomeCargo : "Desconhecido";
+    }
+
     useEffect(() => {
         carregarFuncionarios();
+        carregarCargos();
     })
 
     return (
         <div>
             <h1>Funcionários</h1>
+            
+            <div className="form-group">
+                <label>Buscar</label>
+                <input type="text" ref={termoBusca} placeholder="Digite o nome do funcionário..." className="form-control"
+                onChange={(e) => filtrarBusca()} />
+            </div>
+
             <a href="/funcionarios/criar"><button className="btn btn-primary">Cadastrar</button></a>
 
             <div style={{marginTop: 30}} className="table-responsive">
@@ -41,12 +82,44 @@ export default function funcionarios() {
 
                     <tbody>
                         {
+                            busca != "" && listaBusca ?
+                                listaBusca.length > 0 ?
+                                listaBusca.map((funcionario, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td>{funcionario.nomeFuncionario}</td>
+                                            <td>{funcionario.telFuncionario}</td>
+                                            <td>{encontrarCargo(funcionario.cargoFuncionario)}</td>
+    
+                                            <td>
+                                                <Link className="btn btn-primary" href={`/funcionarios/alterar/${funcionario.idFuncionario}`}>
+                                                    <i className="fas fa-pen"></i>
+                                                </Link>
+                                                <button style={{marginLeft: 15}} className="btn btn-danger" onClick={() => {
+                                                    if (confirm(`Deseja excluir o funcionário ${funcionario.nomeFuncionario}?`)) {
+    
+                                                        httpClient.delete(`/funcionarios/excluir/${funcionario.idFuncionario}`)
+                                                        .then(r => {
+                                                            alert('Funcionário excluído com sucesso!');
+                                                            carregarFuncionarios();
+                                                        });
+                                                    }
+                                                    }}>
+                                                    <i className="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                                :
+                                <div style={{margin: 20}}>Funcionários não encontrados.</div>
+                            :
                             listaFuncionarios.map((funcionario, index) => {
                                 return (
                                     <tr key={index}>
                                         <td>{funcionario.nomeFuncionario}</td>
                                         <td>{funcionario.telFuncionario}</td>
-                                        <td>{funcionario.cargoFuncionario}</td>
+                                        <td>{encontrarCargo(funcionario.cargoFuncionario)}</td>
 
                                         <td>
                                             <Link className="btn btn-primary" href={`/funcionarios/alterar/${funcionario.idFuncionario}`}>

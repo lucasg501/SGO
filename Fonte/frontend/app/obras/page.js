@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
 
@@ -7,6 +7,9 @@ export default function Obras() {
 
     const [listaObras, setListaObras] = useState([]);
     const [listaClientes, setListaClientes] = useState([]);
+    const [busca, setBusca] = useState("");
+    const [listaBusca, setListaBusca] = useState([]);
+    const termoBusca = useRef("");
 
     function carregarObras() {
         httpClient.get('/obras/listar')
@@ -42,6 +45,18 @@ export default function Obras() {
             })
     }
 
+    function filtrarBusca() {
+
+        setBusca(termoBusca.current.value.toLowerCase());
+
+        if (busca != "" && listaObras) {
+
+            setListaBusca(listaObras.filter((obra) => 
+                obra.bairro.toLowerCase().includes(busca)
+            ));
+        }
+    }
+
     useEffect(() => {
         carregarObras();
         listarClientes();
@@ -55,6 +70,12 @@ export default function Obras() {
     return (
         <div>
             <h1>Obras</h1>
+
+            <div className="form-group">
+                <label>Buscar</label>
+                <input type="text" ref={termoBusca} placeholder="Digite o bairro da obra..." className="form-control"
+                onChange={(e) => filtrarBusca()} />
+            </div>
 
             <div>
                 <a href="/obras/gravar"><button className="btn btn-primary">Cadastrar</button></a>
@@ -82,7 +103,58 @@ export default function Obras() {
                     </thead>
 
                     <tbody>
-                        {listaObras.map(function (value, index) {
+                        {
+                            busca != "" && listaBusca ?
+                                listaBusca.length > 0 ?
+                                listaBusca.map(function (value, index) {
+                                    const cliente = listaClientes.find(cliente => cliente.idCli === value.idCliente);
+                                    const nomeCliente = cliente ? cliente.nomeCli : "Cliente desconhecido";
+        
+                                    return (
+                                        <tr key={index}>
+                                            <td>{value.idObra}</td>
+                                            <td>{value.endereco}</td>
+                                            <td>{value.bairro}</td>
+                                            <td>{value.cidade}</td>
+                                            <td>{value.cepObra}</td>
+                                            <td>{parseFloat(value.valorTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                            <td>{formatarData(value.dataInicio)}</td>
+                                            <td>{formatarData(value.dataTermino)}</td>
+                                            <td>
+                                                {value.contrato ? (
+                                                    <a href={value.contrato} download>{value.contrato}</a>
+                                                ) : (
+                                                    "Não possui"
+                                                )}
+                                            </td>
+                                            <td>
+                                                {value.planta ? (
+                                                    <a href={value.planta} download>{value.planta}</a>
+                                                ) : (
+                                                    "Não possui"
+                                                )}
+                                            </td>
+                                            <td>{nomeCliente}</td>
+                                            <td>
+                                                <Link className="btn btn-primary" href={`/obras/alterar/${value.idObra}`}>
+                                                    <i className="fas fa-pen"></i>
+                                                </Link>
+                                            </td>
+        
+                                            <td>
+                                                <button style={{ marginLeft: 10, marginRight: 10 }} onClick={() => excluirObra(value.idObra)} className="btn btn-danger"><i className="fas fa-trash"></i></button>
+                                            </td>
+        
+                                            <td>
+                                                <Link href={`/obras/servicos/${value.idObra}`}><button className="btn btn-success"><i className="fas fa-users"></i></button></Link>
+                                            </td>
+                                        </tr>
+                                    )}
+                                )
+                                :
+                                <div style={{margin: 20}}>Obras não encontradas.</div>
+                            :
+                            listaObras.map(function (value, index) {
                             const cliente = listaClientes.find(cliente => cliente.idCli === value.idCliente);
                             const nomeCliente = cliente ? cliente.nomeCli : "Cliente desconhecido";
 
@@ -125,8 +197,8 @@ export default function Obras() {
                                         <Link href={`/obras/servicos/${value.idObra}`}><button className="btn btn-success"><i className="fas fa-users"></i></button></Link>
                                     </td>
                                 </tr>
-                            )
-                        })}
+                            )})
+                        }
                     </tbody>
 
                 </table>

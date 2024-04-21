@@ -1,11 +1,14 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
 
 export default function Parceiros() {
     const [listaParceiros, setListaParceiros] = useState([]);
     const [listaAtuacao, setListaAtuacao] = useState([]);
+    const [busca, setBusca] = useState("");
+    const [listaBusca, setListaBusca] = useState([]);
+    const termoBusca = useRef("");
 
     function carregarParceiros() {
         httpClient.get('/parceiros/listar')
@@ -25,6 +28,18 @@ export default function Parceiros() {
         carregarAreaAtuacao();
     }, []);
 
+    function filtrarBusca() {
+
+        setBusca(termoBusca.current.value.toLowerCase());
+
+        if (busca != "" && listaParceiros) {
+
+            setListaBusca(listaParceiros.filter((parceiro) => 
+                parceiro.nomeParceiro.toLowerCase().includes(busca)
+            ));
+        }
+    }
+
     function getNomeAreaAtuacao(idAreaAtuacao) {
         for (let i = 0; i < listaAtuacao.length; i++) {
             if (listaAtuacao[i].idArea === idAreaAtuacao) {
@@ -37,6 +52,13 @@ export default function Parceiros() {
     return (
         <div>
             <h1>Parceiros</h1>
+
+            <div className="form-group">
+                <label>Buscar</label>
+                <input type="text" ref={termoBusca} placeholder="Digite o nome do parceiro..." className="form-control"
+                onChange={(e) => filtrarBusca()} />
+            </div>
+
             <a href="/parceiros/criar"><button className="btn btn-primary">Cadastrar</button></a>
 
             <div style={{marginTop: 30}} className="table-responsive">
@@ -51,33 +73,67 @@ export default function Parceiros() {
                     </thead>
 
                     <tbody>
-                        {listaParceiros.map((parceiro, index) => (
-                            <tr key={index}>
-                                <td>{parceiro.nomeParceiro}</td>
-                                <td>{parceiro.telParceiro}</td>
-                                <td>{getNomeAreaAtuacao(parceiro.idAreaAtuacao)}</td>
-                                <td>
-                                    <Link className="btn btn-primary" href={`/parceiros/alterar/${parceiro.idParceiro}`}>
-                                        <i className="fas fa-pen"></i>
-                                    </Link>
-                                    <button
-                                        style={{marginLeft: 15}}
-                                        className="btn btn-danger"
-                                        onClick={() => {
-                                            if (confirm(`Deseja excluir o parceiro ${parceiro.nomeParceiro}?`)) {
-                                                httpClient.delete(`/parceiros/excluir/${parceiro.idParceiro}`)
-                                                    .then(() => {
-                                                        alert('Parceiro excluído com sucesso!');
-                                                        carregarParceiros();
-                                                    });
-                                            }
-                                        }}
-                                    >
-                                        <i className="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                        {
+                            busca != "" && listaBusca ?
+                                listaBusca.length > 0 ?
+                                listaBusca.map((parceiro, index) => (
+                                    <tr key={index}>
+                                        <td>{parceiro.nomeParceiro}</td>
+                                        <td>{parceiro.telParceiro}</td>
+                                        <td>{getNomeAreaAtuacao(parceiro.idAreaAtuacao)}</td>
+                                        <td>
+                                            <Link className="btn btn-primary" href={`/parceiros/alterar/${parceiro.idParceiro}`}>
+                                                <i className="fas fa-pen"></i>
+                                            </Link>
+                                            <button
+                                                style={{marginLeft: 15}}
+                                                className="btn btn-danger"
+                                                onClick={() => {
+                                                    if (confirm(`Deseja excluir o parceiro ${parceiro.nomeParceiro}?`)) {
+                                                        httpClient.delete(`/parceiros/excluir/${parceiro.idParceiro}`)
+                                                            .then(() => {
+                                                                alert('Parceiro excluído com sucesso!');
+                                                                carregarParceiros();
+                                                            });
+                                                    }
+                                                }}
+                                            >
+                                                <i className="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                                :
+                                <div style={{margin: 20}}>Parceiros não encontrados.</div>
+                            :
+                            listaParceiros.map((parceiro, index) => (
+                                <tr key={index}>
+                                    <td>{parceiro.nomeParceiro}</td>
+                                    <td>{parceiro.telParceiro}</td>
+                                    <td>{getNomeAreaAtuacao(parceiro.idAreaAtuacao)}</td>
+                                    <td>
+                                        <Link className="btn btn-primary" href={`/parceiros/alterar/${parceiro.idParceiro}`}>
+                                            <i className="fas fa-pen"></i>
+                                        </Link>
+                                        <button
+                                            style={{marginLeft: 15}}
+                                            className="btn btn-danger"
+                                            onClick={() => {
+                                                if (confirm(`Deseja excluir o parceiro ${parceiro.nomeParceiro}?`)) {
+                                                    httpClient.delete(`/parceiros/excluir/${parceiro.idParceiro}`)
+                                                        .then(() => {
+                                                            alert('Parceiro excluído com sucesso!');
+                                                            carregarParceiros();
+                                                        });
+                                                }
+                                            }}
+                                        >
+                                            <i className="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        }
                     </tbody>
                 </table>
             </div>
