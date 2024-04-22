@@ -26,19 +26,35 @@ export default function FormParcelas(props) {
         return `${ano}-${mes}-${dia}`;
     };
 
+    function ajustarParcelasAoAdicionar() {
+
+        for (let i = 0; i < parcelas.length; i++) {
+            valorParcela.current[i].value = parseFloat(props.obra.valorTotal / (parcelas.length + 1)).toFixed(2);
+        }
+    }
+
+    function ajustarParcelasAoRemover() {
+
+        for (let i = 0; i < parcelas.length; i++) {
+            valorParcela.current[i].value = parseFloat(props.obra.valorTotal / (parcelas.length - 1)).toFixed(2);
+        }
+    }
+
     function adicionarCampo() {
 
         let novaParcela = {
             numParcela: parcelas.length,
             dataVencimento: "",
             dataRecebimento: "",
-            valorParcela: parseFloat(0).toFixed(2),
+            valorParcela: parseFloat(props.obra.valorTotal / (parcelas.length + 1)).toFixed(2),
             idObra: props.obra.idObra
         };
 
         setParcelas((parcelas) => [
             ...parcelas, novaParcela
         ]);
+
+        ajustarParcelasAoAdicionar();
     };
 
     function removerCampo() {
@@ -49,6 +65,8 @@ export default function FormParcelas(props) {
             setParcelas((parcelas) => 
                 parcelas.filter((parcela) => parcela != parcelaExcluir)
             );
+
+            ajustarParcelasAoRemover();
         }
     };
 
@@ -88,9 +106,22 @@ export default function FormParcelas(props) {
         });
     }
 
+    function totalCoberturaValorObra() {
+
+        let soma = parseFloat(0).toFixed(2);
+        let cobriu = false;
+
+        for (let i = 0; i < parcelas.length; i++) {
+            soma += parseFloat(valorParcela.current[i].value).toFixed(2);
+        }
+
+        cobriu = soma == props.obra.valorTotal;
+        return cobriu;
+    }
+
     function gravarParcelas() {
 
-        if (datasPreenchidas() && valoresPreenchidos()) {
+        if (datasPreenchidas() && valoresPreenchidos() && totalCoberturaValorObra()) {
 
             if (props.parcelas.length > 0) {
                 excluirParcelasDaObra();
@@ -163,7 +194,7 @@ export default function FormParcelas(props) {
                                 </div>
 
                                 <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold', marginLeft: 30}}>
-                                    <label>Valor:</label>
+                                    <label>Valor (R$):</label>
                                     <input type="number" className="form-control" defaultValue={parcela.valorParcela ? parcela.valorParcela : 0} 
                                         style={{ width: '80%' }} ref={el => valorParcela.current[index] = el}
                                     />

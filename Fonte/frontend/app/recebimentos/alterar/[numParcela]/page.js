@@ -70,7 +70,7 @@ export default function quitarParcela({params: {numParcela}}) {
             <div>
                 <h1>Marcar Parcela como Paga</h1>
 
-                <div style={{marginTop: 30, marginBottom: 30, padding: 20, display: 'inline-flex', width: '30%'}}>
+                <div style={{marginTop: 30, marginBottom: 30, display: 'inline-flex'}}>
                     <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold'}}>
                         <label>Vencimento:</label>
                         <input disabled
