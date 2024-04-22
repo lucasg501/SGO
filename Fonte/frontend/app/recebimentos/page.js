@@ -7,6 +7,7 @@ export default function Recebimentos() {
 
     const [listaAcompParcelas, setListaAcompParcelas] = useState([]);
     const [listaObras, setListaObras] = useState([]);
+    const [listaParcelasVencidas, setListaParcelasVencidas] = useState([]);
 
     function carregarAcompParcelas() {
 
@@ -29,6 +30,17 @@ export default function Recebimentos() {
             });
     }
 
+    function procurarParcelasVencidas() {
+
+        httpClient.get(`/parcelas/parcelasVencidas/`)
+        .then(r => {
+            return r.json();
+        })
+        .then(r => {
+            setListaParcelasVencidas(r);
+        });
+    }
+
     function carregarObras() {
         httpClient.get('/obras/listar')
             .then(r => r.json())
@@ -48,9 +60,16 @@ export default function Recebimentos() {
         return new Date(data).toLocaleDateString('pt-BR');
     }
 
+    function haParcelasVencidas(idObra) {
+
+        let achouParcelasVencidas = listaParcelasVencidas.find((parcela) => parcela.idObra === idObra);
+        return achouParcelasVencidas;
+    }
+
     useEffect(() => {
         carregarAcompParcelas();
         carregarObras();
+        procurarParcelasVencidas();
     }, [])
 
     return (
@@ -64,16 +83,26 @@ export default function Recebimentos() {
 
                         <div key={obra.idObra} style={{ marginBottom: 20 }}>
                             <details style={{ border: '1px solid #ccc', borderRadius: 5, padding: 10 }}>
+                                
                                 <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>
                                     <a href={`/recebimentos/gravar/${obra.idObra}`}>
                                         <button style={{marginLeft: 20, marginRight: 20}} className="btn btn-primary">Gerenciar</button>
                                     </a>
                                     Obra: {encontrarBairro(Number(obra.idObra))}
+                                    {
+                                        haParcelasVencidas(obra.idObra) ? 
+                                        <div style={{color: 'red', textAlign: 'center'}}>
+                                            Há parcela(s) vencida(s) que não foram pagas para esta obra 
+                                        </div>
+                                        :
+                                        <></>
+                                    }
                                 </summary>
+                                
 
                                 {
                                     listaAcompParcelas[obra.idObra] ?
-                                    <table className="table table-hover">
+                                    <table className="table table-hover" style={{textAlign: 'center', marginTop: 20}}>
                                         <thead>
                                             <tr>
                                                 <th>Parcela</th>
@@ -97,9 +126,9 @@ export default function Recebimentos() {
                                                             <td style={{ display: 'flex', alignContent: 'center' }}>
                                                                 {
                                                                     parcela.dataRecebimento ?
-                                                                        <button style={{ margin: 'auto' }} className="btn btn-success" disabled><i className="fas fa-check"></i></button>
-                                                                        :
-                                                                        <Link style={{ margin: 'auto' }} className="btn btn-success" href={`/recebimentos/alterar/${parcela.numParcela}`}><i className="fas fa-check"></i></Link>
+                                                                    <button style={{ margin: 'auto' }} className="btn btn-success" disabled><i className="fas fa-check"></i></button>
+                                                                    :
+                                                                    <Link style={{ margin: 'auto' }} className="btn btn-success" href={`/recebimentos/alterar/${parcela.numParcela}`}><i className="fas fa-check"></i></Link>
                                                                 }
                                                             </td>
 

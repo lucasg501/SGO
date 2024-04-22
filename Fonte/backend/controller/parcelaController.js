@@ -153,6 +153,25 @@ class ParcelaController {
             res.status(500).json({msg: ex.message});
         }
     }
+
+    async procurarParcelasVencidas(req, res) {
+
+        try {
+
+            let parcelaModel = new ParcelaModel();
+            let lista = await parcelaModel.procurarParcelasVencidas();
+            let listaJson = [];
+
+            for (let i = 0; i < lista.length; i++) {
+                listaJson.push(lista[i].toJSON());
+            }
+
+            res.status(200).json(listaJson);
+        }
+        catch(ex) {
+            res.status(500).json({msg: ex.message});
+        }
+    }
 }
 
 module.exports = ParcelaController;

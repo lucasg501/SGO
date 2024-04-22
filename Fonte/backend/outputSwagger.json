@@ -825,6 +825,20 @@
         }
       }
     },
+    "/parcelas/parcelasVencidas/": {
+      "get": {
+        "tags": [
+          "Parcelas"
+        ],
+        "summary": "Procura parcelas vencidas",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/cargos/listar": {
       "get": {
         "tags": [

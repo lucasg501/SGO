@@ -28,8 +28,10 @@ export default function CriarParcelas({params: {idObra}}) {
             return r.json();
         })
         .then(r => {
+            let listaParcelas = r.listaJson;
+            
             if (r.listaJson) {
-                setListaParcelas(r.listaJson);
+                setListaParcelas(listaParcelas.filter((parcela) => parcela.dataRecebimento == null));
             }
             else {
                 setListaParcelas([])

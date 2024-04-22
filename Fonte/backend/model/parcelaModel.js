@@ -104,12 +104,29 @@ class ParcelaModel {
 
     async excluirParcelasObra(idObra) {
 
-        let sql = "delete from tb_Parcelas where idObra = ?";
+        let sql = "delete from tb_Parcelas where idObra = ? and dataRecebimento is null";
         let valores = [idObra];
 
         let ok = await banco.ExecutaComandoNonQuery(sql, valores);
         
         return ok;
+    }
+
+    async procurarParcelasVencidas() {
+
+        let sql = "select * from tb_Parcelas where dataVencimento < curdate() and dataRecebimento is null";
+        
+        let rows = await banco.ExecutaComando(sql);
+
+        let listaRetorno = [];
+
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            listaRetorno.push(new ParcelaModel(row['numParcela'], row['dataVencimento'], row['dataRecebimento'], row['valorParcela'], 
+            row['idObra']));
+        }
+
+        return listaRetorno;
     }
 
     toJSON() {

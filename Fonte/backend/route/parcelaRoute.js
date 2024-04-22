@@ -51,4 +51,12 @@ router.delete('/excluirParcelasObra/:idObra', (req, res) => {
     ctrl.excluirParcelasObra(req, res);
 });
 
+router.get('/parcelasVencidas/', (req, res) => {
+
+    // #swagger.tags = ['Parcelas']
+    // #swagger.summary = 'Procura parcelas vencidas'
+
+    ctrl.procurarParcelasVencidas(req, res);
+});
+
 module.exports = router;
