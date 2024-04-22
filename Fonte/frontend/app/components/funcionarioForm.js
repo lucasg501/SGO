@@ -73,7 +73,9 @@ export default function FuncionarioForm(props) {
 
     function cadastrarFuncionario() {
 
-        if (!camposVazios()) {
+        let camposPreenchidos = !camposVazios();
+
+        if (camposPreenchidos) {
 
             let status = 0;
 
