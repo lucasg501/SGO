@@ -66,6 +66,12 @@ export default function Recebimentos() {
         return achouParcelasVencidas;
     }
 
+    function parcelaEstaVencida(numParcela) {
+
+        let parcelaVencida = listaParcelasVencidas.find((parcela) => parcela.numParcela === numParcela);
+        return parcelaVencida;
+    }
+
     useEffect(() => {
         carregarAcompParcelas();
         carregarObras();
@@ -120,7 +126,11 @@ export default function Recebimentos() {
                                                     return (
                                                         <tr key={index}>
                                                             <td>{index + 1}</td>
-                                                            <td>{formatarData(parcela.dataVencimento)}</td>
+                                                            <td>{parcelaEstaVencida(parcela.numParcela) ?
+                                                                <div style={{color: 'red', fontWeight: 'bold', textDecoration: 'underline'}}>
+                                                                    {formatarData(parcela.dataVencimento)}</div>
+                                                                :
+                                                                <div>{formatarData(parcela.dataVencimento)}</div>}</td>
                                                             <td>{parcela.dataRecebimento ? formatarData(parcela.dataRecebimento) : "Não foi recebida"}</td>
                                                             <td>{parcela.valorParcela}</td>
                                                             <td style={{ display: 'flex', alignContent: 'center' }}>
