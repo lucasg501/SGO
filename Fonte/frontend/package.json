@@ -16,6 +16,7 @@
     "next": "latest",
     "node": "^18.20.2",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-toastify": "^10.0.5"
   }
 }
