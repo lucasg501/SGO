@@ -7,7 +7,9 @@ import { useEffect, useState } from "react";
 export default function CriarParcelas({params: {idObra}}) {
 
     const [obra, setObra] = useState(null);
-    const [listaParcelas, setListaParcelas] = useState(null);
+    const [listaParcelas, setListaParcelas] = useState([]);
+    const [totalRecebido, setTotalRecebido] = useState(0);
+    const [qtdeParcelasPagas, setQtdeParcelasPagas] = useState(0);
 
     function carregarObra() {
 
@@ -28,13 +30,28 @@ export default function CriarParcelas({params: {idObra}}) {
             return r.json();
         })
         .then(r => {
-            let listaParcelas = r.listaJson;
-            
+
             if (r.listaJson) {
-                setListaParcelas(listaParcelas.filter((parcela) => parcela.dataRecebimento == null));
-            }
-            else {
-                setListaParcelas([])
+
+                let lista = r.listaJson;
+                let recebido = 0;
+                let qtdePaga = 0;
+
+                let listaFinal = [];
+
+                lista.map((parcela) => {
+                    if (parcela.dataRecebimento != null) {
+                        recebido += parseFloat(parcela.valorParcela);
+                        qtdePaga++;
+                    }
+                    else {
+                        listaFinal.push(parcela);
+                    }
+                });
+
+                setListaParcelas(listaFinal);
+                setTotalRecebido(recebido);
+                setQtdeParcelasPagas(qtdePaga);
             }
         })
     }
@@ -49,7 +66,7 @@ export default function CriarParcelas({params: {idObra}}) {
         <div>
             {
                 obra && listaParcelas ? 
-                <FormParcelas obra={obra} parcelas={listaParcelas}></FormParcelas>
+                <FormParcelas obra={obra} parcelas={listaParcelas} valorRecebido={totalRecebido} qtdeParcelasPagas={qtdeParcelasPagas}></FormParcelas>
                 :
                 <div>Carregando...</div>
             }

@@ -10,14 +10,6 @@ export default function FormParcelas(props) {
     const valorParcela = useRef([]);
     const dataRecebimento = useRef([]);
 
-    const [parcelas, setParcelas] = useState(props.parcelas.length > 0 ? props.parcelas : [{
-        numParcela: 0,
-        dataVencimento: "",
-        dataRecebimento: "",
-        valorParcela: parseFloat(0).toFixed(2),
-        idObra: props.obra.idObra
-    }]);
-
     const formatarData = (data) => {
         const dataObj = new Date(data);
         const ano = dataObj.getUTCFullYear();
@@ -26,27 +18,66 @@ export default function FormParcelas(props) {
         return `${ano}-${mes}-${dia}`;
     };
 
+    const [parcelas, setParcelas] = useState(props.parcelas.length > 0 ? props.parcelas : [{
+        numParcela: 0,
+        dataVencimento: formatarData(props.obra.dataInicio),
+        dataRecebimento: null,
+        valorParcela: parseFloat(props.obra.valorTotal).toFixed(2),
+        idObra: props.obra.idObra
+    }]);
+
+    const incrementarMes = (data) => {
+        const dataObj = new Date(data);
+        let ano = dataObj.getUTCFullYear();
+        let mes = ('0' + (dataObj.getUTCMonth() + 2)).slice(-2);
+        
+        if (mes > 12) {
+            mes = '01';
+            ano++;
+        }
+
+        let dia = ('0' + dataObj.getUTCDate()).slice(-2);
+        return `${ano}-${mes}-${dia}`;
+    };
+
     function ajustarParcelasAoAdicionar() {
 
         for (let i = 0; i < parcelas.length; i++) {
-            valorParcela.current[i].value = parseFloat(props.obra.valorTotal / (parcelas.length + 1)).toFixed(2);
+            if (valorParcela.current[i] && parcelas[i].dataRecebimento == null) {
+                valorParcela.current[i].value = parseFloat((props.obra.valorTotal - props.valorRecebido) / (parcelas.length + 1)).toFixed(2);
+            }
         }
     }
 
     function ajustarParcelasAoRemover() {
 
-        for (let i = 0; i < parcelas.length; i++) {
-            valorParcela.current[i].value = parseFloat(props.obra.valorTotal / (parcelas.length - 1)).toFixed(2);
+        if (props.qtdeParcelasPagas > 0) {
+            for (let i = 0; i < parcelas.length; i++) {
+                if (parcelas[i].dataRecebimento == null) {
+                    valorParcela.current[i].value = parseFloat((props.obra.valorTotal - props.valorRecebido) / (parcelas.length - props.qtdeParcelasPagas)).toFixed(2);
+                }
+            }
+        }
+        else {
+            for (let i = 0; i < parcelas.length; i++) {
+                if (parcelas[i].dataRecebimento == null) {
+                    valorParcela.current[i].value = parseFloat((props.obra.valorTotal - props.valorRecebido) / (parcelas.length - 1 - props.qtdeParcelasPagas)).toFixed(2);
+                }
+            }
         }
     }
 
     function adicionarCampo() {
 
+        let data = incrementarMes(parcelas[parcelas.length - 1].dataVencimento);
+
+        let valor = parseFloat((props.obra.valorTotal - props.valorRecebido) / (parcelas.length + 1)).toFixed(2);
+
         let novaParcela = {
             numParcela: parcelas.length,
-            dataVencimento: "",
-            dataRecebimento: "",
-            valorParcela: parseFloat(props.obra.valorTotal / (parcelas.length + 1)).toFixed(2),
+            dataVencimento: data,
+            dataRecebimento: null,
+            valorParcela: valor,
             idObra: props.obra.idObra
         };
 
@@ -59,7 +90,7 @@ export default function FormParcelas(props) {
 
     function removerCampo() {
         if (parcelas.length > 1) {
-            
+
             let parcelaExcluir = parcelas[parcelas.length - 1];
 
             setParcelas((parcelas) => 
@@ -106,22 +137,9 @@ export default function FormParcelas(props) {
         });
     }
 
-    function totalCoberturaValorObra() {
-
-        let soma = parseFloat(0).toFixed(2);
-        let cobriu = false;
-
-        for (let i = 0; i < parcelas.length; i++) {
-            soma += parseFloat(valorParcela.current[i].value).toFixed(2);
-        }
-
-        cobriu = soma == props.obra.valorTotal;
-        return cobriu;
-    }
-
     function gravarParcelas() {
 
-        if (datasPreenchidas() && valoresPreenchidos() && totalCoberturaValorObra()) {
+        if (datasPreenchidas() && valoresPreenchidos()) {
 
             if (props.parcelas.length > 0) {
                 excluirParcelasDaObra();
@@ -131,6 +149,7 @@ export default function FormParcelas(props) {
             let parcelasArray = [];
 
             for (let i = 0; i < parcelas.length; i++) {
+
                 const dataVencimentoValue = dataVencimento.current[i] ? dataVencimento.current[i].value : null;
                 const dataRecebimentoValue = dataRecebimento.current[i] ? dataRecebimento.current[i].value : null;
                 const valorParcelaValue = valorParcela.current[i] ? valorParcela.current[i].value : null;
@@ -168,13 +187,15 @@ export default function FormParcelas(props) {
             <h1>Gerenciar Parcelas da Obra</h1>
             <h2><b>Obra: {props.obra.bairro}</b></h2>
             <h2><b>Valor: R$ {parseFloat(props.obra.valorTotal).toFixed(2).replace('.', ',')}</b></h2>
+            <h2><b>Total recebido: R$ {parseFloat(props.valorRecebido).toFixed(2).replace('.', ',')}</b></h2>
 
             <div>
                 <br></br>
 
                 {
                     parcelas.map((parcela, index) => (
-                        <div key={index} className="card" style={{marginBottom: 20, width: '35%', textAlign: 'center'}}>
+                        parcela.dataRecebimento == null ?
+                        <div key={index} className="card" style={{marginBottom: 20, width: '37.5%', textAlign: 'center'}}>
                             <div className="form-group card-header">
                                 <label><b>Parcela {index + 1}</b></label>
                             </div>
@@ -189,6 +210,9 @@ export default function FormParcelas(props) {
                                         type="date"
                                         className="form-control"
                                         ref={el => dataVencimento.current[index] = el}
+                                        onChange={(e) => {
+                                            parcela.dataVencimento = e.target.value
+                                        }}
                                     />
 
                                 </div>
@@ -197,10 +221,16 @@ export default function FormParcelas(props) {
                                     <label>Valor (R$):</label>
                                     <input type="number" className="form-control" defaultValue={parcela.valorParcela ? parcela.valorParcela : 0} 
                                         style={{ width: '80%' }} ref={el => valorParcela.current[index] = el}
+                                        onChange={(e) => {
+                                            parcela.valorParcela = e.target.value;
+                                        }}
+                                        disabled
                                     />
                                 </div>
                             </div>
                         </div>
+                        :
+                        <></>
                     ))
                 }
 

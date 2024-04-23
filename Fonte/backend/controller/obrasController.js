@@ -1,66 +1,86 @@
+const { response } = require('express');
 const ObrasModel = require('../model/obraModel.js');
 
 class ObrasController {
     gravar(req,res){
-        if(Object.keys(req.body).length > 0){
-            let obrasModel = new ObrasModel();
-        
-            obrasModel.idObra = 0;
-            obrasModel.endereco = req.body.endereco;
-            obrasModel.bairro = req.body.bairro;
-            obrasModel.cidade = req.body.cidade;
-            obrasModel.valorTotal = req.body.valorTotal;
-            obrasModel.dataInicio = req.body.dataInicio;
-            obrasModel.dataTermino = req.body.dataTermino;
-            obrasModel.contrato = req.body.contrato;
-            obrasModel.planta = req.body.planta;
-            obrasModel.idCliente = req.body.idCliente;
-            obrasModel.cepObra = req.body.cepObra;
-            let ok = obrasModel.gravar();
-            if(ok){
-                res.status(200).json({msg:"Obra gravada com sucesso!"});
+
+        try {
+
+            if(Object.keys(req.body).length > 0){
+                let obrasModel = new ObrasModel();
+            
+                obrasModel.idObra = 0;
+                obrasModel.endereco = req.body.endereco;
+                obrasModel.bairro = req.body.bairro;
+                obrasModel.cidade = req.body.cidade;
+                obrasModel.valorTotal = req.body.valorTotal;
+                obrasModel.dataInicio = req.body.dataInicio;
+                obrasModel.dataTermino = req.body.dataTermino;
+                obrasModel.contrato = req.body.contrato;
+                obrasModel.planta = req.body.planta;
+                obrasModel.idCliente = req.body.idCliente;
+                obrasModel.cepObra = req.body.cepObra;
+                let ok = obrasModel.gravar();
+                if(ok){
+                    res.status(200).json({msg:"Obra gravada com sucesso!"});
+                }else{
+                    res.status(500).json({msg:"Erro ao gravar obra!"});
+                }
             }else{
-                res.status(500).json({msg:"Erro ao gravar obra!"});
+                res.status(400).json({msg:"Parâmetros inválidos!"});
             }
-        }else{
-            res.status(400).json({msg:"Parâmetros inválidos!"});
+        }
+        catch(ex) {
+            res.status(500).json({msg: ex.message});
         }
     }
 
     async alterar(req,res){
-        if(Object.keys(req.body).length > 0){
-            let obrasModel = new ObrasModel();
-        
-            obrasModel.idObra = req.body.idObra;
-            obrasModel.endereco = req.body.endereco;
-            obrasModel.bairro = req.body.bairro;
-            obrasModel.cidade = req.body.cidade;
-            obrasModel.valorTotal = req.body.valorTotal;
-            obrasModel.dataInicio = req.body.dataInicio;
-            obrasModel.dataTermino = req.body.dataTermino;
-            obrasModel.contrato = req.body.contrato;
-            obrasModel.planta = req.body.planta;
-            obrasModel.idCliente = req.body.idCliente;
-            obrasModel.cepObra = req.body.cepObra;
-            let ok = obrasModel.gravar();
-            if(ok){
-                res.status(200).json({msg:"Obra alterada com sucesso!"});
+
+        try {
+            if(Object.keys(req.body).length > 0){
+                let obrasModel = new ObrasModel();
+            
+                obrasModel.idObra = req.body.idObra;
+                obrasModel.endereco = req.body.endereco;
+                obrasModel.bairro = req.body.bairro;
+                obrasModel.cidade = req.body.cidade;
+                obrasModel.valorTotal = req.body.valorTotal;
+                obrasModel.dataInicio = req.body.dataInicio;
+                obrasModel.dataTermino = req.body.dataTermino;
+                obrasModel.contrato = req.body.contrato;
+                obrasModel.planta = req.body.planta;
+                obrasModel.idCliente = req.body.idCliente;
+                obrasModel.cepObra = req.body.cepObra;
+                let ok = obrasModel.gravar();
+                if(ok){
+                    res.status(200).json({msg:"Obra alterada com sucesso!"});
+                }else{
+                    res.status(500).json({msg:"Erro ao alterar obra!"});
+                }
             }else{
-                res.status(500).json({msg:"Erro ao alterar obra!"});
+                res.status(400).json({msg:"Parâmetros inválidos!"});
             }
-        }else{
-            res.status(400).json({msg:"Parâmetros inválidos!"});
+        }
+        catch(ex) {
+            res.status(500).json({msg: ex.message});
         }
     }
 
     async listar(req,res){
-        let obrasModel = new ObrasModel();
-        let lista = await obrasModel.listar();
-        let listaRetorno = [];
-        for (let i = 0; i < lista.length; i++) {
-            listaRetorno.push(lista[i].toJSON());
+        
+        try {
+            let obrasModel = new ObrasModel();
+            let lista = await obrasModel.listar();
+            let listaRetorno = [];
+            for (let i = 0; i < lista.length; i++) {
+                listaRetorno.push(lista[i].toJSON());
+            }
+            res.status(200).json(listaRetorno);
         }
-        res.status(200).json(listaRetorno);
+        catch(ex) {
+            res.status(500).json({msg: ex.message});
+        }
     }
 
     async excluir(req,res){
