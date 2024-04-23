@@ -2,6 +2,7 @@
 import { useRef, useState, useEffect } from "react";
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
+import InputMask from 'react-input-mask';
 
 export default function ObraForm(props) {
     const idObra = useRef(0);
@@ -184,7 +185,7 @@ export default function ObraForm(props) {
             <h1>{obra.idObra == 0 ? 'Cadastrar Obra' : 'Alterar Obra'}</h1>
 
             <div className="form-group">
-                <label>Cliente</label>
+                <label>Cliente:*</label>
                 <input
                     type="text"
                     className="form-control"
@@ -212,52 +213,52 @@ export default function ObraForm(props) {
 
             <div className="form-row">
                 <div className="form-group col-md-6">
-                    <label>Endereço</label>
+                    <label>Endereço:*</label>
                     <input type="text" className="form-control" ref={endereco} defaultValue={obra.endereco} />
                 </div>
                 <div className="form-group col-md-6">
-                    <label>Bairro</label>
+                    <label>Bairro:*</label>
                     <input type="text" className="form-control" ref={bairro} defaultValue={obra.bairro} />
                 </div>
             </div>
 
             <div className="form-row">
                 <div className="form-group col-md-6">
-                    <label>Cidade</label>
+                    <label>Cidade:*</label>
                     <input type="text" className="form-control" ref={cidade} defaultValue={obra.cidade} />
                 </div>
 
                 <div className="form-group col-md-6">
-                    <label>CEP:</label>
-                    <input type="text" className="form-control" ref={cepObra} defaultValue={obra.cepObra} />
+                    <label>CEP:*</label>
+                    <InputMask mask='99999-999' type="text" className="form-control" ref={cepObra} defaultValue={obra.cepObra} />
                 </div>
 
             </div>
 
             <div className="form-row">
                 <div className="form-group col-md-6">
-                    <label>Valor Total</label>
+                    <label>Valor Total:*</label>
                     <input type="text" className="form-control" ref={valorTotal} defaultValue={obra.valorTotal} />
                 </div>
             </div>
 
             <div className="form-group">
-                <label>Data Inicio</label>
+                <label>Data Inicio:*</label>
                 <input type="date" className="form-control" ref={dataInicio} defaultValue={obra.dataInicio} />
             </div>
 
             <div className="form-group">
-                <label>Data Prevista de Término</label>
+                <label>Data Prevista de Término:*</label>
                 <input type="date" className="form-control" ref={dataTermino} defaultValue={obra.dataTermino} />
             </div>
 
             <div className="form-group">
-                <label>Contrato</label>
+                <label>Contrato:</label>
                 <input type="file" className="form-control" ref={contrato} defaultValue={obra.contrato} />
             </div>
 
             <div className="form-group">
-                <label>Planta</label>
+                <label>Planta:</label>
                 <input type="file" className="form-control" ref={planta} defaultValue={obra.planta} />
             </div>
 
