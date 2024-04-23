@@ -52,7 +52,7 @@ class DiariaModel {
         }
     }
 
-    async listarDiariasFuncionario(idFuncionario) {
+    async obterDiariasFuncionario(idFuncionario) {
 
         let sql = "select * from tb_Diarias where idFuncionario = ?";
         let valores = [idFuncionario];
@@ -68,14 +68,25 @@ class DiariaModel {
         return listaRetorno;
     }
 
-    async excluir(idDiaria) {
+    async excluirDiariasFuncionario(idFuncionario) {
 
-        let sql = "delete from tb_Diarias where idDiaria = ?";
-        let valores = [idDiaria];
+        let sql = "delete from tb_Diarias where idFuncionario = ?";
+        let valores = [idFuncionario];
 
         let ok = await banco.ExecutaComandoNonQuery(sql, valores);
 
         return ok;
+    }
+
+    toJSON() {
+
+        return {
+            "idDiaria": this.#idDiaria,
+            "dia": this.#dia,
+            "valorDiaria": this.#valorDiaria,
+            "dataPgto": this.#dataPgto,
+            "idFuncionario": this.#idFuncionario
+        };
     }
 }
 

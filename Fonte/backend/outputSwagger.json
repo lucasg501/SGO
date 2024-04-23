@@ -852,6 +852,68 @@
           }
         }
       }
+    },
+    "/diarias/gravar": {
+      "post": {
+        "tags": [
+          "Diárias"
+        ],
+        "summary": "Grava as diárias para um funcionário",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/diarias/obterDiariasFuncionario/{idFuncionario}": {
+      "get": {
+        "tags": [
+          "Diárias"
+        ],
+        "summary": "Obtém as diárias de um funcionário",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idFuncionario",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/diarias/excluirDiariasFuncionario/{idFuncionario}": {
+      "delete": {
+        "tags": [
+          "Diárias"
+        ],
+        "summary": "Exclui as diárias um funcionário",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idFuncionario",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {

@@ -245,7 +245,7 @@ export default function FormParcelas(props) {
                 </div>
 
                 <div>
-                    <Link style={{ marginRight: 25 }} href="/recebimentos"><button className="btn btn-secondary">Voltar</button></Link>
+                    <Link style={{ marginRight: 25 }} href="/recebimentos"><button className="btn btn-secondary">Cancelar</button></Link>
                     <button className="btn btn-primary" onClick={props.parcela == null ? gravarParcelas : alterarParcela}>Gravar</button>
                 </div>
             </div>
