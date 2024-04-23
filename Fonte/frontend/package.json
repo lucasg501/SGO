@@ -17,6 +17,7 @@
     "node": "^18.20.2",
     "react": "latest",
     "react-dom": "latest",
+    "react-input-mask": "^2.0.4",
     "react-toastify": "^10.0.5"
   }
 }

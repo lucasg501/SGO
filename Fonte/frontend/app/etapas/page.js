@@ -88,7 +88,6 @@ export default function Etapas(){
                                         <th>Data Término</th>
                                         <th>Data Fim</th>
                                         <th>Descrição</th>
-                                        <th>Alterar</th>
                                         <th>Marcar como terminada</th>
                                         <th>Excluir</th>
                                     </tr>
@@ -102,15 +101,6 @@ export default function Etapas(){
                                             <td>{formatarData(etapa.dataPrevTermino)}</td>
                                             <td>{etapa.dataFim ? formatarData(etapa.dataFim) : ''}</td>
                                             <td>{etapa.descricaoEtapa}</td>
-                                            <td>
-                                                {
-                                                    etapa.dataFim ? (
-                                                        <button disabled style={{ margin: 'auto' }} className="btn btn-success"><i className="fas fa-pen"></i></button>
-                                                    ) : (
-                                                        <Link style={{ margin: 'auto' }} className="btn btn-primary" href={`/etapas/alterar/${etapa.idAndamento}`}><i className="fas fa-pen"></i></Link>
-                                                    )
-                                                }
-                                            </td>
                                             <td style={{ display: 'flex', alignContent: 'center' }}>
                                                 {etapa.dataFim ? (
                                                     <button disabled style={{ margin: 'auto' }} className="btn btn-success"><i className="fas fa-check"></i></button>
