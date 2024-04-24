@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
+import InputMask from 'react-input-mask';
 
 export default function FuncionarioForm(props) {
 
@@ -115,14 +116,14 @@ export default function FuncionarioForm(props) {
             {
                 nomeVazio ?
                 <div className="form-group">
-                    <label>*Nome:</label>
+                    <label>Nome:*</label>
                     <input type="text" defaultValue={funcionario.nomeFuncionario} className="form-control" 
                     ref={el => nomeFuncionario.current = el} style={{border: "2px solid red"}} />
                     <div style={{color: "red"}}>Por favor, digite o nome.</div>
                 </div>
                 :
                 <div className="form-group">
-                <label>*Nome:</label>
+                <label>Nome:*</label>
                     <input type="text" defaultValue={funcionario.nomeFuncionario} className="form-control" 
                     ref={el => nomeFuncionario.current = el} />
                 </div>
@@ -131,15 +132,15 @@ export default function FuncionarioForm(props) {
             {
                 telVazio ?
                 <div className="form-group">
-                    <label>*Telefone:</label>
-                    <input type="tel" defaultValue={funcionario.telFuncionario} maxLength={14} className="form-control" 
+                    <label>Telefone:*</label>
+                    <InputMask mask="(99) 99999-9999" defaultValue={funcionario.telFuncionario} className="form-control" 
                     ref={el => telFuncionario.current = el} style={{border: "2px solid red"}} />
                     <div style={{color: "red"}}>Por favor, digite o telefone.</div>
                 </div>
                 :
                 <div className="form-group">
-                    <label>*Telefone:</label>
-                    <input type="tel" defaultValue={funcionario.telFuncionario} maxLength={14} className="form-control" 
+                    <label>Telefone:*</label>
+                    <InputMask mask="(99) 99999-9999" defaultValue={funcionario.telFuncionario} className="form-control" 
                     ref={el => telFuncionario.current = el}/>
                 </div>
             }
@@ -147,7 +148,7 @@ export default function FuncionarioForm(props) {
             {
                 cargoVazio ?
                 <div className="form-group">
-                    <label>*Cargo:</label>
+                    <label>Cargo:*</label>
                     <select style={{width: 250, textAlign: 'center', border: "2px solid red"}} 
                     defaultValue={funcionario.cargoFuncionario} className="form-control" ref={el => cargoFuncionario.current = el}>
                         <option value={0}>Selecione</option>
