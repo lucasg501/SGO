@@ -59,4 +59,12 @@ router.get('/parcelasVencidas/', (req, res) => {
     ctrl.procurarParcelasVencidas(req, res);
 });
 
+router.put('/cancelarRecebimento/:numParcela', (req, res) => {
+
+    // #swagger.tags = ['Parcelas']
+    // #swagger.summary = 'Cancela o recebimento de uma parcela'
+
+    ctrl.cancelarRecebimento(req, res);
+});
+
 module.exports = router;

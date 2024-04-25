@@ -8,7 +8,6 @@ export default function FormParcelas(props) {
 
     const dataVencimento = useRef([]);
     const valorParcela = useRef([]);
-    const dataRecebimento = useRef([]);
 
     const formatarData = (data) => {
         const dataObj = new Date(data);
@@ -90,7 +89,7 @@ export default function FormParcelas(props) {
 
         for (let i = 0; i < parcelas.length; i++) {
 
-            if (dataVencimento.current[i].value == "") {
+            if (parcelas[i].dataVencimento == "") {
                 faltaData = true;
             }
         }
@@ -150,16 +149,21 @@ export default function FormParcelas(props) {
                 });
         }
         else {
-            alert("Preencha todos os dados das parcelas!");
+            alert("Preencha todas as datas das parcelas!");
         }
     }
 
     return (
         <div>
             <h1>Gerenciar Parcelas da Obra</h1>
-            <h2><b>Obra: {props.obra.bairro}</b></h2>
-            <h2><b>Valor: R$ {parseFloat(props.obra.valorTotal).toFixed(2).replace('.', ',')}</b></h2>
-            <h2><b>Total recebido: R$ {parseFloat(props.valorRecebido).toFixed(2).replace('.', ',')}</b></h2>
+            <div className="card" style={{padding: 20}}>
+                <h2><b>Obra: {props.obra.bairro}</b></h2>
+                <div><b>Data de Início:</b> {formatarData(props.obra.dataInicio)}</div>
+                <div><b>Data Prevista de Término:</b> {formatarData(props.obra.dataTermino)}</div>
+                <div><b>Valor:</b> R$ {parseFloat(props.obra.valorTotal).toFixed(2).replace('.', ',')}</div>
+                <div><b>Quantidade de parcelas pagas desta obra:</b> {props.qtdeParcelasPagas}</div>
+                <div><b>Total recebido desta obra:</b> R$ {parseFloat(props.valorRecebido).toFixed(2).replace('.', ',')}</div>
+            </div>
 
             <div>
                 <br></br>
@@ -168,7 +172,7 @@ export default function FormParcelas(props) {
                     parcelas.map((parcela, index) => (
                         <div key={index} className="card" style={{marginBottom: 20, width: '37.5%', textAlign: 'center'}}>
                             <div className="form-group card-header">
-                                <label><b>Parcela {parcela.numParcela}</b></label>
+                                <label><b>Parcela {index + 1}</b></label>
                             </div>
 
                             <div className="form-group" style={{ display: 'inline-flex', marginTop: 10, padding: 15, }}>

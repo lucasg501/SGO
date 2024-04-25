@@ -839,6 +839,30 @@
         }
       }
     },
+    "/parcelas/cancelarRecebimento/{numParcela}": {
+      "put": {
+        "tags": [
+          "Parcelas"
+        ],
+        "summary": "Cancela o recebimento de uma parcela",
+        "description": "",
+        "parameters": [
+          {
+            "name": "numParcela",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/cargos/listar": {
       "get": {
         "tags": [

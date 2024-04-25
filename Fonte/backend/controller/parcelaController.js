@@ -172,6 +172,32 @@ class ParcelaController {
             res.status(500).json({msg: ex.message});
         }
     }
+
+    async cancelarRecebimento(req, res) {
+
+        try {
+
+            if (req.params.numParcela != undefined) {
+
+                let parcelaModel = new ParcelaModel();
+                
+                let ok = await parcelaModel.cancelarRecebimento(req.params.numParcela);
+
+                if (ok) {
+                    res.status(200).json({msg: "Recebimento cancelado!"});
+                }
+                else {
+                    res.status(500).json({msg: "Erro no cancelamento deste recebimento!"});
+                }
+            }
+            else {
+                res.status(400).json({msg: "Parâmetros inválidos!"});
+            }
+        }
+        catch(ex) {
+            res.status(500).json({msg: ex.message});
+        }
+    }
 }
 
 module.exports = ParcelaController;

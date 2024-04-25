@@ -129,6 +129,16 @@ class ParcelaModel {
         return listaRetorno;
     }
 
+    async cancelarRecebimento(numParcela) {
+
+        let sql = "update tb_Parcelas set dataRecebimento = null where numParcela = ?";
+        let valores = [numParcela];
+
+        let ok = await banco.ExecutaComandoNonQuery(sql, valores);
+
+        return ok;
+    }
+
     toJSON() {
 
         return {

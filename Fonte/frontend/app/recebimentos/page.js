@@ -72,6 +72,22 @@ export default function Recebimentos() {
         return parcelaVencida;
     }
 
+    function cancelarRecebimento(numParcela) {
+
+        if (confirm("Tem certeza que deseja cancelar este recebimento?")) {
+
+            httpClient.put(`/parcelas/cancelarRecebimento/${numParcela}`)
+            .then(r => {
+                return r.json();
+            })
+            .then(r => {
+                alert(r.msg);
+
+                carregarAcompParcelas();
+            });
+        }
+    }
+
     useEffect(() => {
         carregarAcompParcelas();
         carregarObras();
@@ -116,6 +132,7 @@ export default function Recebimentos() {
                                                 <th>Data de Recebimento</th>
                                                 <th>Valor</th>
                                                 <th>Marcar como Recebida</th>
+                                                <th>Cancelar Recebimento</th>
                                             </tr>
                                         </thead>
 
@@ -133,12 +150,20 @@ export default function Recebimentos() {
                                                                 <div>{formatarData(parcela.dataVencimento)}</div>}</td>
                                                             <td>{parcela.dataRecebimento ? formatarData(parcela.dataRecebimento) : "Não foi recebida"}</td>
                                                             <td>{parcela.valorParcela}</td>
-                                                            <td style={{ display: 'flex', alignContent: 'center' }}>
+                                                            <td>
                                                                 {
                                                                     parcela.dataRecebimento ?
                                                                     <button style={{ margin: 'auto' }} className="btn btn-success" disabled><i className="fas fa-check"></i></button>
                                                                     :
                                                                     <Link style={{ margin: 'auto' }} className="btn btn-success" href={`/recebimentos/alterar/${parcela.numParcela}`}><i className="fas fa-check"></i></Link>
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    parcela.dataRecebimento ?
+                                                                    <button style={{ margin: 'auto' }} className="btn btn-danger" onClick={() => {cancelarRecebimento(parcela.numParcela)}}><i className="fas fa-ban"></i></button>
+                                                                    :
+                                                                    <button style={{ margin: 'auto' }} className="btn btn-danger" disabled><i className="fas fa-ban"></i></button>
                                                                 }
                                                             </td>
 
