@@ -9,4 +9,12 @@ router.get('/listar', (req,res) =>{
     ctrl.listar(req,res);
 });
 
+router.get('/obter/:idCargo', (req, res) => {
+
+    // #swagger.tags = ['Cargos']
+    // #swagger.summary = 'Obtém o cargo especificado'
+
+    ctrl.obter(req, res);
+})
+
 module.exports = router;

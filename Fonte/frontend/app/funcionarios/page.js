@@ -70,13 +70,14 @@ export default function funcionarios() {
             <a href="/funcionarios/criar"><button className="btn btn-primary">Cadastrar</button></a>
 
             <div style={{marginTop: 30}} className="table-responsive">
-                <table className="table table-hover">
+                <table className="table table-hover" style={{textAlign: "center"}}>
                     <thead>
                         <tr>
                             <th>Nome</th>
                             <th>Telefone</th>
                             <th>Cargo</th>
                             <th>Ações</th>
+                            <th>Gerenciar Diárias</th>
                         </tr>
                     </thead>
 
@@ -137,6 +138,11 @@ export default function funcionarios() {
                                                 }}>
                                                 <i className="fas fa-trash"></i>
                                             </button>
+                                        </td>
+                                        <td>
+                                            <Link className="btn btn-success" href={`/funcionarios/diarias/${funcionario.idFuncionario}`}>
+                                                <i className="fas fa-dollar-sign"></i>
+                                            </Link>
                                         </td>
                                     </tr>
                                 )

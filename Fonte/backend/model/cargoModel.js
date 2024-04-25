@@ -30,6 +30,21 @@ class CargoModel {
         return lista;
     }
 
+    async obter(idCargo) {
+
+        let sql = 'select * from tb_Cargo where idCargo = ?';
+        let valores = [idCargo];
+
+        let rows = await banco.ExecutaComando(sql, valores);
+
+        if (rows.length > 0) {
+
+            let row = rows[0];
+            return new CargoModel(row['idCargo'], row['nomeCargo']);
+        }
+
+        return null;
+    }
 }
 
 module.exports = CargoModel;

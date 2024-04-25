@@ -877,6 +877,30 @@
         }
       }
     },
+    "/cargos/obter/{idCargo}": {
+      "get": {
+        "tags": [
+          "Cargos"
+        ],
+        "summary": "Obtém o cargo especificado",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idCargo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/diarias/gravar": {
       "post": {
         "tags": [

@@ -55,7 +55,7 @@ class FuncionarioModel extends PessoaModel {
 
     async listar() {
 
-        let sql = "select * from tb_Funcionario";
+        let sql = "select * from tb_Funcionario order by nomeFuncionario";
 
         let rows = await banco.ExecutaComando(sql);
         let lista = [];
