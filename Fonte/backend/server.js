@@ -11,6 +11,7 @@ const servicosRota = require('./route/servicoRoute.js');
 const andamentoEtapasRota = require('./route/andamentoEtapasRoute.js');
 const parcelaRota = require('./route/parcelaRoute.js');
 const cargoRota = require('./route/cargoRoute.js');
+const diariaRota = require('./route/diariaRoute.js');
 
 const cors = require('cors');
 
@@ -30,6 +31,7 @@ app.use('/servicos', servicosRota);
 app.use('/andamentoEtapas', andamentoEtapasRota);
 app.use('/parcelas', parcelaRota);
 app.use('/cargos', cargoRota);
+app.use('/diarias', diariaRota);
 
 app.listen(porta, () => {
     console.log(`Servidor rodando em http://localhost:${porta}\n`);

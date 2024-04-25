@@ -74,7 +74,6 @@ export default function ParceiroForm(props) {
 
     useEffect(() => {
         carregarAreasAtuacao();
-        carregarObra();
     }, []);
 
     return (
