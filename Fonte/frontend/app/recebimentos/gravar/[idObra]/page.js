@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 export default function CriarParcelas({params: {idObra}}) {
 
     const [obra, setObra] = useState(null);
-    const [listaParcelas, setListaParcelas] = useState([]);
+    const [listaParcelas, setListaParcelas] = useState(null);
     const [totalRecebido, setTotalRecebido] = useState(0);
     const [qtdeParcelasPagas, setQtdeParcelasPagas] = useState(0);
 
@@ -52,6 +52,9 @@ export default function CriarParcelas({params: {idObra}}) {
                 setListaParcelas(listaFinal);
                 setTotalRecebido(recebido);
                 setQtdeParcelasPagas(qtdePaga);
+            }
+            else {
+                setListaParcelas([]);
             }
         })
     }
