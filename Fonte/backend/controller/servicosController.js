@@ -10,6 +10,7 @@ class ServicosController{
             servicosModel.valorServico = req.body.valorServico;
             servicosModel.idObra = req.body.idObra;
             servicosModel.idParceiro = req.body.idParceiro;
+            servicosModel.dataServ = req.body.dataServ;
             let ok = await servicosModel.gravar();
             if(ok){
                 res.status(200).json({msg:"Serviço gravado com sucesso!"});
@@ -30,6 +31,7 @@ class ServicosController{
             servicosModel.valorServico = req.body.valorServico;
             servicosModel.idObra = req.body.idObra;
             servicosModel.idParceiro = req.body.idParceiro;
+            servicosModel.servData = req.body.servData;
             let ok = await servicosModel.gravar();
             if(ok){
                 res.status(200).json({msg:"Serviço alterado com sucesso!"});

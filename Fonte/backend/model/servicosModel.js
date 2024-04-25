@@ -7,19 +7,22 @@ class servicosModel {
     #valorServico;
     #idObra;
     #idParceiro;
+    #dataServ;
 
     get idServico() { return this.#idServico; } set idServico(idServico) { this.#idServico = idServico; }
     get descServico() { return this.#descServico; } set descServico(descServico) { this.#descServico = descServico; }
     get valorServico() { return this.#valorServico; } set valorServico(valorServico) { this.#valorServico = valorServico; }
     get idObra() { return this.#idObra; } set idObra(idObra) { this.#idObra = idObra; }
     get idParceiro() { return this.#idParceiro; } set idParceiro(idParceiro) { this.#idParceiro = idParceiro; }
+    get dataServ() { return this.#dataServ; } set dataServ(dataServ) { this.#dataServ = dataServ; }
 
-    constructor(idServico, descServico, valorServico, idObra, idParceiro) {
+    constructor(idServico, descServico, valorServico, idObra, idParceiro, dataServ) {
         this.#idServico = idServico;
         this.#descServico = descServico;
         this.#valorServico = valorServico;
         this.#idObra = idObra;
         this.#idParceiro = idParceiro;
+        this.#dataServ = dataServ;
     }
 
     toJSON() {
@@ -28,19 +31,20 @@ class servicosModel {
             "descServico": this.#descServico,
             "valorServico": this.#valorServico,
             "idObra": this.#idObra,
-            "idParceiro": this.#idParceiro
+            "idParceiro": this.#idParceiro,
+            "dataServ": this.#dataServ
         }
     }
 
     async gravar() {
         if (this.#idServico === 0) {
-            let sql = 'insert into tb_Servicos (descricaoServico, valorServico, idObra, idParceiro) values(?, ?, ?, ?)';
-            let valores = [this.#descServico, this.#valorServico, this.#idObra, this.#idParceiro];
+            let sql = 'insert into tb_Servicos (descricaoServico, valorServico, idObra, idParceiro, dataServ) values(?, ?, ?, ?, ?)';
+            let valores = [this.#descServico, this.#valorServico, this.#idObra, this.#idParceiro, this.#dataServ];
             let ok = await banco.ExecutaComandoNonQuery(sql, valores);
             return ok;
         } else {
-            let sql = 'update tb_Servicos set descricaoServico = ?, valorServico = ?, idObra = ?, idParceiro = ? where idServico = ?';
-            let valores = [this.#descServico, this.#valorServico, this.#idObra, this.#idParceiro, this.#idServico];
+            let sql = 'update tb_Servicos set descricaoServico = ?, valorServico = ?, idObra = ?, idParceiro = ?, dataServ = ? where idServico = ?';
+            let valores = [this.#descServico, this.#valorServico, this.#idObra, this.#idParceiro, this.#dataServ, this.#idServico];
             let ok = await banco.ExecutaComandoNonQuery(sql, valores);
             return ok;
         }
@@ -51,7 +55,7 @@ class servicosModel {
         let rows = await banco.ExecutaComando(sql);
         let lista = [];
         for (let i = 0; i < rows.length; i++) {
-            lista.push(new servicosModel(rows[i]['idServico'], rows[i]['descricaoServico'], rows[i]['valorServico'], rows[i]['idObra'], rows[i]['idParceiro']));
+            lista.push(new servicosModel(rows[i]['idServico'], rows[i]['descricaoServico'], rows[i]['valorServico'], rows[i]['idObra'], rows[i]['idParceiro'], rows[i]['dataServ']));
         }
         return lista;
     }
@@ -61,7 +65,7 @@ class servicosModel {
         let valores = [idServico];
         let rows = await banco.ExecutaComando(sql, valores);
         if (rows.length > 0) {
-            let servico = new servicosModel(rows[0]['idServico'], rows[0]['descricaoServico'], rows[0]['valorServico'], rows[0]['idObra'], rows[0]['idParceiro']);
+            let servico = new servicosModel(rows[0]['idServico'], rows[0]['descricaoServico'], rows[0]['valorServico'], rows[0]['idObra'], rows[0]['idParceiro'], rows[0]['dataServ']);
             return servico;
         }
         return null;

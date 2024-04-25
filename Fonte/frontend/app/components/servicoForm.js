@@ -2,17 +2,19 @@
 import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 
-export default function ServicoForm({params: {idObra}}) {
+export default function ServicoForm({ params: {idObra} }) {
     const descricaoServico = useRef('');
     const valorServico = useRef(0);
     const idAtuacao = useRef('');
     const idParceiro = useRef('');
+    const dataServ = useRef(null);
 
     const [listaAtuacao, setListaAtuacao] = useState([]);
     const [listaParceiros, setListaParceiros] = useState([]);
     const [bairroObra, setBairroObra] = useState('');
     const [listaServicos, setListaServicos] = useState([]);
     const [listaTotalParceiros, setListaTotalParceiros] = useState([]);
+
     function listarAtuacao() {
         httpClient.get('/areaAtuacao/listar')
             .then(r => r.json())
@@ -60,7 +62,7 @@ export default function ServicoForm({params: {idObra}}) {
         map[parceiro.idParceiro] = parceiro.nomeParceiro;
         return map;
     }, {});
-    
+
     const getNomeParceiro = (idParceiro) => {
         return parceirosNomes[idParceiro] || '';
     };
@@ -75,7 +77,8 @@ export default function ServicoForm({params: {idObra}}) {
                 descServico: descricaoServico.current.value,
                 valorServico: valor,
                 idObra: idObra,
-                idParceiro: idParceiro.current.value
+                idParceiro: idParceiro.current.value,
+                dataServ: dataServ.current.value
             })
                 .then(r => {
                     status = r.status;
@@ -84,33 +87,10 @@ export default function ServicoForm({params: {idObra}}) {
                 .then(r => {
                     alert(r.msg);
                     if (status === 200) {
-                        window.location.href = '/obras';
-                    }
-                });
-        } else {
-            alert("Preencha todos os campos!");
-        }
-    }
-
-    function alterarAlocacao(){
-        const valor = parseFloat(valorServico.current.value);
-        if (idAtuacao.current.value > 0 && idParceiro.current.value > 0 && descricaoServico.current.value !== "" && valor > 0) {
-            let status = 0;
-            httpClient.put('/servicos/alterar', {
-                idServico: props.params.idServico,
-                descServico: descricaoServico.current.value,
-                valorServico: valor,
-                idObra: idObra,
-                idParceiro: idParceiro.current.value
-            })
-                .then(r => {
-                    status = r.status;
-                    return r.json();
-                })
-                .then(r => {
-                    alert(r.msg);
-                    if (status === 200) {
-                        window.location.href = '/obras';
+                        descricaoServico.current.value = "";
+                        valorServico.current.value = 0;
+                        idParceiro.current.value = 0;
+                        window.location.reload();
                     }
                 });
         } else {
@@ -161,6 +141,11 @@ export default function ServicoForm({params: {idObra}}) {
             <div className="form-group">
                 <label>Valor do Serviço</label>
                 <input type="number" className="form-control" ref={valorServico}></input>
+            </div>
+
+            <div className="form-group">
+                <label>Data do Serviço</label>
+                <input type="date" className="form-control" ref={dataServ}></input>
             </div>
 
             <button onClick={alocarParceiro} className="btn btn-primary">Alocar</button>
