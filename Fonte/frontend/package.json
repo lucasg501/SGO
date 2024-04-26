@@ -16,6 +16,7 @@
     "next": "latest",
     "node": "^18.20.2",
     "react": "latest",
+    "react-calendar": "^4.8.0",
     "react-dom": "latest",
     "react-input-mask": "^3.0.0-alpha.2",
     "react-toastify": "^10.0.5"
