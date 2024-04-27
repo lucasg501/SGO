@@ -6,34 +6,31 @@ class DiariaController {
 
         try {
 
-            if (req.body.length > 0) {
+            let diarias = req.body;
+            
+            const promises = [];
 
-                let diarias = req.body;
-                
-                const promises = [];
+            for (const diaria of diarias) {
 
-                for (const diaria of diarias) {
+                const {
+                    dia,
+                    valorDiaria,
+                    dataPgto,
+                    idFunc
+                } = diaria;
 
-                    const {
-                        dia,
-                        valorDiaria,
-                        dataPgto,
-                        idFuncionario
-                    } = diaria;
+                const novaDiaria = new DiariaModel(0, dia, valorDiaria, dataPgto, idFunc);
 
-                    const novaDiaria = new DiariaModel(0, dia, valorDiaria, dataPgto, idFuncionario);
+                promises.push(novaDiaria.gravar());
+            }
 
-                    promises.push(novaDiaria.gravar());
-                }
+            let ok = await Promise.all(promises);
 
-                let ok = await Promise.all(promises);
-
-                if (ok) {
-                    res.status(200).json({msg: "Diarias gravadas com sucesso!"});
-                }
-                else {
-                    res.status(500).json({msg: "Erro na gravação de diárias!"});
-                }
+            if (ok) {
+                res.status(200).json({msg: "Diarias gravadas com sucesso!"});
+            }
+            else {
+                res.status(500).json({msg: "Erro na gravação de diárias!"});
             }
         }
         catch(ex) {

@@ -27,7 +27,7 @@ class DiariaModel {
         this.#dia = dia;
         this.#valorDiaria = valorDiaria;
         this.#dataPgto = dataPgto;
-        this.#idFuncionario;
+        this.#idFuncionario = idFuncionario;
     }
 
     async gravar() {

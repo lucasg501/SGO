@@ -11,7 +11,7 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
     const [funcionario, setFuncionario] = useState(null);
     const [cargo, setCargo] = useState(null);
     const [dias, setDias] = useState([]);
-    const [totalDiarias, setTotalDiarias] = useState(0);
+    const [totalDiarias, setTotalDiarias] = useState("0,00");
     const valorDiarias = useRef(0);
 
     const formatarData = (data) => {
@@ -54,8 +54,48 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
             diasTransformados[index] = formatarData(diasTransformados[index]);
         })
 
+        let valorTotal = parseFloat(valorDiarias.current.value * diasSelecionados.length).toFixed(2).replace('.', ',');
+
+        setTotalDiarias(valorTotal);
         setDias(diasTransformados);
-        setTotalDiarias(valorDiarias.current.value * dias.length);
+    }
+
+    function gravarDiarias() {
+
+        if (valorDiarias.current.value > 0) {
+
+            let status = 0;
+
+            let diariasArray = [];
+
+            for (let i = 0; i < dias.length; i++) {
+                
+                const diaria = {
+                    dia: dias[i],
+                    valorDiaria: valorDiarias.current.value,
+                    dataPgto: null,
+                    idFunc: idFuncionario
+                }
+                
+                diariasArray.push(diaria);
+            }
+
+            httpClient.post("/diarias/gravar", diariasArray)
+            .then(r => {
+                status = r.status;
+                return r.json();
+            })
+            .then(r => {
+                alert(r.msg);
+
+                if (status == 200) {
+                    window.location.href='/funcionarios';
+                }
+            });
+        }
+        else {
+            alert("Informe o valor das diárias!");
+        }
     }
 
     useEffect(() => {
@@ -79,7 +119,7 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
                         <label><b>Valor da diária:</b> R$ </label>
                         <div style={{marginLeft: 10, width: 80}}>
                             <input type="number" className="form-control" ref={valorDiarias} 
-                            onChange={(e) => {setTotalDiarias(e.target.value * dias.length)}} />
+                            onChange={(e) => {setTotalDiarias(parseFloat(e.target.value * dias.length).toFixed(2).replace('.', ','))}} />
                         </div>
                     </div> { /* Será mudado, isto é para testar a interface */ }
                     
@@ -90,7 +130,7 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
                     </div>
                     
                     <div style={{margin: 20, marginTop: 40}}>
-                        <button className="btn btn-primary">Gravar</button>
+                        <button className="btn btn-primary" onClick={gravarDiarias}>Gravar</button>
                         <a href="/funcionarios" style={{marginLeft: 40}}><button className="btn btn-secondary">Voltar</button></a>
                     </div>
                 </div>
