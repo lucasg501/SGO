@@ -71,7 +71,7 @@ class DiariaController {
             if (req.params.idFuncionario != undefined) {
                 
                 let diariaModel = new DiariaModel();
-                let ok = await diariaModel.excluirDiariasFuncionario(idFuncionario);
+                let ok = await diariaModel.excluirDiariasFuncionario(req.params.idFuncionario);
 
                 if (ok) {
                     res.status(200).json({msg: "Diárias do funcionário " + idFuncionario + " excluídas com sucesso!"});
