@@ -60,7 +60,7 @@ class DiariaModel {
         let rows = await banco.ExecutaComando(sql, valores);
         let listaRetorno = [];
 
-        for (let i = 0; i < rows; i++) {
+        for (let i = 0; i < rows.length; i++) {
             let row = rows[i];
             listaRetorno.push(new DiariaModel(row['idDiaria'], row['dia'], row['valorDiaria'], row['dataPgto'], row['idFuncionario']));
         }

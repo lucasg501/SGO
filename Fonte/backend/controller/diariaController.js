@@ -53,7 +53,7 @@ class DiariaController {
                     listaJson.push(lista[i].toJSON());
                 }
 
-                res.status(200).json({listaJson});
+                res.status(200).json(listaJson);
             }
             else {
                 res.status(400).json({msg: "Parâmetros inválidos!"});

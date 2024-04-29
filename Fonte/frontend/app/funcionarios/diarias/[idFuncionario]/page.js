@@ -3,7 +3,7 @@
 import httpClient from "@/app/utils/httpClient";
 import { useEffect, useRef, useState } from "react";
 import 'react-calendar/dist/Calendar.css';
-import { Calendar } from "react-multi-date-picker";
+import { Calendar, DateObject } from "react-multi-date-picker";
 import gregorian_pt_br from "react-date-object/locales/gregorian_pt_br";
 
 export default function GerenciarDiarias({params: {idFuncionario}}) {
@@ -12,7 +12,8 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
     const [cargo, setCargo] = useState(null);
     const [dias, setDias] = useState([]);
     const [totalDiarias, setTotalDiarias] = useState("0,00");
-    const valorDiarias = useRef(0);
+    const [valorDiarias, setValorDiarias] = useState(0);
+    const [diasConvertidos, setDiasConvertidos] = useState([]);
 
     const formatarData = (data) => {
         const dataObj = new Date(data);
@@ -34,6 +35,31 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
         });
     }
 
+    function carregarDiarias() {
+
+        httpClient.get(`/diarias/obterDiariasFuncionario/${idFuncionario}`)
+        .then(r => {
+            return r.json();
+        })
+        .then(r => {
+
+            if (r.length > 0) {
+
+                let lista = [];
+
+                for (let i = 0; i < r.length; i++) {
+
+                    lista.push(formatarData(r[i].dia));
+                }
+
+                setDias(lista);
+                setValorDiarias(r[0].valorDiaria);
+                setTotalDiarias(r[0].valorDiaria * r.length);
+                converterDias(lista);
+            }
+        });
+    }
+
     function carregarCargo(idCargo) {
 
         httpClient.get(`/cargos/obter/${idCargo}`)
@@ -45,24 +71,51 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
         });
     }
 
+    function converterDias(diasFormatados) {
+
+        let lista = [];
+
+        diasFormatados.map((dia) => {
+            let data = new DateObject({date: dia, format: "YYYY-MM-DD"});
+            lista.push(data);
+        })
+
+        setDiasConvertidos(lista);
+    }
+
     function mudarDias(diasSelecionados) {
 
         let diasTransformados = [];
 
         diasSelecionados.map((dia, index) => {
-            diasTransformados.push(new Date(dia.year, dia.month, dia.day));
+            diasTransformados.push(new Date(dia.year, dia.month - 1, dia.day));
             diasTransformados[index] = formatarData(diasTransformados[index]);
         })
 
-        let valorTotal = parseFloat(valorDiarias.current.value * diasSelecionados.length).toFixed(2).replace('.', ',');
+        let valorTotal = parseFloat(valorDiarias * diasSelecionados.length).toFixed(2).replace('.', ',');
 
         setTotalDiarias(valorTotal);
         setDias(diasTransformados);
     }
 
+    function excluirDiariasDoFuncionario() {
+
+        httpClient.delete(`/diarias/excluirDiariasFuncionario/${idFuncionario}`)
+        .then(r => {
+            return r.json();
+        })
+        .then(r => {
+            console.log(r.msg);
+        });
+    }
+
     function gravarDiarias() {
 
-        if (valorDiarias.current.value > 0) {
+        if (valorDiarias > 0) {
+
+            if (diasConvertidos.length > 0) {
+                excluirDiariasDoFuncionario();
+            }
 
             let status = 0;
 
@@ -72,7 +125,7 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
                 
                 const diaria = {
                     dia: dias[i],
-                    valorDiaria: valorDiarias.current.value,
+                    valorDiaria: valorDiarias,
                     dataPgto: null,
                     idFunc: idFuncionario
                 }
@@ -100,6 +153,7 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
 
     useEffect(() => {
         carregarFuncionario();
+        carregarDiarias();
     }, [])
 
     return (
@@ -118,15 +172,21 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
                     <div className="input-group" style={{margin: 20, display: "flex", alignItems: "center"}}>
                         <label><b>Valor da diária:</b> R$ </label>
                         <div style={{marginLeft: 10, width: 80}}>
-                            <input type="number" className="form-control" ref={valorDiarias} 
-                            onChange={(e) => {setTotalDiarias(parseFloat(e.target.value * dias.length).toFixed(2).replace('.', ','))}} />
+                            <input type="number" className="form-control" 
+                            defaultValue={valorDiarias}
+                            onChange={(e) => {
+                                setValorDiarias(e.target.value);
+                                setTotalDiarias(parseFloat(e.target.value * dias.length).toFixed(2).replace('.', ','));
+                            }} />
                         </div>
                     </div> { /* Será mudado, isto é para testar a interface */ }
                     
                     <div style={{marginLeft: 20}}><b>Total: R$ {totalDiarias}</b></div>
                     
                     <div style={{margin: 20}}>
-                        <Calendar locale={gregorian_pt_br} multiple onChange={(selecao) => mudarDias(selecao)} />
+                        <Calendar locale={gregorian_pt_br} multiple 
+                        value={diasConvertidos}
+                        onChange={(selecao) => mudarDias(selecao)} />
                     </div>
                     
                     <div style={{margin: 20, marginTop: 40}}>
