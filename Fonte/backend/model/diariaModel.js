@@ -54,7 +54,7 @@ class DiariaModel {
 
     async obterDiariasFuncionario(idFuncionario) {
 
-        let sql = "select * from tb_Diarias where idFuncionario = ?";
+        let sql = "select * from tb_Diarias where idFuncionario = ? order by dia";
         let valores = [idFuncionario];
 
         let rows = await banco.ExecutaComando(sql, valores);

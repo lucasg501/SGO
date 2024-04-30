@@ -81,6 +81,11 @@ export default function RootLayout({ children }) {
                             <span>Recebimentos</span>
                         </Link>
                     </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" href="/funcionarios/diarias">
+                            <span>Diarias</span>
+                        </Link>
+                    </li>
 
                 </ul>
 
