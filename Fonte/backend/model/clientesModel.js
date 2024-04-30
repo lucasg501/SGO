@@ -67,7 +67,7 @@ class clientesModel{
     }
 
     async listar(){
-        let sql = 'select * from tb_Clientes';
+        let sql = 'select * from tb_Clientes order by nomeCli';
         let rows = await banco.ExecutaComando(sql);
         let lista = [];
         for(let i=0; i<rows.length; i++){
