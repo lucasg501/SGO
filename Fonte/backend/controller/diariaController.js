@@ -38,6 +38,63 @@ class DiariaController {
         }
     }
 
+    async obter(req, res) {
+
+        try {
+
+            if (req.params.idDiaria != undefined) {
+
+                let diariaModel = new DiariaModel();
+                diariaModel = await diariaModel.obter(req.params.idDiaria);
+
+                if (diariaModel != null) {
+                    res.status(200).json(diariaModel.toJSON());
+                }
+                else {
+                    res.status(404).json({msg: "Diária não encontrada!"});
+                }
+            }
+            else {
+                res.status(400).json({msg: "Parâmetros inválidos!"});
+            }
+        }
+        catch(ex) {
+            res.status(500).json({msg: ex.message});
+        }
+    }
+
+    async alterar(req, res) {
+
+        try {
+
+            if (Object.keys(req.body).length > 0) {
+
+                let diariaModel = new DiariaModel();
+
+                diariaModel.idDiaria = req.body.idDiaria;
+                diariaModel.dia = req.body.dia;
+                diariaModel.valorDiaria = req.body.valorDiaria;
+                diariaModel.dataPgto = req.body.dataPgto;
+                diariaModel.idFuncionario = req.body.idFuncionario;
+
+                let ok = await diariaModel.gravar();
+
+                if (ok) {
+                    res.status(200).json({msg: "Diária marcada como paga com sucesso!"});
+                }
+                else {
+                    res.status(500).json({msg: "Erro ao marcar pagamento da diária!"});
+                }
+            }
+            else {
+                res.status(400).json({msg: "Parâmetros inválidos!"});
+            }
+        }
+        catch(ex) {
+            res.status(500).json({msg: ex.message});
+        }
+    }
+
     async obterDiariasFuncionario(req, res) {
 
         try {

@@ -12,6 +12,22 @@ router.post('/gravar', (req, res) => {
     ctrl.gravar(req, res);
 });
 
+router.put('/alterar', (req, res) => {
+
+    // #swagger.tags = ['Diárias']
+    // #swagger.summary = 'Altera uma diária'
+
+    ctrl.alterar(req, res);
+});
+
+router.get('/obter/:idDiaria', (req, res) => {
+    
+    // #swagger.tags = ['Diárias']
+    // #swagger.summary = 'Obtém uma diária'
+
+    ctrl.obter(req, res);
+});
+
 router.get('/obterDiariasFuncionario/:idFuncionario', (req, res) => {
 
     // #swagger.tags = ['Diárias']

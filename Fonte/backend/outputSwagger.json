@@ -915,6 +915,44 @@
         }
       }
     },
+    "/diarias/alterar": {
+      "put": {
+        "tags": [
+          "Diárias"
+        ],
+        "summary": "Altera uma diária",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/diarias/obter/{idDiaria}": {
+      "get": {
+        "tags": [
+          "Diárias"
+        ],
+        "summary": "Obtém uma diária",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idDiaria",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/diarias/obterDiariasFuncionario/{idFuncionario}": {
       "get": {
         "tags": [

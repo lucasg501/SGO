@@ -52,6 +52,21 @@ class DiariaModel {
         }
     }
 
+    async obter(idDiaria) {
+
+        let sql = "select * from tb_Diarias where idDiaria = ?";
+        let valores = [idDiaria];
+
+        let rows = await banco.ExecutaComando(sql, valores);
+        
+        if (rows.length > 0) {
+            let row = rows[0];
+            return new DiariaModel(row['idDiaria'], row['dia'], row['valorDiaria'], row['dataPgto'], row['idFuncionario']);
+        }
+
+        return null;
+    }
+
     async obterDiariasFuncionario(idFuncionario) {
 
         let sql = "select * from tb_Diarias where idFuncionario = ? order by dia";

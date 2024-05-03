@@ -1,6 +1,7 @@
 'use client'
 
 import httpClient from "@/app/utils/httpClient";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 export default function Diarias() {
@@ -74,6 +75,9 @@ export default function Diarias() {
                                 <th>Dia</th>
                                 <th>Valor</th>
                                 <th>Data de Pagamento</th>
+                                <th>Marcar como Paga</th>
+                                <th>Cancelar Pagamento</th>
+                                <th>Dispensar</th>
                             </thead>
 
                             <tbody>
@@ -87,9 +91,30 @@ export default function Diarias() {
                                                 <td>
                                                     {
                                                         diaria.dataPgto ?
-                                                        diaria.dataPgto
+                                                        formatarData(diaria.dataPgto)
                                                         :
                                                         "Não foi paga"
+                                                    }
+                                                </td>
+                                                <td>
+                                                    {
+                                                        diaria.dataPgto ?
+                                                        <button disabled className="btn btn-success" href={`diarias/alterar/${diaria.idDiaria}`}>
+                                                            <i className="fas fa-check"></i>
+                                                        </button>
+                                                        :
+                                                        <Link className="btn btn-success" href={`diarias/alterar/${diaria.idDiaria}`}>
+                                                            <i className="fas fa-check"></i>
+                                                        </Link>
+                                                    }
+                                                    
+                                                </td>
+                                                <td>
+                                                    {
+                                                        diaria.dataPgto ?
+                                                        <button className="btn btn-danger"><i className="fas fa-ban"></i></button>
+                                                        :
+                                                        <button className="btn btn-danger" disabled><i className="fas fa-ban"></i></button>
                                                     }
                                                 </td>
                                             </tr>
