@@ -44,4 +44,12 @@ router.delete('/excluirDiariasFuncionario/:idFuncionario', (req, res) => {
     ctrl.excluirDiariasFuncionario(req, res);
 });
 
+router.put('/cancelarPagamento/:idDiaria', (req, res) => {
+
+    // #swagger.tags = ['Diárias']
+    // #swagger.summary = 'Cancela o pagamento de uma diária'
+
+    ctrl.cancelarPagamento(req, res);
+});
+
 module.exports = router;

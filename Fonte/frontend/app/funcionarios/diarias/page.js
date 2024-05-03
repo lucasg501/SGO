@@ -46,6 +46,22 @@ export default function Diarias() {
         }
     }
 
+    function cancelarPagamento(idDiaria) {
+
+        if (confirm("Tem certeza que deseja cancelar este pagamento?")) {
+
+            httpClient.put(`/diarias/cancelarPagamento/${idDiaria}`)
+            .then(r => {
+                return r.json();
+            })
+            .then(r => {
+                alert(r.msg);
+
+                carregarDiarias(idFuncDiarias.current.value);
+            });
+        }
+    }
+
     useEffect(() => {
         carregarListaFuncionarios();
     }, []);
@@ -112,7 +128,7 @@ export default function Diarias() {
                                                 <td>
                                                     {
                                                         diaria.dataPgto ?
-                                                        <button className="btn btn-danger"><i className="fas fa-ban"></i></button>
+                                                        <button className="btn btn-danger" onClick={() => cancelarPagamento(diaria.idDiaria)}><i className="fas fa-ban"></i></button>
                                                         :
                                                         <button className="btn btn-danger" disabled><i className="fas fa-ban"></i></button>
                                                     }

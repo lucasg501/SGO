@@ -1000,6 +1000,30 @@
           }
         }
       }
+    },
+    "/diarias/cancelarPagamento/{idDiaria}": {
+      "put": {
+        "tags": [
+          "Diárias"
+        ],
+        "summary": "Cancela o pagamento de uma diária",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idDiaria",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {

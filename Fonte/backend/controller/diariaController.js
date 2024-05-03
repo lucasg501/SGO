@@ -145,6 +145,32 @@ class DiariaController {
             res.status(500).json({msg: ex.message});
         }
     }
+
+    async cancelarPagamento(req, res) {
+
+        try {
+
+            if (req.params.idDiaria != undefined) {
+
+                let diariaModel = new DiariaModel();
+                
+                let ok = await diariaModel.cancelarPagamento(req.params.idDiaria);
+
+                if (ok) {
+                    res.status(200).json({msg: "Pagamento cancelado!"});
+                }
+                else {
+                    res.status(500).json({msg: "Erro no cancelamento deste pagamento!"});
+                }
+            }
+            else {
+                res.status(400).json({msg: "Parâmetros inválidos!"});
+            }
+        }
+        catch(ex) {
+            res.status(500).json({msg: ex.message});
+        }
+    }
 }
 
 module.exports = DiariaController;

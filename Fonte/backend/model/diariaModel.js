@@ -93,6 +93,16 @@ class DiariaModel {
         return ok;
     }
 
+    async cancelarPagamento(idDiaria) {
+
+        let sql = "update tb_Diarias set dataPgto = null where idDiaria = ?";
+        let valores = [idDiaria];
+
+        let ok = await banco.ExecutaComandoNonQuery(sql, valores);
+
+        return ok;
+    }
+
     toJSON() {
 
         return {
