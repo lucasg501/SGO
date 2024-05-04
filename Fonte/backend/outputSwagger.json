@@ -1024,6 +1024,30 @@
           }
         }
       }
+    },
+    "/diarias/dispensarDiaria/{idDiaria}": {
+      "delete": {
+        "tags": [
+          "Diárias"
+        ],
+        "summary": "Exclui uma diária",
+        "description": "",
+        "parameters": [
+          {
+            "name": "idDiaria",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {

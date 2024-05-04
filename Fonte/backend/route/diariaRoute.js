@@ -52,4 +52,12 @@ router.put('/cancelarPagamento/:idDiaria', (req, res) => {
     ctrl.cancelarPagamento(req, res);
 });
 
+router.delete('/dispensarDiaria/:idDiaria', (req, res) => {
+
+    // #swagger.tags = ['Diárias']
+    // #swagger.summary = 'Exclui uma diária'
+
+    ctrl.dispensarDiaria(req, res);
+})
+
 module.exports = router;

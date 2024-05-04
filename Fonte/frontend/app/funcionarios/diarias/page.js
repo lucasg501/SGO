@@ -62,6 +62,22 @@ export default function Diarias() {
         }
     }
 
+    function dispensarDiaria(idDiaria) {
+
+        if (confirm("Esta ação irá apagar completamente a diária selecionada. Deseja continuar?")) {
+
+            httpClient.delete(`/diarias/dispensarDiaria/${idDiaria}`)
+            .then(r => {
+                return r.json();
+            })
+            .then(r => {
+                alert(r.msg);
+
+                carregarDiarias(idFuncDiarias.current.value);
+            });
+        }
+    }
+
     useEffect(() => {
         carregarListaFuncionarios();
     }, []);
@@ -128,9 +144,23 @@ export default function Diarias() {
                                                 <td>
                                                     {
                                                         diaria.dataPgto ?
-                                                        <button className="btn btn-danger" onClick={() => cancelarPagamento(diaria.idDiaria)}><i className="fas fa-ban"></i></button>
+                                                        <button className="btn btn-danger" onClick={() => cancelarPagamento(diaria.idDiaria)}>
+                                                            <i className="fas fa-ban"></i>
+                                                        </button>
                                                         :
                                                         <button className="btn btn-danger" disabled><i className="fas fa-ban"></i></button>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    {
+                                                        diaria.dataPgto ?
+                                                        <button className="btn btn-primary" onClick={() => dispensarDiaria(diaria.idDiaria)}>
+                                                            <i className="fas fa-trash"></i>
+                                                        </button>
+                                                        :
+                                                        <button className="btn btn-primary" disabled>
+                                                            <i className="fas fa-trash"></i>
+                                                        </button>
                                                     }
                                                 </td>
                                             </tr>
