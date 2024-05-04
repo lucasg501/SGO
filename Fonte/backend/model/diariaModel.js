@@ -85,7 +85,7 @@ class DiariaModel {
 
     async excluirDiariasFuncionario(idFuncionario) {
 
-        let sql = "delete from tb_Diarias where idFuncionario = ?";
+        let sql = "delete from tb_Diarias where idFuncionario = ? and dataPgto is null";
         let valores = [idFuncionario];
 
         let ok = await banco.ExecutaComandoNonQuery(sql, valores);

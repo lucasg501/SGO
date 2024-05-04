@@ -49,12 +49,14 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
 
                 for (let i = 0; i < r.length; i++) {
 
-                    lista.push(formatarData(r[i].dia));
+                    if (!r[i].dataPgto){
+                        lista.push(formatarData(r[i].dia));
+                    }
                 }
 
                 setDias(lista);
                 setValorDiarias(r[0].valorDiaria);
-                setTotalDiarias(r[0].valorDiaria * r.length);
+                setTotalDiarias(r[0].valorDiaria * lista.length);
                 converterDias(lista);
             }
         });
@@ -169,6 +171,12 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
                         <div><b>Cargo:</b> {cargo.nomeCargo}</div>
                     </div>
 
+                    <div style={{margin: 20}}>
+                        <b>ATENÇÃO: Aqui apenas aparecem dias que não foram pagos. Caso queira visualizar todos os dias, 
+                        consulte o relatório de diárias.
+                        </b>
+                    </div>
+
                     <div className="input-group" style={{margin: 20, display: "flex", alignItems: "center"}}>
                         <label><b>Valor da diária:</b> R$ </label>
                         <div style={{marginLeft: 10, width: 80}}>
@@ -179,7 +187,7 @@ export default function GerenciarDiarias({params: {idFuncionario}}) {
                                 setTotalDiarias(parseFloat(e.target.value * dias.length).toFixed(2).replace('.', ','));
                             }} />
                         </div>
-                    </div> { /* Será mudado, isto é para testar a interface */ }
+                    </div>
                     
                     <div style={{marginLeft: 20}}><b>Total: R$ {totalDiarias}</b></div>
                     
