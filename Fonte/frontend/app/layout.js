@@ -28,6 +28,27 @@ const nunito = Nunito({ subsets: ['latin'] });
 
 export default function RootLayout({ children }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [mostrarNavFuncionarios, setMostrarNavFuncionarios] = useState(false);
+    const [mostrarNavObras, setMostrarNavObras] = useState(false);
+    const [mostrarNavParceiros, setMostrarNavParceiros] = useState(false);
+
+    function controleMostrar(item) {
+
+        switch(item) {
+
+            case "funcionarios":
+                setMostrarNavFuncionarios(!mostrarNavFuncionarios);
+                break;
+            
+            case "obras":
+                setMostrarNavObras(!mostrarNavObras);
+                break;
+            
+            case "parceiros":
+                setMostrarNavParceiros(!mostrarNavParceiros);
+                break;
+        }
+    }
 
     return (
         <html lang="en">
@@ -46,7 +67,7 @@ export default function RootLayout({ children }) {
 
                             <hr className="sidebar-divider my-0" />
 
-                            <li className="nav-item active">
+                            <li className="nav-item">
                                 <Link className="nav-link" href="/">
                                     <i className="fas fa-home"></i>
                                     <span>Início</span>
@@ -60,44 +81,64 @@ export default function RootLayout({ children }) {
                             </div>
 
                             <li className="nav-item">
-                                <Link className="nav-link" href="/clientes">
-                                    <span>Clientes</span>
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" href="/funcionarios">
+                                <Link href="#" className={mostrarNavFuncionarios ? "nav-link" : "nav-link collapsed"} 
+                                onClick={() => controleMostrar("funcionarios")} data-toggle="collapse">
+                                    <i class="fas fa-fw fa-hard-hat"></i>
                                     <span>Funcionários</span>
                                 </Link>
+                                <div id="collapseTwo" className={mostrarNavFuncionarios ? "collapse show" : "collapse"} data-parent="#accordionSidebar">
+                                    <div className="bg-white py-2 collapse-inner rounded">
+                                        <h6 className="collapse-header">Opções:</h6>
+                                        <Link className="collapse-item" href="/funcionarios">
+                                            Gerenciar Funcionários
+                                        </Link>
+                                        <Link className="collapse-item" href="/funcionarios/diarias">
+                                            Relatório de Diárias
+                                        </Link>
+                                    </div>
+                                </div>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" href="/parceiros">
-                                    <span>Parceiros</span>
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" href="/obras">
+                                <Link href="#" className={mostrarNavObras ? "nav-link" : "nav-link collapsed"} onClick={() => 
+                                controleMostrar("obras")} data-toggle="collapse">
+                                    <i class="fas fa-fw fa-hammer"></i>
                                     <span>Obras</span>
                                 </Link>
+                                <div id="collapseTwo" className={mostrarNavObras ? "collapse show" : "collapse"} data-parent="#accordionSidebar">
+                                    <div className="bg-white py-2 collapse-inner rounded">
+                                        <h6 className="collapse-header">Opções:</h6>
+                                        <Link className="collapse-item" href="/obras">
+                                            Gerenciar Obras
+                                        </Link>
+                                        <Link className="collapse-item" href="/clientes">
+                                            Gerenciar Clientes
+                                        </Link>
+                                        <Link className="collapse-item" href="/etapas">
+                                            Gerenciar Etapas
+                                        </Link>
+                                        <Link className="collapse-item" href="/recebimentos">
+                                            Recebimento de Parcelas
+                                        </Link>
+                                    </div>
+                                </div>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" href="/obras/servicos">
-                                    <span>Serviços</span>
+                                <Link href="#" className={mostrarNavParceiros ? "nav-link" : "nav-link collapsed"} 
+                                onClick={() => controleMostrar("parceiros")} data-toggle="collapse">
+                                    <i class="fas fa-fw fa-handshake"></i>
+                                    <span>Parceiros</span>
                                 </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" href="/etapas">
-                                    <span>Etapas</span>
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" href="/recebimentos">
-                                    <span>Recebimentos</span>
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="nav-link" href="/funcionarios/diarias">
-                                    <span>Diarias</span>
-                                </Link>
+                                <div id="collapseTwo" className={mostrarNavParceiros ? "collapse show" : "collapse"} data-parent="#accordionSidebar">
+                                    <div className="bg-white py-2 collapse-inner rounded">
+                                        <h6 className="collapse-header">Opções:</h6>
+                                        <Link className="collapse-item" href="/parceiros">
+                                            Gerenciar Parceiros
+                                        </Link>
+                                        <Link className="collapse-item" href="/obras/servicos">
+                                            Gerenciar Serviços
+                                        </Link>
+                                    </div>
+                                </div>
                             </li>
 
                         </ul>
