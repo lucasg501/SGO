@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
+import Modal from 'react-modal';
 
 export default function FormEtapas(props) {
 
@@ -12,6 +13,14 @@ export default function FormEtapas(props) {
     const dataFim = useRef([]);
     const descricaoEtapa = useRef([]);
     const [listaAndamentoEtapas, setListaAndamentoEtapas] = useState([]);
+
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    function openModal() {
+        setModalIsOpen(true);
+    }
+    function closeModal() {
+        setModalIsOpen(false);
+    }
 
     const formatarData = (data) => {
         const dataObj = new Date(data);
@@ -85,34 +94,34 @@ export default function FormEtapas(props) {
         let status = 0;
         let etapasArray = [];
         let hasInvalidDate = false;
-    
+
         const idObraValue = idObra.current[0] ? idObra.current[0].value : null;
-    
+
         for (let i = 0; i < etapas.idEtapa + 1; i++) {
             const idEtapaValue = idEtapa.current[i] ? idEtapa.current[i].value : null;
             const dataPrevInicioValue = dataPrevInicio.current[i] ? dataPrevInicio.current[i].value : null;
             const dataPrevTerminoValue = dataPrevTermino.current[i] ? dataPrevTermino.current[i].value : null;
             const dataFimValue = dataFim.current[i] ? (dataFim.current[i].value !== '' ? dataFim.current[i].value : null) : null;
             const descricaoEtapaValue = descricaoEtapa.current[i] ? descricaoEtapa.current[i].value : null;
-    
+
             if (dataPrevInicioValue && dataPrevTerminoValue && dataPrevInicioValue >= dataPrevTerminoValue) {
                 alert("A data de previsão de início deve ser menor do que a data de previsão de término.");
                 hasInvalidDate = true;
                 break;
             }
-    
+
             if (dataFimValue < dataPrevInicioValue) {
                 alert("A data de fim não pode ser anterior à data de início.");
                 hasInvalidDate = true;
                 break;
             }
-    
+
             if (dataFimValue < dataPrevTerminoValue) {
                 alert("A data de fim não pode ser anterior à data de previsão de término.");
                 hasInvalidDate = true;
                 break;
             }
-    
+
             const etapa = {
                 idObra: idObraValue,
                 idEtapa: idEtapaValue,
@@ -123,7 +132,7 @@ export default function FormEtapas(props) {
             };
             etapasArray.push(etapa);
         }
-    
+
         if (!hasInvalidDate) {
             httpClient.post('/andamentoEtapas/gravar', etapasArray)
                 .then(r => {
@@ -138,7 +147,7 @@ export default function FormEtapas(props) {
                 });
         }
     }
-    
+
 
     function alterarEtapas() {
         let status = 0;
@@ -166,7 +175,10 @@ export default function FormEtapas(props) {
 
     return (
         <div>
-            <h1>{props.etapa != null ? 'Marcar Como Finalizada' : 'Gerenciar Etapas da Obra'}</h1>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <h1>{props.etapa != null ? 'Marcar Como Finalizada' : 'Gerenciar Etapas da Obra'}</h1>
+                <button onClick={openModal} className="btn btn-info" style={{ marginLeft: 10 }}>Ajuda</button>
+            </div>
 
             <div>
                 <div className="from-group">
@@ -268,6 +280,67 @@ export default function FormEtapas(props) {
                     }
                 </tbody>
             </table>
+
+            <Modal style={{ content: { width: '500px', margin: 'auto' } }} isOpen={modalIsOpen} onRequestClose={closeModal}>
+                <div className="form-group">
+                    <label>Obra:</label>
+                    <select disabled style={{ width: '100%' }} className="form-control">
+                        <option value={0} disabled selected>Clique e selecione a obra desejada</option>
+                    </select>
+                </div>
+                <br />
+
+                {[...Array(etapas.idEtapa + 1)].map((_, index) => (
+                    <div key={index}>
+                        <div className="form-group">
+                            <label>Etapa {index + 1}:</label>
+                            <select style={{ width: '100%' }} className="form-control" disabled>
+                                <option value={0} disabled selected>Clique e selecione a etapa desejada</option>
+                            </select>
+                        </div>
+
+                        <div className="form-group" style={{ display: 'inline-block', width: '50%', marginRight: '10px' }}>
+                            <label>Início:</label>
+                            <input style={{ width: '100%' }} type="date" className="form-control" placeholder="Início" disabled />
+                        </div>
+                        <div className="form-group" style={{ display: 'inline-block', width: '50%' }}>
+                            <label>Previsão de Término:</label>
+                            <input style={{ width: '100%' }} type="date" className="form-control" placeholder="Previsão de Término" disabled />
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                            <div className="form-group" style={{ width: '50%', marginRight: '10px' }}>
+                                <label style={{ display: 'block' }}>Fim:</label>
+                                <input style={{ width: '100%' }} type="date" className="form-control" placeholder="Fim" disabled />
+                            </div>
+                            <div className="form-group" style={{ width: '50%' }}>
+                                <label style={{ display: 'block' }}>Descrição:</label>
+                                <textarea style={{ width: '100%', minHeight: '100px' }} className="form-control" placeholder="Breve descrição de como será a etapa" disabled />
+                            </div>
+                        </div>
+                    </div>
+                ))}
+
+                <div style={{ display: 'flex', alignItems: 'baseline' }} className="form-group">
+                    <div style={{ display: 'inline-block' }}>
+                        <button disabled className="btn btn-danger">-</button>
+                        
+                    </div>
+                    <p>Clique para diminuir a quantidade de campos para cadastro de etapas</p>
+                    <div style={{ display: 'inline-block', marginLeft: 15 }}>
+                        <button disabled className="btn btn-primary" >+</button>
+                    </div>
+                    <p>Clique para aumentar a quantidade de campos para cadastro de etapas</p>
+                </div>
+
+                <br /><br />
+                <h3>Etapas já cadastradas</h3>
+                <table>
+                    <p>Etapas já cadastradas apareceram aqui</p>
+                </table>
+                <button className="btn btn-danger" onClick={closeModal}>Fechar</button>
+            </Modal>
+
 
         </div>
     );

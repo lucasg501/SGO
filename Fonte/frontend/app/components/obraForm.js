@@ -3,6 +3,7 @@ import { useRef, useState, useEffect } from "react";
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
 import InputMask from 'react-input-mask';
+import Modal from 'react-modal';
 
 export default function ObraForm(props) {
     const idObra = useRef(0);
@@ -37,6 +38,14 @@ export default function ObraForm(props) {
         cepObra: ''
     });
 
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    function openModal() {
+        setModalIsOpen(true);
+    }
+    function closeModal() {
+        setModalIsOpen(false);
+    }
+
     useEffect(() => {
         if (props.obra) {
             // Preencher os campos do formulário com os dados da obra recebida por props
@@ -45,18 +54,18 @@ export default function ObraForm(props) {
             bairro.current.value = props.obra.bairro;
             cidade.current.value = props.obra.cidade;
             valorTotal.current.value = props.obra.valorTotal;
-            
+
             // Remover horário das datas
             dataInicio.current.value = props.obra.dataInicio.split('T')[0];
             dataTermino.current.value = props.obra.dataTermino.split('T')[0];
-            
+
             contrato.current.value = props.obra.contrato;
             planta.current.value = props.obra.planta;
             cepObra.current.value = props.obra.cepObra;
             setClienteInput(getClienteName(props.obra.idCliente, listaClientes)); // Definir o nome do cliente
         }
     }, [props.obra]);
-    
+
 
     function handleClienteInputChange(event) {
         setClienteInput(event.target.value);
@@ -129,7 +138,7 @@ export default function ObraForm(props) {
                     bairro: bairro.current.value,
                     cidade: cidade.current.value,
                     valorTotal: valorTotal.current.value,
-                    dataInicio: inicio.toISOString().split('T')[0], 
+                    dataInicio: inicio.toISOString().split('T')[0],
                     dataTermino: termino.toISOString().split('T')[0],
                     contrato: contrato.current.value,
                     planta: planta.current.value,
@@ -182,7 +191,11 @@ export default function ObraForm(props) {
 
     return (
         <div>
-            <h1>{obra.idObra == 0 ? 'Cadastrar Obra' : 'Alterar Obra'}</h1>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <h1>{obra.idObra == 0 ? 'Cadastrar Obra' : 'Alterar Obra'}</h1>
+                <button onClick={openModal} className="btn btn-info" style={{ marginLeft: 10 }}>Ajuda</button>
+            </div>
+
 
             <div className="form-group">
                 <label>Cliente:*</label>
@@ -266,6 +279,71 @@ export default function ObraForm(props) {
                 <button className="btn btn-primary" onClick={obra.idObra == 0 ? cadastrarObra : alterarObra}>{obra.idObra == 0 ? 'Cadastrar' : 'Alterar'}</button>
                 <Link style={{ marginLeft: 15 }} href={'/obras'}><button className="btn btn-secondary">Voltar</button></Link>
             </div>
+
+            <Modal style={{ content: { width: '500px', margin: 'auto' } }} isOpen={modalIsOpen} onRequestClose={closeModal}>
+                <div className="form-group">
+                    <label>Cliente:*</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Digite o nome do cliente e selecione quando aparecer"
+                        disabled
+                    />
+                    {/* Seção de sugestões de clientes omitida para brevidade */}
+                </div>
+
+                <div className="form-row">
+                    <div className="form-group col-md-6">
+                        <label>Endereço:*</label>
+                        <input type="text" className="form-control" placeholder="Endereço do cliente" disabled />
+                    </div>
+                    <div className="form-group col-md-6">
+                        <label>Bairro:*</label>
+                        <input type="text" className="form-control" placeholder="Bairro do cliente" disabled />
+                    </div>
+                </div>
+
+                <div className="form-row">
+                    <div className="form-group col-md-6">
+                        <label>Cidade:*</label>
+                        <input type="text" className="form-control" placeholder="Cidade do cliente" disabled />
+                    </div>
+
+                    <div className="form-group col-md-6">
+                        <label>CEP:*</label>
+                        <InputMask mask='99999-999' type="text" className="form-control" placeholder="99999-999" disabled />
+                    </div>
+                </div>
+
+                <div className="form-row">
+                    <div className="form-group col-md-6">
+                        <label>Valor Total:*</label>
+                        <input type="text" className="form-control" placeholder="Valor Total da Obra" disabled />
+                    </div>
+                </div>
+
+                <div className="form-group">
+                    <label>Data Inicio:*</label>
+                    <input type="date" className="form-control"  disabled />
+                </div>
+
+                <div className="form-group">
+                    <label>Data Prevista de Término:*</label>
+                    <input type="date" className="form-control"  disabled />
+                </div>
+
+                <div className="form-group">
+                    <label>Contrato:</label>
+                    <input type="file" className="form-control" disabled />
+                </div>
+
+                <div className="form-group">
+                    <label>Planta:</label>
+                    <input type="file" className="form-control" disabled />
+                </div>
+
+                <button className="btn btn-danger" onClick={closeModal}>Fechar</button>
+            </Modal>
 
         </div>
     )

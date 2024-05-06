@@ -1,5 +1,5 @@
 'use client'
-
+import Modal from 'react-modal';
 import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
@@ -8,6 +8,14 @@ export default function FormParcelas(props) {
 
     const dataVencimento = useRef([]);
     const valorParcela = useRef([]);
+
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    function openModal() {
+        setModalIsOpen(true);
+    }
+    function closeModal() {
+        setModalIsOpen(false);
+    }
 
     const formatarData = (data) => {
         const dataObj = new Date(data);
@@ -29,7 +37,7 @@ export default function FormParcelas(props) {
         const dataObj = new Date(data);
         let ano = dataObj.getUTCFullYear();
         let mes = ('0' + (dataObj.getUTCMonth() + 2)).slice(-2);
-        
+
         if (mes > 12) {
             mes = '01';
             ano++;
@@ -77,7 +85,7 @@ export default function FormParcelas(props) {
             let valor = parseFloat((props.obra.valorTotal - props.valorRecebido) / (parcelas.length - 1)).toFixed(2);
             ajustarValoresParcelas(valor);
 
-            setParcelas((listaParcelas) => 
+            setParcelas((listaParcelas) =>
                 listaParcelas.filter(parcela => parcela.numParcela != parcelaExcluir.numParcela)
             );
         }
@@ -100,12 +108,12 @@ export default function FormParcelas(props) {
     function excluirParcelasDaObra() {
 
         httpClient.delete(`/parcelas/excluirParcelasObra/${props.obra.idObra}`)
-        .then(r => {
-            return r.json();
-        })
-        .then(r => {
-            console.log(r.msg);
-        });
+            .then(r => {
+                return r.json();
+            })
+            .then(r => {
+                console.log(r.msg);
+            });
     }
 
     function gravarParcelas() {
@@ -155,8 +163,12 @@ export default function FormParcelas(props) {
 
     return (
         <div>
-            <h1>Gerenciar Parcelas da Obra</h1>
-            <div className="card" style={{padding: 20}}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <h1>Gerenciar Parcelas da Obra</h1>
+                <button onClick={openModal} className="btn btn-info" style={{ marginLeft: 10 }}>Ajuda</button>
+            </div>
+
+            <div className="card" style={{ padding: 20 }}>
                 <h2><b>Obra: {props.obra.bairro}</b></h2>
                 <div><b>Data de Início:</b> {formatarData(props.obra.dataInicio)}</div>
                 <div><b>Data Prevista de Término:</b> {formatarData(props.obra.dataTermino)}</div>
@@ -170,14 +182,14 @@ export default function FormParcelas(props) {
 
                 {
                     parcelas.map((parcela, index) => (
-                        <div key={index} className="card" style={{marginBottom: 20, width: '37.5%', textAlign: 'center'}}>
+                        <div key={index} className="card" style={{ marginBottom: 20, width: '37.5%', textAlign: 'center' }}>
                             <div className="form-group card-header">
                                 <label><b>Parcela {index + 1}</b></label>
                             </div>
 
                             <div className="form-group" style={{ display: 'inline-flex', marginTop: 10, padding: 15, }}>
 
-                                <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold'}}>
+                                <div className="form-group" style={{ textAlign: 'start', fontWeight: 'bold' }}>
                                     <label>Vencimento:</label>
                                     <input
                                         defaultValue={parcela.dataVencimento ? formatarData(parcela.dataVencimento) : ''}
@@ -192,9 +204,9 @@ export default function FormParcelas(props) {
 
                                 </div>
 
-                                <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold', marginLeft: 30}}>
+                                <div className="form-group" style={{ textAlign: 'start', fontWeight: 'bold', marginLeft: 30 }}>
                                     <label>Valor (R$):</label>
-                                    <input type="number" className="form-control" defaultValue={parcela.valorParcela ? parcela.valorParcela : 0} 
+                                    <input type="number" className="form-control" defaultValue={parcela.valorParcela ? parcela.valorParcela : 0}
                                         style={{ width: '80%' }} ref={el => valorParcela.current[parcela.numParcela] = el}
                                         onChange={(e) => {
                                             parcela.valorParcela = e.target.value;
@@ -222,6 +234,54 @@ export default function FormParcelas(props) {
                     <button className="btn btn-primary" onClick={props.parcela == null ? gravarParcelas : alterarParcela}>Gravar</button>
                 </div>
             </div>
+
+            <Modal style={{ content: { width: '500px', margin: 'auto', height: '500px' } }} isOpen={modalIsOpen} onRequestClose={closeModal}>
+                <div className="card" style={{ marginBottom: '20px', width: '100%', textAlign: 'center' }}>
+                    <div className="form-group card-header">
+                        <label><b>Parcela 1</b></label>
+                    </div>
+
+                    <div className="form-group" style={{ display: 'inline-flex', marginTop: '10px', padding: '15px' }}>
+                        <div className="form-group" style={{ textAlign: 'start', fontWeight: 'bold', width: '50%' }}>
+                            <label>Vencimento:</label>
+                            <input
+                                style={{ width: '100%' }}
+                                type="date"
+                                className="form-control"
+                                placeholder="Vencimento"
+                                disabled
+                            />
+                        </div>
+
+                        <div className="form-group" style={{ textAlign: 'start', fontWeight: 'bold', width: '50%', marginLeft: '30px' }}>
+                            <label>Valor (R$):</label>
+                            <input
+                                type="number"
+                                className="form-control"
+                                style={{ width: '100%' }}
+                                placeholder="Valor (R$)"
+                                disabled
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'baseline' }} className="form-group">
+                    <div style={{ display: 'inline-block' }}>
+                        <button disabled className="btn btn-danger">-</button>
+                        
+                    </div>
+                    <p>Clique para diminuir a quantidade de campos</p>
+                    <div style={{ display: 'inline-block', marginLeft: 15 }}>
+                        <button disabled className="btn btn-primary" >+</button>
+                    </div>
+                    <p>Clique para aumentar a quantidade de campos</p>
+                </div>
+
+                <button className="btn btn-danger" onClick={closeModal}>Fechar</button>
+            </Modal>
+
+
         </div>
     );
 }
