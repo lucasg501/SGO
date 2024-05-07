@@ -111,11 +111,11 @@ export default function AdminLayout({ children }) {
                 :
                 <></>
             }
-            <div className="card" style={{padding: 20, marginTop: 20, marginBottom: 20}}>
-                <div>
-                    <h1>Obras em andamento:</h1>
+            <div className="card shadow">
+                <div className="card-header">
+                    <span className="font-weight-bold text-primary align-middle" style={{fontSize: 20}}>Obras em andamento</span>
                 </div>
-                <div>
+                <div className="card-body">
                     {Object.keys(listaAcompEtapas).map(idObra => {
                         const obrasFiltradas = listaAcompEtapas[idObra].filter(etapa => etapa.dataFim === '' || etapa.dataFim === null);
 
@@ -161,10 +161,12 @@ export default function AdminLayout({ children }) {
 
             {/*-----------------------------------------------------------------------------------------------------------------------*/}
 
-            <div className="card" style={{padding: 20, marginTop: 20, marginBottom: 20}}>
+            <div className="card shadow" style={{marginTop: 20, marginBottom: 20}}>
                 <div style={{ width: '100%' }}>
-                    <h1>Etapas perto de expirar:</h1>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-around' }}>
+                    <div className="card-header">
+                        <span className="font-weight-bold text-primary align-middle" style={{fontSize: 20}}>Etapas perto de expirar</span>
+                    </div>
+                    <div className="card-body">
                         {Object.keys(listaAcompEtapas).map(idObra => {
                             const etapasFiltradas = listaAcompEtapas[idObra].filter(etapa => {
                                 const tresDiasDepois = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // Hoje + 3 dias

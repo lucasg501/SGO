@@ -83,7 +83,7 @@ export default function RootLayout({ children }) {
                             <li className="nav-item">
                                 <Link href="#" className={mostrarNavFuncionarios ? "nav-link" : "nav-link collapsed"} 
                                 onClick={() => controleMostrar("funcionarios")} data-toggle="collapse">
-                                    <i class="fas fa-fw fa-hard-hat"></i>
+                                    <i className="fas fa-fw fa-hard-hat"></i>
                                     <span>Funcionários</span>
                                 </Link>
                                 <div id="collapseTwo" className={mostrarNavFuncionarios ? "collapse show" : "collapse"} data-parent="#accordionSidebar">
@@ -101,7 +101,7 @@ export default function RootLayout({ children }) {
                             <li className="nav-item">
                                 <Link href="#" className={mostrarNavObras ? "nav-link" : "nav-link collapsed"} onClick={() => 
                                 controleMostrar("obras")} data-toggle="collapse">
-                                    <i class="fas fa-fw fa-hammer"></i>
+                                    <i className="fas fa-fw fa-hammer"></i>
                                     <span>Obras</span>
                                 </Link>
                                 <div id="collapseTwo" className={mostrarNavObras ? "collapse show" : "collapse"} data-parent="#accordionSidebar">
@@ -125,7 +125,7 @@ export default function RootLayout({ children }) {
                             <li className="nav-item">
                                 <Link href="#" className={mostrarNavParceiros ? "nav-link" : "nav-link collapsed"} 
                                 onClick={() => controleMostrar("parceiros")} data-toggle="collapse">
-                                    <i class="fas fa-fw fa-handshake"></i>
+                                    <i className="fas fa-fw fa-handshake"></i>
                                     <span>Parceiros</span>
                                 </Link>
                                 <div id="collapseTwo" className={mostrarNavParceiros ? "collapse show" : "collapse"} data-parent="#accordionSidebar">

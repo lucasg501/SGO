@@ -105,52 +105,69 @@ export default function ClienteForm(props) {
                 <h1>{cliente.idCli === 0 ? 'Cadastrar Novo Cliente' : 'Alterar Cliente'}</h1>
                 <button onClick={openModal} className="btn btn-info" style={{ marginLeft: 10 }}>Ajuda</button>
             </div>
-            <div className="form-group">
-                <label>Nome:*</label>
-                <input type="text" defaultValue={cliente.nomeCli} className="form-control" ref={nomeCli} />
+
+            <div style={{marginTop: 30}}>
+                <div className="form-group">
+                    <label>Nome:*</label>
+                    <input type="text" defaultValue={cliente.nomeCli} className="form-control" ref={nomeCli} />
+                </div>
+
+                <div style={{display: 'inline-flex'}}>
+                    <div className="form-group">
+                        <label>Telefone:*</label>
+                        <InputMask mask="(99) 99999-9999" defaultValue={cliente.telCli} className="form-control" ref={telCli} 
+                        style={{width: 400, marginRight: 40}} />
+                    </div>
+
+                    <div className="form-group">
+                        <label>E-mail:*</label>
+                        <input type="email" defaultValue={cliente.emailCli} className="form-control" ref={emailCli} 
+                        style={{width: 400}} />
+                    </div>
+                </div>
+
+                <div style={{display: 'inline-flex'}}>
+                    <div className="form-group">
+                        <label>RG:*</label>
+                        <InputMask mask='99.999.999-9' type="text" defaultValue={cliente.rgCli} className="form-control" ref={rgCli} 
+                        style={{width: 400, marginRight: 40}} />
+                    </div>
+
+                    <div className="form-group">
+                        <label>CPF:*</label>
+                        <InputMask mask="999.999.999-99" defaultValue={cliente.cpfCli} className="form-control" ref={cpfCli} 
+                        style={{width: 400}} />
+                    </div>
+                </div>
+
+                <div style={{display: 'inline-flex'}}>
+                    <div className="form-group">
+                        <label>Endereço:*</label>
+                        <input type="text" defaultValue={cliente.enderecoCli} className="form-control" ref={enderecoCli} 
+                        style={{width: 200, marginRight: 30}} />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Bairro:*</label>
+                        <input type="text" defaultValue={cliente.bairroCli} className="form-control" ref={bairroCli} 
+                        style={{width: 150, marginRight: 30}} />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Cidade:*</label>
+                        <input type="text" defaultValue={cliente.cidadeCli} className="form-control" ref={cidadeCli} 
+                        style={{width: 200, marginRight: 30}} />
+                    </div>
+                    
+                    <div className="form-group">
+                        <label>CEP:*</label>
+                        <InputMask mask="99999-999" defaultValue={cliente.cepCli} className="form-control" ref={cepCli} 
+                        style={{width: 200}} />
+                    </div>
+                </div>
             </div>
 
-            <div className="form-group">
-                <label>Telefone:*</label>
-                <InputMask mask="(99) 99999-9999" defaultValue={cliente.telCli} className="form-control" ref={telCli} />
-            </div>
-
-            <div className="form-group">
-                <label>E-mail:*</label>
-                <input type="email" defaultValue={cliente.emailCli} className="form-control" ref={emailCli} />
-            </div>
-
-            <div className="form-group">
-                <label>RG:*</label>
-                <InputMask mask='99.999.999-9' type="text" defaultValue={cliente.rgCli} className="form-control" ref={rgCli} />
-            </div>
-
-            <div className="form-group">
-                <label>CPF:*</label>
-                <InputMask mask="999.999.999-99" defaultValue={cliente.cpfCli} className="form-control" ref={cpfCli} />
-            </div>
-
-            <div className="form-group">
-                <label>Endereço:*</label>
-                <input type="text" defaultValue={cliente.enderecoCli} className="form-control" ref={enderecoCli} />
-            </div>
-
-            <div className="form-group">
-                <label>Bairro:*</label>
-                <input type="text" defaultValue={cliente.bairroCli} className="form-control" ref={bairroCli} />
-            </div>
-
-            <div className="form-group">
-                <label>Cidade:*</label>
-                <input type="text" defaultValue={cliente.cidadeCli} className="form-control" ref={cidadeCli} />
-            </div>
-
-            <div className="form-group">
-                <label>CEP:*</label>
-                <InputMask mask="99999-999" defaultValue={cliente.cepCli} className="form-control" ref={cepCli} />
-            </div>
-
-            <div>
+            <div style={{marginTop: 30}}>
                 <button onClick={cliente.idCli !== 0 ? alterarCliente : cadastrarCliente} className="btn btn-primary">{cliente.idCli !== 0 ? 'Alterar' : 'Cadastrar'}</button>
                 <a href="/clientes"><button style={{ marginLeft: 50 }} className="btn btn-danger">Cancelar</button></a>
             </div>

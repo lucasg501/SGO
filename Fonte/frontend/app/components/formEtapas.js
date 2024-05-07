@@ -183,7 +183,7 @@ export default function FormEtapas(props) {
             <div>
                 <div className="from-group">
                     <label>Obra:</label>
-                    <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: '10%', textAlign: 'center' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
+                    <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: 200, textAlign: 'center' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
 
                         <option value={0}>Selecione</option>
                         {listaObras.map(function (value, index) {
@@ -203,7 +203,7 @@ export default function FormEtapas(props) {
                     <div key={index}>
                         <div className="form-group">
                             <label>Etapa {index + 1}:</label>
-                            <select defaultValue={props.etapa ? props.etapa.idEtapa : 0} ref={el => idEtapa.current[index] = el} style={{ width: '10%', textAlign: 'center' }} className="form-control" disabled={props.etapa != null}>
+                            <select defaultValue={props.etapa ? props.etapa.idEtapa : 0} ref={el => idEtapa.current[index] = el} style={{ width: 200, textAlign: 'center' }} className="form-control" disabled={props.etapa != null}>
                                 <option value={0}>Selecione</option>
                                 {listaEtapas.map(function (value, index) {
                                     const isSelected = props.etapa && value.idEtapa === props.etapa.idEtapa;
@@ -218,17 +218,17 @@ export default function FormEtapas(props) {
                             </select>
                         </div>
 
-                        <div className="form-group" style={{ display: 'inline-block', width: '15%', marginRight: '10px' }}>
+                        <div className="form-group" style={{ display: 'inline-block', width: '17.5%', marginRight: '10px' }}>
                             <label>Início:</label>
                             <input disabled={props.etapa != null} defaultValue={props.etapa ? formatarData(props.etapa.dataPrevInicio) : ''} ref={el => dataPrevInicio.current[index] = el} style={{ width: '80%' }} type="date" className="form-control" placeholder="Início" />
                         </div>
-                        <div className="form-group" style={{ display: 'inline-block', width: '25%' }}>
+                        <div className="form-group" style={{ display: 'inline-block', width: '35%' }}>
                             <label>Previsão de Término:</label>
                             <input disabled={props.etapa != null} defaultValue={props.etapa ? formatarData(props.etapa.dataPrevTermino) : ''} ref={el => dataPrevTermino.current[index] = el} style={{ width: '40%' }} type="date" className="form-control" placeholder="Previsão de Término" />
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'baseline' }}>
-                            <div className="form-group" style={{ width: '15%', marginRight: '10px' }}>
+                            <div className="form-group" style={{ width: '17.5%', marginRight: '10px' }}>
                                 <label style={{ display: 'block' }}>Fim:</label>
                                 <input ref={el => dataFim.current[index] = el} style={{ width: '80%' }} type="date" className="form-control" placeholder="Fim" />
                             </div>
