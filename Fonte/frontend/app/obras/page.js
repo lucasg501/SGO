@@ -98,12 +98,16 @@ export default function Obras() {
             <h1>Obras</h1>
 
             <div className="card shadow">
-                <div className="card-header">
+                <div style={{display: 'flex', justifyContent: 'space-between'}} className="card-header">
+                    <div style={{display: 'flex', alignItems: 'center'}}>
                     <Link href="/obras/gravar"><button className="btn btn-primary">Cadastrar</button></Link>
+                    </div>
 
+                    <div className="form-group" style={{marginTop: 15}}>
+                    <label>Filtrar por:</label>
                     <select 
                         className="form-select" 
-                        style={{width: 200, float: 'right', marginRight: "70%"}}
+                        style={{width: 200, }}
                         value={filtroTerminada} // Define o valor do dropdown como o estado atual de filtroTerminada
                         onChange={(e) => {
                             setFiltroTerminada(e.target.value);
@@ -114,6 +118,7 @@ export default function Obras() {
                         <option value={'S'}>Terminadas</option>
                         <option value={'N'}>Em andamento</option>
                     </select>
+                    </div>
                 </div>
 
                 <div className="card-body">
