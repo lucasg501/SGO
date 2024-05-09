@@ -203,7 +203,7 @@ export default function ServicoForm({ params: { idObra } }) {
                         <tr key={index}>
                             <td>{getNomeParceiro(value.idParceiro)}</td>
                             <td>{value.descServico}</td>
-                            <td>{value.valorServico}</td>
+                            <td>R$ {value.valorServico.toFixed(2)}</td>
                             <td>{value.dataServ == null ? 'N/A' : new Date(value.dataServ).toLocaleDateString()}</td>
                             <td>
                                 <button style={{backgroundColor:'red'}} className="btn btn-danger" onClick={() => {

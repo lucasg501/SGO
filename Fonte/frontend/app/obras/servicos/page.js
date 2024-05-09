@@ -95,11 +95,10 @@ export default function Servicos() {
                     <table className="table table-hover">
                         <thead>
                             <tr>
-                                <th>Nº</th>
+                                <th>Parceiro</th>
                                 <th>Descrição</th>
                                 <th>Valor</th>
                                 <th>Obra</th>
-                                <th>Parceiro</th>
                                 <th>Área de Atuação</th>
                                 <th>Data</th>
                                 <th>Alterar</th>
@@ -111,11 +110,10 @@ export default function Servicos() {
                                 .filter(servico => !idParceiroFiltrado || servico.idParceiro === parseInt(idParceiroFiltrado))
                                 .map((value, index) => (
                                     <tr key={index}>
-                                        <td>{value.idServico}</td>
-                                        <td>{value.descServico}</td>
-                                        <td>{value.valorServico.toFixed(2)}</td>
-                                        <td>{obterBairroObra(value.idObra)}</td>
                                         <td>{obterNomeParceiro(value.idParceiro)}</td>
+                                        <td>{value.descServico}</td>
+                                        <td>R$ {value.valorServico.toFixed(2)}</td>
+                                        <td>{obterBairroObra(value.idObra)}</td>
                                         <td>{obterAreaAtuacao(value.idParceiro)}</td>
                                         <td>{value.dataServ == null ? 'N/A' : new Date(value.dataServ).toLocaleDateString()}</td>
                                         <td>
