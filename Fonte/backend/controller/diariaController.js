@@ -6,31 +6,42 @@ class DiariaController {
 
         try {
 
-            let diarias = req.body;
-            
-            const promises = [];
+            if (req.body.length > 0) {
 
-            for (const diaria of diarias) {
+                let idFuncionarioExclusao = req.body[0].idFunc;
 
-                const {
-                    dia,
-                    valorDiaria,
-                    dataPgto,
-                    idFunc
-                } = diaria;
+                let diariaModel = new DiariaModel();
+                await diariaModel.excluirDiariasFuncionario(idFuncionarioExclusao);
 
-                const novaDiaria = new DiariaModel(0, dia, valorDiaria, dataPgto, idFunc);
+                let diarias = req.body;
+                
+                const promises = [];
 
-                promises.push(novaDiaria.gravar());
-            }
+                for (const diaria of diarias) {
 
-            let ok = await Promise.all(promises);
+                    const {
+                        dia,
+                        valorDiaria,
+                        dataPgto,
+                        idFunc
+                    } = diaria;
 
-            if (ok) {
-                res.status(200).json({msg: "Diarias gravadas com sucesso!"});
+                    const novaDiaria = new DiariaModel(0, dia, valorDiaria, dataPgto, idFunc);
+
+                    promises.push(novaDiaria.gravar());
+                }
+
+                let ok = await Promise.all(promises);
+
+                if (ok) {
+                    res.status(200).json({msg: "Diarias gravadas com sucesso!"});
+                }
+                else {
+                    res.status(500).json({msg: "Erro na gravação de diárias!"});
+                }
             }
             else {
-                res.status(500).json({msg: "Erro na gravação de diárias!"});
+                res.status(500).json({msg: "Não foi possível iniciar a gravação: Erro na exclusão das diárias!"});
             }
         }
         catch(ex) {

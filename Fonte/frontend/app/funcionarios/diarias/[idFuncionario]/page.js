@@ -108,24 +108,9 @@ export default function GerenciarDiarias({ params: { idFuncionario } }) {
         setDias(diasTransformados);
     }
 
-    function excluirDiariasDoFuncionario() {
-
-        httpClient.delete(`/diarias/excluirDiariasFuncionario/${idFuncionario}`)
-            .then(r => {
-                return r.json();
-            })
-            .then(r => {
-                console.log(r.msg);
-            });
-    }
-
     function gravarDiarias() {
 
         if (valorDiarias > 0) {
-
-            if (diasConvertidos.length > 0) {
-                excluirDiariasDoFuncionario();
-            }
 
             let status = 0;
 

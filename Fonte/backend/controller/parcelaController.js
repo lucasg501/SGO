@@ -40,7 +40,7 @@ class ParcelaController {
                     }
                 }
                 else {
-                    res.status(500).json({msg})
+                    res.status(500).json({msg: "Não foi possível iniciar a gravação: Erro na exclusão das parcelas!"});
                 }
             }
             else {
