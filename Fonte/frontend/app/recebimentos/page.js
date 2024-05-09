@@ -149,7 +149,7 @@ export default function Recebimentos() {
                                                                 :
                                                                 <div>{formatarData(parcela.dataVencimento)}</div>}</td>
                                                             <td>{parcela.dataRecebimento ? formatarData(parcela.dataRecebimento) : "Não foi recebida"}</td>
-                                                            <td>{parcela.valorParcela}</td>
+                                                            <td>R$ {parseFloat(parcela.valorParcela).toFixed(2)}</td>
                                                             <td>
                                                                 {
                                                                     parcela.dataRecebimento ?

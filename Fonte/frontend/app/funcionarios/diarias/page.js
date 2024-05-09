@@ -10,13 +10,9 @@ export default function Diarias() {
     const [listaFuncionarios, setListaFuncionarios] = useState([]);
     const idFuncDiarias = useRef(0);
 
-    const formatarData = (data) => {
-        const dataObj = new Date(data);
-        const ano = dataObj.getUTCFullYear();
-        const mes = ('0' + (dataObj.getUTCMonth() + 1)).slice(-2);
-        const dia = ('0' + dataObj.getUTCDate()).slice(-2);
-        return `${ano}-${mes}-${dia}`;
-    };
+    function formatarData(data) {
+        return new Date(data).toLocaleDateString('pt-BR');
+    }
 
     function carregarListaFuncionarios() {
 
@@ -62,22 +58,6 @@ export default function Diarias() {
         }
     }
 
-    function dispensarDiaria(idDiaria) {
-
-        if (confirm("Esta ação irá apagar completamente a diária selecionada. Deseja continuar?")) {
-
-            httpClient.delete(`/diarias/dispensarDiaria/${idDiaria}`)
-            .then(r => {
-                return r.json();
-            })
-            .then(r => {
-                alert(r.msg);
-
-                carregarDiarias(idFuncDiarias.current.value);
-            });
-        }
-    }
-
     useEffect(() => {
         carregarListaFuncionarios();
     }, []);
@@ -109,7 +89,6 @@ export default function Diarias() {
                                 <th>Data de Pagamento</th>
                                 <th>Marcar como Paga</th>
                                 <th>Cancelar Pagamento</th>
-                                <th>Dispensar</th>
                             </thead>
 
                             <tbody>
@@ -149,18 +128,6 @@ export default function Diarias() {
                                                         </button>
                                                         :
                                                         <button className="btn btn-danger" disabled><i className="fas fa-ban"></i></button>
-                                                    }
-                                                </td>
-                                                <td>
-                                                    {
-                                                        diaria.dataPgto ?
-                                                        <button className="btn btn-primary" onClick={() => dispensarDiaria(diaria.idDiaria)}>
-                                                            <i className="fas fa-trash"></i>
-                                                        </button>
-                                                        :
-                                                        <button className="btn btn-primary" disabled>
-                                                            <i className="fas fa-trash"></i>
-                                                        </button>
                                                     }
                                                 </td>
                                             </tr>

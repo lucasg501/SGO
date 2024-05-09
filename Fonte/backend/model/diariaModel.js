@@ -103,16 +103,6 @@ class DiariaModel {
         return ok;
     }
 
-    async dispensarDiaria(idDiaria) {
-
-        let sql = "delete from tb_Diarias where idDiaria = ?";
-        let valores = [idDiaria];
-
-        let ok = await banco.ExecutaComandoNonQuery(sql, valores);
-
-        return ok;
-    }
-
     toJSON() {
 
         return {

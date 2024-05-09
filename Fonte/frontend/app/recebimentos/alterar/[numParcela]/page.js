@@ -6,6 +6,14 @@ import { useEffect, useRef, useState } from "react";
 
 export default function quitarParcela({params: {numParcela}}) {
 
+    const formatarData = (data) => {
+        const dataObj = new Date(data);
+        const ano = dataObj.getUTCFullYear();
+        const mes = ('0' + (dataObj.getUTCMonth() + 1)).slice(-2);
+        const dia = ('0' + dataObj.getUTCDate()).slice(-2);
+        return `${ano}-${mes}-${dia}`;
+    };
+
     const [parcela, setParcela] = useState(null);
     const dataRecebimento = useRef("");
 
@@ -18,14 +26,6 @@ export default function quitarParcela({params: {numParcela}}) {
             setParcela(r);
         })
     }
-
-    const formatarData = (data) => {
-        const dataObj = new Date(data);
-        const ano = dataObj.getUTCFullYear();
-        const mes = ('0' + (dataObj.getUTCMonth() + 1)).slice(-2);
-        const dia = ('0' + dataObj.getUTCDate()).slice(-2);
-        return `${ano}-${mes}-${dia}`;
-    };
 
     function alterarParcela() {
 
@@ -88,6 +88,7 @@ export default function quitarParcela({params: {numParcela}}) {
                             type="date"
                             className="form-control"
                             ref={dataRecebimento}
+                            defaultValue={formatarData(new Date())}
                         />
 
                     </div>
