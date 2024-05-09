@@ -16,6 +16,7 @@ export default function ObraForm(props) {
     const contrato = useRef('');
     const planta = useRef('');
     const cepObra = useRef('');
+    const terminada = useRef('N');
     const idCliente = useRef(props.obra ? props.obra.idCliente : 0); // Inicialize idCliente com o valor da obra, se existir
     const [clienteInput, setClienteInput] = useState('');
     const [selectedCliente, setSelectedCliente] = useState(null);
@@ -137,7 +138,8 @@ export default function ObraForm(props) {
                     contrato: contrato.current.value,
                     planta: planta.current.value,
                     idCliente: idCliente.current,
-                    cepObra: cepObra.current.value
+                    cepObra: cepObra.current.value,
+                    terminada: terminada.current.checked ? 'S' : 'N'
                 })
                     .then(r => {
                         status = r.status;
@@ -189,6 +191,7 @@ export default function ObraForm(props) {
                         planta: planta.current.value,
                         idCliente: idCliente.current,
                         cepObra: cepObra.current.value,
+                        terminada: terminada.current.checked ? 'S' : 'N'
                     })
                     .then((r) => {
                         status = r.status;
@@ -356,7 +359,7 @@ export default function ObraForm(props) {
 
             </div>
 
-            <div className="form-row">
+            <div className="form-row" style={{alignItems: 'center'}}>
                 {
                     valorTotalVazio ?
                         <div className="form-group col-md-6">
@@ -369,6 +372,11 @@ export default function ObraForm(props) {
                             <input type="text" className="form-control" ref={valorTotal} defaultValue={obra.valorTotal} />
                         </div>
                 }
+
+                <div style={{ display: 'inline-block' }} className="form-group col-md-4">
+                    <label>Concluída:</label>
+                    <input ref={terminada} style={{ marginLeft: 15}} type="checkbox"></input>
+                </div>
             </div>
 
             {

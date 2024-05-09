@@ -235,42 +235,49 @@ export default function FormEtapas(props) {
             </div>
 
             <div>
-                {
-                    obraVazia ?
-                        <div className="from-group">
-                            <label>Obra:*</label>
-                            <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: 200, textAlign: 'center', border: '2px solid red' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
+            {
+    obraVazia ?
+        <div className="from-group">
+            <label>Obra:*</label>
+            <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: 200, textAlign: 'center', border: '2px solid red' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
 
-                                <option value={0}>Selecione</option>
-                                {listaObras.map(function (value, index) {
-                                    const isSelected = props.etapa && value.idObra === props.etapa.idObra;
-                                    return (
-                                        <option key={index} value={value.idObra} selected={isSelected}>
-                                            {value.bairro}
-                                        </option>
-                                    );
-                                })}
+                <option value={0}>Selecione</option>
+                {listaObras.map(function (value, index) {
+                    if (value.terminada !== 'S') { // Verifica se a obra não está terminada
+                        const isSelected = props.etapa && value.idObra === props.etapa.idObra;
+                        return (
+                            <option key={index} value={value.idObra} selected={isSelected}>
+                                {value.bairro}
+                            </option>
+                        );
+                    }
+                    return null; // Retorna null para não renderizar nada se a obra estiver terminada
+                })}
 
-                            </select>
-                        </div>
-                        :
-                        <div className="from-group">
-                            <label>Obra:*</label>
-                            <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: 200, textAlign: 'center' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
+            </select>
+        </div>
+        :
+        <div className="from-group">
+            <label>Obra:*</label>
+            <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: 200, textAlign: 'center' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
 
-                                <option value={0}>Selecione</option>
-                                {listaObras.map(function (value, index) {
-                                    const isSelected = props.etapa && value.idObra === props.etapa.idObra;
-                                    return (
-                                        <option key={index} value={value.idObra} selected={isSelected}>
-                                            {value.bairro}
-                                        </option>
-                                    );
-                                })}
+                <option value={0}>Selecione</option>
+                {listaObras.map(function (value, index) {
+                    if (value.terminada !== 'S') { // Verifica se a obra não está terminada
+                        const isSelected = props.etapa && value.idObra === props.etapa.idObra;
+                        return (
+                            <option key={index} value={value.idObra} selected={isSelected}>
+                                {value.bairro}
+                            </option>
+                        );
+                    }
+                    return null; // Retorna null para não renderizar nada se a obra estiver terminada
+                })}
 
-                            </select>
-                        </div>
-                }
+            </select>
+        </div>
+}
+
                 <br></br>
 
                 {[...Array(etapas.idEtapa + 1)].map((_, index) => (
