@@ -105,24 +105,9 @@ export default function FormParcelas(props) {
         return !faltaData;
     }
 
-    function excluirParcelasDaObra() {
-
-        httpClient.delete(`/parcelas/excluirParcelasObra/${props.obra.idObra}`)
-            .then(r => {
-                return r.json();
-            })
-            .then(r => {
-                console.log(r.msg);
-            });
-    }
-
     function gravarParcelas() {
 
         if (datasPreenchidas()) {
-
-            if (props.parcelas.length > 0) {
-                excluirParcelasDaObra();
-            }
 
             let status = 0;
             let parcelasArray = [];

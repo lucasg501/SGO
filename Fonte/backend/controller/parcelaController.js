@@ -6,30 +6,41 @@ class ParcelaController {
 
         try {
             if (req.body.length > 0) {
+
+                let idObraExcluir = req.body[0].idObra;
                 
-                const promises = [];
+                let parcelaModel = new ParcelaModel();
+                let ok = await parcelaModel.excluirParcelasObra(idObraExcluir);
 
-                for (const parcela of req.body) {
+                if (ok) {
 
-                    const {
-                        dataVencimento,
-                        dataRecebimento,
-                        valorParcela,
-                        idObra
-                    } = parcela;
+                    const promises = [];
 
-                    const novaParcela = new ParcelaModel(0, dataVencimento, dataRecebimento, valorParcela, idObra);
+                    for (const parcela of req.body) {
 
-                    promises.push(novaParcela.gravar());
-                }
+                        const {
+                            dataVencimento,
+                            dataRecebimento,
+                            valorParcela,
+                            idObra
+                        } = parcela;
 
-                let ok = await Promise.all(promises);
-                
-                if (ok){
-                    res.status(200).json({msg: "Parcelas gravadas com sucesso!"});
+                        const novaParcela = new ParcelaModel(0, dataVencimento, dataRecebimento, valorParcela, idObra);
+
+                        promises.push(novaParcela.gravar());
+                    }
+
+                    ok = await Promise.all(promises);
+                    
+                    if (ok){
+                        res.status(200).json({msg: "Parcelas gravadas com sucesso!"});
+                    }
+                    else {
+                        res.status(500).json({msg: "Erro na gravação de parcelas!"});
+                    }
                 }
                 else {
-                    res.status(500).json({msg: "Erro na gravação de parcelas!"});
+                    res.status(500).json({msg})
                 }
             }
             else {
