@@ -22,7 +22,7 @@ export default function Obras() {
     }
 
     function excluirObra(idObra) {
-        const confirmacao = window.confirm("Tem certeza que deseja excluir esta obra e todos os dados ligados a ela?");
+        const confirmacao = window.confirm("Tem certeza que deseja excluir esta obra?");
         if (confirmacao) {
             httpClient.delete(`/obras/excluir/${idObra}`)
                 .then(r => {

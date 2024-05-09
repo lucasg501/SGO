@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 
-export default function ServicoForm({ params: {idObra} }) {
+export default function ServicoForm({ params: { idObra } }) {
     const descricaoServico = useRef('');
     const valorServico = useRef(0);
     const idAtuacao = useRef('');
@@ -69,16 +69,41 @@ export default function ServicoForm({ params: {idObra} }) {
 
     function alocarParceiro() {
         const valor = parseFloat(valorServico.current.value);
-
-        if (idAtuacao.current.value > 0 && idParceiro.current.value > 0 && descricaoServico.current.value !== "" && valor > 0) {
+        const parceiroSelecionado = idParceiro.current.value;
+        const dataSelecionada = dataServ.current.value;
+    
+        // Verificar se o parceiro já está na listaServicos para a mesma data
+        const mesmoParceiroMesmaData = listaServicos.some(servico => {
+            // Verificando se o serviço tem uma data definida
+            if (servico.dataServ !== null) {
+                // Convertendo a dataServ do serviço para o formato YYYY-MM-DD
+                const dataServFormatada = servico.dataServ.split('T')[0];
+                // Convertendo a dataSelecionada para o mesmo formato
+                const dataSelecionadaFormatada = dataSelecionada.split('T')[0];
+                
+                // Verificando se o idParceiro e a dataServ do serviço são iguais aos valores selecionados
+                return servico.idParceiro == parceiroSelecionado && dataServFormatada === dataSelecionadaFormatada;
+            } else {
+                return false; // Se a dataServ for nula, não há coincidência de datas
+            }
+        });
+        
+        
+    
+        if (mesmoParceiroMesmaData) {
+            alert("Não é possível gravar o mesmo parceiro na mesma data.");
+            return;
+        }
+    
+        if (idAtuacao.current.value > 0 && parceiroSelecionado > 0 && descricaoServico.current.value !== "" && valor > 0) {
             let status = 0;
-
+    
             httpClient.post('/servicos/gravar', {
                 descServico: descricaoServico.current.value,
                 valorServico: valor,
                 idObra: idObra,
-                idParceiro: idParceiro.current.value,
-                dataServ: dataServ.current.value
+                idParceiro: parceiroSelecionado,
+                dataServ: dataSelecionada
             })
                 .then(r => {
                     status = r.status;
@@ -97,6 +122,8 @@ export default function ServicoForm({ params: {idObra} }) {
             alert("Preencha todos os campos!");
         }
     }
+    
+    
 
     useEffect(() => {
         listarAtuacao();
@@ -113,11 +140,11 @@ export default function ServicoForm({ params: {idObra} }) {
                 <h3>Obra: {bairroObra}</h3>
             </div>
 
-            <div style={{display: 'inline-flex', marginTop: 30}}>
-                <div className="form-group" style={{marginRight: 30}}>
+            <div style={{ display: 'inline-flex', marginTop: 30 }}>
+                <div className="form-group" style={{ marginRight: 30 }}>
                     <label>Área de atuação</label>
-                    <select className="form-control" ref={idAtuacao} 
-                    onChange={(e) => listarParceiros(e.target.value)} style={{width: 200, textAlign: 'center'}}>
+                    <select className="form-control" ref={idAtuacao}
+                        onChange={(e) => listarParceiros(e.target.value)} style={{ width: 200, textAlign: 'center' }}>
                         <option value="0">Selecione</option>
                         {listaAtuacao.map((value, index) => (
                             <option key={index} value={value.idArea}>{value.nomeAtuacao}</option>
@@ -127,7 +154,7 @@ export default function ServicoForm({ params: {idObra} }) {
 
                 <div className="form-group">
                     <label>Parceiro</label>
-                    <select className="form-control" ref={idParceiro} style={{width: 200, textAlign: 'center'}}>
+                    <select className="form-control" ref={idParceiro} style={{ width: 200, textAlign: 'center' }}>
                         <option value="0">Selecione</option>
                         {listaParceiros.map((value, index) => (
                             <option key={index} value={value.idParceiro}>{value.nomeParceiro}</option>
@@ -140,20 +167,20 @@ export default function ServicoForm({ params: {idObra} }) {
                 <label>Descrição do Serviço</label>
                 <textarea className="form-control" ref={descricaoServico}></textarea>
             </div>
-            
-            <div style={{display: 'inline-flex'}}>
+
+            <div style={{ display: 'inline-flex' }}>
                 <div className="form-group">
                     <label>Valor do Serviço</label>
-                    <input type="number" className="form-control" ref={valorServico} style={{width: 200, marginRight: 30}}></input>
+                    <input type="number" className="form-control" ref={valorServico} style={{ width: 200, marginRight: 30 }}></input>
                 </div>
 
                 <div className="form-group">
                     <label>Data do Serviço</label>
-                    <input type="date" className="form-control" ref={dataServ} style={{width: 200}}></input>
+                    <input type="date" className="form-control" ref={dataServ} style={{ width: 200 }}></input>
                 </div>
             </div>
-            
-            <div style={{marginTop: 20}}>
+
+            <div style={{ marginTop: 20 }}>
                 <button onClick={alocarParceiro} className="btn btn-primary">Alocar</button>
                 <a href="/obras"><button style={{ marginLeft: 50 }} className="btn btn-danger">Cancelar</button></a>
             </div>
@@ -167,12 +194,31 @@ export default function ServicoForm({ params: {idObra} }) {
                         <tr>
                             <th>Parceiro</th>
                             <th>Serviço</th>
+                            <th>Valor do Serviço</th>
+                            <th>Data</th>
+                            <th>Excluir</th>
                         </tr>
                     </thead>
                     {listaServicos.map((value, index) => (
                         <tr key={index}>
                             <td>{getNomeParceiro(value.idParceiro)}</td>
                             <td>{value.descServico}</td>
+                            <td>{value.valorServico}</td>
+                            <td>{value.dataServ == null ? 'N/A' : new Date(value.dataServ).toLocaleDateString()}</td>
+                            <td>
+                                <button style={{backgroundColor:'red'}} className="btn btn-danger" onClick={() => {
+                                    if (confirm('Deseja excluir o serviço e todos os dados relacionados a ele?')) {
+                                        httpClient.delete(`/servicos/excluir/${value.idServico}`)
+                                            .then(r => {
+                                                alert('Serviço excluído com sucesso!');
+                                                window.location.reload();
+                                            })
+                                            .catch(error => console.error("Erro ao excluir serviço:", error));
+                                    }
+                                }}>
+                                    <i className="fas fa-trash"></i>
+                                </button>
+                            </td>
                         </tr>
                     ))}
                 </table>

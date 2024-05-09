@@ -92,7 +92,7 @@ export default function clientes({children}){
                                                     </td>
                                                     <td>
                                                     <button style={{marginLeft: 15}} className="btn btn-danger" onClick={()=>{
-                                                            if(confirm(`Deseja excluir o cliente ${value.nomeCli} e todos os seus dados relacionados: "Serviços, Parcelas e Obras"?`)){
+                                                            if(confirm(`Deseja excluir o cliente ${value.nomeCli}"?`)){
                                                                 httpClient.delete(`/clientes/excluir/${value.idCli}`)
                                                                 .then(r=>{
                                                                     alert('Cliente excluído com sucesso!');
@@ -124,10 +124,13 @@ export default function clientes({children}){
                                                 </td>
                                                 <td>
                                                 <button style={{marginLeft: 15}} className="btn btn-danger" onClick={()=>{
-                                                        if(confirm(`Deseja excluir o cliente ${value.nomeCli} e todos os seus dados relacionados: "Serviços, Parcelas e Obras"?`)){
+                                                        if(confirm(`Deseja excluir o cliente ${value.nomeCli}"?`)){
                                                             httpClient.delete(`/clientes/excluir/${value.idCli}`)
                                                             .then(r=>{
-                                                                alert('Cliente excluído com sucesso!');
+                                                                return r.json();
+                                                            })
+                                                            .then(r=>{
+                                                                alert(r.msg);
                                                                 carregarClientes();
                                                             })
                                                         }

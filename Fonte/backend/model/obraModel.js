@@ -93,12 +93,6 @@ class obraModel{
 
     async excluir(idObra) {
         try {
-            // Excluir registros da tabela tb_Servicos que estão vinculados à obra
-            let sqlServicos = 'DELETE FROM tb_Servicos WHERE idObra = ?';
-            let valoresServicos = [idObra];
-            await banco.ExecutaComandoNonQuery(sqlServicos, valoresServicos);
-    
-            // Agora que os registros da tabela tb_Servicos foram excluídos, podemos excluir a obra
             let sqlObras = 'DELETE FROM tb_Obras WHERE idObra = ?';
             let valoresObras = [idObra];
             let ok = await banco.ExecutaComandoNonQuery(sqlObras, valoresObras);

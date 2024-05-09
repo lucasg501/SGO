@@ -91,7 +91,7 @@ class ObrasController {
                 if(ok){
                     res.status(200).json({msg:"Obra excluída com sucesso!"});
                 }else{
-                    res.status(500).json({msg:"Erro ao excluir obra!"});
+                    res.status(500).json({msg:"Erro ao excluir obra! Apague primeiro os dados relacionados a esta obra. Serviços, Parcelas!"});
                 }
             }else{
                 res.status(400).json({msg:"Parâmetros inválidos!"});

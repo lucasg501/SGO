@@ -24,6 +24,39 @@ export default function ObraForm(props) {
         carregarClientes();
     }, []);
 
+
+    const [clienteVazio, setClienteVazio] = useState(false);
+    const [enderecoVazio, setEnderecoVazio] = useState(false);
+    const [bairroVazio, setBairroVazio] = useState(false);
+    const [cidadeVazio, setCidadeVazio] = useState(false);
+    const [valorTotalVazio, setValorTotalVazio] = useState(false);
+    const [dataInicioVazio, setDataInicioVazio] = useState(false);
+    const [dataTerminoVazio, setDataTerminoVazio] = useState(false);
+    const [cepVazio, setCepVazio] = useState(false);
+
+    function camposVazios() {
+
+        let clienteNaoPreenchido = idCliente.current == 0;
+        let enderecoNaoPreenchido = endereco.current.value == "";
+        let bairroNaoPreenchido = bairro.current.value == "";
+        let cidadeNaoPreenchido = cidade.current.value == "";
+        let valorTotalNaoPreenchido = valorTotal.current.value == 0;
+        let dataInicioNaoPreenchido = dataInicio.current.value == "";
+        let dataTerminoNaoPreenchido = dataTermino.current.value == "";
+        let cepNaoPreenchido = cepObra.current.value == "";
+
+        setClienteVazio(clienteNaoPreenchido);
+        setEnderecoVazio(enderecoNaoPreenchido);
+        setBairroVazio(bairroNaoPreenchido);
+        setCidadeVazio(cidadeNaoPreenchido);
+        setValorTotalVazio(valorTotalNaoPreenchido);
+        setDataInicioVazio(dataInicioNaoPreenchido);
+        setDataTerminoVazio(dataTerminoNaoPreenchido);
+        setCepVazio(cepNaoPreenchido);
+
+        return clienteNaoPreenchido || enderecoNaoPreenchido || bairroNaoPreenchido || cidadeNaoPreenchido || valorTotalNaoPreenchido || dataInicioNaoPreenchido || dataTerminoNaoPreenchido || cepNaoPreenchido;
+    }
+
     const [obra, setObra] = useState(props.obra ? props.obra : {
         idObra: 0,
         endereco: '',
@@ -79,88 +112,101 @@ export default function ObraForm(props) {
     }
 
     function cadastrarObra() {
-        let status = 0;
-        const inicio = new Date(dataInicio.current.value);
-        const termino = new Date(dataTermino.current.value);
-
-        if (endereco.current.value !== '' && bairro.current.value !== '' && cidade.current.value !== '' && inicio && termino && idCliente.current > 0 && cepObra.current.value !== '') {
-            if (termino < inicio) {
-                alert('A data de término não pode ser menor que a data de início.');
-                return;
-            }
-
-            httpClient.post('/obras/gravar', {
-                endereco: endereco.current.value,
-                bairro: bairro.current.value,
-                cidade: cidade.current.value,
-                valorTotal: valorTotal.current.value,
-                dataInicio: inicio.toISOString().split('T')[0], // Formata para o formato YYYY-MM-DD
-                dataTermino: termino.toISOString().split('T')[0], // Formata para o formato YYYY-MM-DD
-                contrato: contrato.current.value,
-                planta: planta.current.value,
-                idCliente: idCliente.current,
-                cepObra: cepObra.current.value
-            })
-                .then(r => {
-                    status = r.status;
-                    return r.json();
-                })
-                .then(r => {
-                    alert(r.msg);
-                    if (status == 200) {
-                        window.location.href = '/obras';
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro ao cadastrar obra:', error);
-                    alert('Erro ao cadastrar obra. Por favor, tente novamente.');
-                });
-        } else {
-            alert('Preencha todos os campos!');
+        let camposPreenchidos = !camposVazios();
+        if (!camposPreenchidos) {
+            alert("Preencha corretamente todos os campos!");
         }
-    }
+        if (camposPreenchidos) {
+            let status = 0;
+            const inicio = new Date(dataInicio.current.value);
+            const termino = new Date(dataTermino.current.value);
 
-    function alterarObra() {
-        let status = 0;
-        const inicio = new Date(dataInicio.current.value);
-        const termino = new Date(dataTermino.current.value);
+            if (endereco.current.value !== '' && bairro.current.value !== '' && cidade.current.value !== '' && inicio && termino && idCliente.current > 0 && cepObra.current.value !== '') {
+                if (termino < inicio) {
+                    alert('A data de término não pode ser menor que a data de início.');
+                    return;
+                }
 
-        if (endereco.current.value !== '' && bairro.current.value !== '' && cidade.current.value !== '' && inicio && termino && idCliente.current > 0 && cepObra.current.value !== '') {
-            if (termino < inicio) {
-                alert('A data de término não pode ser menor que a data de início.');
-                return;
-            }
-
-            httpClient
-                .put('/obras/alterar', {
-                    idObra: obra.idObra,
+                httpClient.post('/obras/gravar', {
                     endereco: endereco.current.value,
                     bairro: bairro.current.value,
                     cidade: cidade.current.value,
                     valorTotal: valorTotal.current.value,
-                    dataInicio: inicio.toISOString().split('T')[0],
-                    dataTermino: termino.toISOString().split('T')[0],
+                    dataInicio: inicio.toISOString().split('T')[0], // Formata para o formato YYYY-MM-DD
+                    dataTermino: termino.toISOString().split('T')[0], // Formata para o formato YYYY-MM-DD
                     contrato: contrato.current.value,
                     planta: planta.current.value,
                     idCliente: idCliente.current,
-                    cepObra: cepObra.current.value,
+                    cepObra: cepObra.current.value
                 })
-                .then((r) => {
-                    status = r.status;
-                    return r.json();
-                })
-                .then((r) => {
-                    alert(r.msg);
-                    if (status == 200) {
-                        window.location.href = '/obras';
-                    }
-                })
-                .catch((error) => {
-                    console.error('Erro ao alterar obra:', error);
-                    alert('Erro ao alterar obra. Por favor, tente novamente.');
-                });
-        } else {
-            alert('Preencha todos os campos!');
+                    .then(r => {
+                        status = r.status;
+                        return r.json();
+                    })
+                    .then(r => {
+                        alert(r.msg);
+                        if (status == 200) {
+                            window.location.href = '/obras';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao cadastrar obra:', error);
+                        alert('Erro ao cadastrar obra. Por favor, tente novamente.');
+                    });
+            } else {
+                alert('Preencha todos os campos!');
+            }
+        }
+    }
+
+    function alterarObra() {
+        let camposPreenchidos = !camposVazios();
+        if (!camposPreenchidos) {
+            alert("Preencha corretamente todos os campos!");
+        }
+
+        if (camposPreenchidos) {
+            let status = 0;
+            const inicio = new Date(dataInicio.current.value);
+            const termino = new Date(dataTermino.current.value);
+
+            if (endereco.current.value !== '' && bairro.current.value !== '' && cidade.current.value !== '' && inicio && termino && idCliente.current > 0 && cepObra.current.value !== '') {
+                if (termino < inicio) {
+                    alert('A data de término não pode ser menor que a data de início.');
+                    return;
+                }
+
+                httpClient
+                    .put('/obras/alterar', {
+                        idObra: obra.idObra,
+                        endereco: endereco.current.value,
+                        bairro: bairro.current.value,
+                        cidade: cidade.current.value,
+                        valorTotal: valorTotal.current.value,
+                        dataInicio: inicio.toISOString().split('T')[0],
+                        dataTermino: termino.toISOString().split('T')[0],
+                        contrato: contrato.current.value,
+                        planta: planta.current.value,
+                        idCliente: idCliente.current,
+                        cepObra: cepObra.current.value,
+                    })
+                    .then((r) => {
+                        status = r.status;
+                        return r.json();
+                    })
+                    .then((r) => {
+                        alert(r.msg);
+                        if (status == 200) {
+                            window.location.href = '/obras';
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao alterar obra:', error);
+                        alert('Erro ao alterar obra. Por favor, tente novamente.');
+                    });
+            } else {
+                alert('Preencha todos os campos!');
+            }
         }
     }
 
@@ -197,73 +243,159 @@ export default function ObraForm(props) {
             </div>
 
 
-            <div className="form-group">
-                <label>Cliente:*</label>
-                <input
-                    type="text"
-                    className="form-control"
-                    value={clienteInput}
-                    onChange={handleClienteInputChange} defaultValue={obra.idCliente}
-                />
-                {clienteInput && listaClientes.length > 0 && (
-                    <ul className="list-group">
-                        {listaClientes
-                            .filter(cliente => cliente.nomeCli.toLowerCase().includes(clienteInput.toLowerCase()))
-                            .map((cliente, index) => (
-                                <li
-                                    key={index}
-                                    className="list-group-item"
-                                    onClick={() => selectCliente(cliente)}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    {cliente.nomeCli}
-                                </li>
-                            ))}
-                    </ul>
-                )}
-            </div>
+            {
+                clienteVazio ?
+                    <div className="form-group">
+                        <label>Cliente:*</label>
+                        <input style={{ border: "2px solid red" }}
+                            type="text"
+                            className="form-control"
+                            value={clienteInput}
+                            onChange={handleClienteInputChange} defaultValue={obra.idCliente}
+                        />
+                        {clienteInput && listaClientes.length > 0 && (
+                            <ul className="list-group">
+                                {listaClientes
+                                    .filter(cliente => cliente.nomeCli.toLowerCase().includes(clienteInput.toLowerCase()))
+                                    .map((cliente, index) => (
+                                        <li
+                                            key={index}
+                                            className="list-group-item"
+                                            onClick={() => selectCliente(cliente)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            {cliente.nomeCli}
+                                        </li>
+                                    ))}
+                            </ul>
+                        )}
+                    </div>
+                    :
+                    <div className="form-group">
+                        <label>Cliente:*</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={clienteInput}
+                            onChange={handleClienteInputChange} defaultValue={obra.idCliente}
+                        />
+                        {clienteInput && listaClientes.length > 0 && (
+                            <ul className="list-group">
+                                {listaClientes
+                                    .filter(cliente => cliente.nomeCli.toLowerCase().includes(clienteInput.toLowerCase()))
+                                    .map((cliente, index) => (
+                                        <li
+                                            key={index}
+                                            className="list-group-item"
+                                            onClick={() => selectCliente(cliente)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            {cliente.nomeCli}
+                                        </li>
+                                    ))}
+                            </ul>
+                        )}
+                    </div>
+
+            }
 
 
             <div className="form-row">
-                <div className="form-group col-md-6">
-                    <label>Endereço:*</label>
-                    <input type="text" className="form-control" ref={endereco} defaultValue={obra.endereco} />
-                </div>
-                <div className="form-group col-md-6">
-                    <label>Bairro:*</label>
-                    <input type="text" className="form-control" ref={bairro} defaultValue={obra.bairro} />
-                </div>
+                {
+                    enderecoVazio ?
+                        <div className="form-group col-md-6">
+                            <label>Endereço:*</label>
+                            <input style={{ border: "2px solid red" }} type="text" className="form-control" ref={endereco} defaultValue={obra.endereco} />
+                        </div>
+                        :
+                        <div className="form-group col-md-6">
+                            <label>Endereço:*</label>
+                            <input type="text" className="form-control" ref={endereco} defaultValue={obra.endereco} />
+                        </div>
+                }
+                {
+                    bairroVazio ?
+                        <div className="form-group col-md-6">
+                            <label>Bairro:*</label>
+                            <input style={{ border: "2px solid red" }} type="text" className="form-control" ref={bairro} defaultValue={obra.bairro} />
+                        </div>
+                        :
+                        <div className="form-group col-md-6">
+                            <label>Bairro:*</label>
+                            <input type="text" className="form-control" ref={bairro} defaultValue={obra.bairro} />
+                        </div>
+                }
             </div>
 
             <div className="form-row">
-                <div className="form-group col-md-6">
-                    <label>Cidade:*</label>
-                    <input type="text" className="form-control" ref={cidade} defaultValue={obra.cidade} />
-                </div>
+                {
+                    cidadeVazio ?
+                        <div className="form-group col-md-6">
+                            <label>Cidade:*</label>
+                            <input style={{ border: "2px solid red" }} type="text" className="form-control" ref={cidade} defaultValue={obra.cidade} />
+                        </div>
+                        :
+                        <div className="form-group col-md-6">
+                            <label>Cidade:*</label>
+                            <input type="text" className="form-control" ref={cidade} defaultValue={obra.cidade} />
+                        </div>
+                }
 
-                <div className="form-group col-md-6">
-                    <label>CEP:*</label>
-                    <InputMask mask='99999-999' type="text" className="form-control" ref={cepObra} defaultValue={obra.cepObra} />
-                </div>
+                {
+                    cepVazio ?
+                        <div className="form-group col-md-6">
+                            <label>CEP:*</label>
+                            <InputMask style={{ border: "2px solid red" }} mask='99999-999' type="text" className="form-control" ref={cepObra} defaultValue={obra.cepObra} />
+                        </div>
+                        :
+                        <div className="form-group col-md-6">
+                            <label>CEP:*</label>
+                            <InputMask mask='99999-999' type="text" className="form-control" ref={cepObra} defaultValue={obra.cepObra} />
+                        </div>
+                }
 
             </div>
 
             <div className="form-row">
-                <div className="form-group col-md-6">
-                    <label>Valor Total:*</label>
-                    <input type="text" className="form-control" ref={valorTotal} defaultValue={obra.valorTotal} />
-                </div>
+                {
+                    valorTotalVazio ?
+                        <div className="form-group col-md-6">
+                            <label>Valor Total:*</label>
+                            <input style={{ border: "2px solid red" }} type="text" className="form-control" ref={valorTotal} defaultValue={obra.valorTotal} />
+                        </div>
+                        :
+                        <div className="form-group col-md-6">
+                            <label>Valor Total:*</label>
+                            <input type="text" className="form-control" ref={valorTotal} defaultValue={obra.valorTotal} />
+                        </div>
+                }
             </div>
 
-            <div className="form-group">
-                <label>Data Inicio:*</label>
-                <input type="date" className="form-control" ref={dataInicio} defaultValue={obra.dataInicio} />
-            </div>
+            {
+                dataInicioVazio ?
+                    <div className="form-group">
+                        <label>Data Inicio:*</label>
+                        <input style={{ border: "2px solid red" }} type="date" className="form-control" ref={dataInicio} defaultValue={obra.dataInicio} />
+                    </div>
+                    :
+                    <div className="form-group">
+                        <label>Data Inicio:*</label>
+                        <input type="date" className="form-control" ref={dataInicio} defaultValue={obra.dataInicio} />
+                    </div>
+            }
 
-            <div className="form-group">
-                <label>Data Prevista de Término:*</label>
-                <input type="date" className="form-control" ref={dataTermino} defaultValue={obra.dataTermino} />
-            </div>
+            {
+                dataTerminoVazio ?
+                    <div className="form-group">
+                        <label>Data Prevista de Término:*</label>
+                        <input style={{ border: "2px solid red" }} type="date" className="form-control" ref={dataTermino} defaultValue={obra.dataTermino} />
+                    </div>
+                    :
+                    <div className="form-group">
+                        <label>Data Prevista de Término:*</label>
+                        <input type="date" className="form-control" ref={dataTermino} defaultValue={obra.dataTermino} />
+                    </div>
+            }
 
             <div className="form-group">
                 <label>Contrato:</label>
@@ -324,12 +456,12 @@ export default function ObraForm(props) {
 
                 <div className="form-group">
                     <label>Data Inicio:*</label>
-                    <input type="date" className="form-control"  disabled />
+                    <input type="date" className="form-control" disabled />
                 </div>
 
                 <div className="form-group">
                     <label>Data Prevista de Término:*</label>
-                    <input type="date" className="form-control"  disabled />
+                    <input type="date" className="form-control" disabled />
                 </div>
 
                 <div className="form-group">

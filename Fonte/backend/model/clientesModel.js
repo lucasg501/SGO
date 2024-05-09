@@ -100,29 +100,13 @@ class clientesModel{
 
     async excluir(idCli) {
         try {
-
-            let sqlServicos = `DELETE FROM tb_Servicos WHERE idObra IN (SELECT idObra FROM tb_Obras WHERE idCliente = ?)`;
-            let valoresServicos = [idCli];
-            await banco.ExecutaComandoNonQuery(sqlServicos, valoresServicos);
-
-            // Excluir registros da tabela tb_Parcelas
-            let sqlParcelas = `DELETE FROM tb_Parcelas WHERE idObra IN (SELECT idObra FROM tb_Obras WHERE idCliente = ?)`;
-            let valoresParcelas = [idCli];
-            await banco.ExecutaComandoNonQuery(sqlParcelas, valoresParcelas);
-            
-            // Excluir registros da tabela tb_Obras
-            let sqlObras = `DELETE FROM tb_Obras WHERE idCliente = ?`;
-            let valoresObras = [idCli];
-            await banco.ExecutaComandoNonQuery(sqlObras, valoresObras);
-    
-            // Excluir registro da tabela tb_Clientes
             let sqlClientes = `DELETE FROM tb_Clientes WHERE idCli = ?`;
             let valoresClientes = [idCli];
             await banco.ExecutaComandoNonQuery(sqlClientes, valoresClientes);
     
             return true;
         } catch (error) {
-            console.error("Erro ao excluir cliente:", error);
+            console.error("Erro ao excluir o cliente! Exclua os serviços, parcelas e obras ligadas a esse clientes antes de excluir o cliente!", error);
             return false;
         }
     }

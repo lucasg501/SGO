@@ -14,6 +14,27 @@ export default function FormEtapas(props) {
     const descricaoEtapa = useRef([]);
     const [listaAndamentoEtapas, setListaAndamentoEtapas] = useState([]);
 
+    const [obraVazia, setObraVazia] = useState(false);
+    const [etapaVazia, setEtapaVazia] = useState(false);
+    const [dataPrevInicioVazia, setDataPrevInicioVazia] = useState(false);
+    const [dataPrevTerminoVazia, setDataPrevTerminoVazia] = useState(false);
+
+
+    function camposVazios() {
+
+        let obraNaoPreenchido = idObra.current[0].value == 0;
+        let etapaNaoPreenchido = idEtapa.current[0].value == 0;
+        let dataPrevInicioNaoPreenchido = dataPrevInicio.current[0].value == "";
+        let dataPrevTerminoNaoPreenchido = dataPrevTermino.current[0].value == "";
+
+        setObraVazia(obraNaoPreenchido);
+        setEtapaVazia(etapaNaoPreenchido);
+        setDataPrevInicioVazia(dataPrevInicioNaoPreenchido);
+        setDataPrevTerminoVazia(dataPrevTerminoNaoPreenchido);
+
+        return obraNaoPreenchido || etapaNaoPreenchido || dataPrevInicioNaoPreenchido || dataPrevTerminoNaoPreenchido;
+    }
+
     const [modalIsOpen, setModalIsOpen] = useState(false);
     function openModal() {
         setModalIsOpen(true);
@@ -89,39 +110,54 @@ export default function FormEtapas(props) {
                 });
         }
     };
-
     function gravarEtapas() {
+        let camposPreenchidos = !camposVazios();
+        if (!camposPreenchidos) {
+            alert("Preencha todos os campos obrigatórios");
+            return;
+        }
+    
+        if (
+            idObra.current[0].value === "0" || 
+            idEtapa.current.some(ref => ref.value === "0") || 
+            dataPrevInicio.current.some(ref => ref.value === "") || 
+            dataPrevTermino.current.some(ref => ref.value === "")
+        ) {
+            alert("Preencha todos os campos obrigatórios");
+            return;
+        }
+    
         let status = 0;
         let etapasArray = [];
         let hasInvalidDate = false;
-
+    
         const idObraValue = idObra.current[0] ? idObra.current[0].value : null;
-
+    
         for (let i = 0; i < etapas.idEtapa + 1; i++) {
             const idEtapaValue = idEtapa.current[i] ? idEtapa.current[i].value : null;
             const dataPrevInicioValue = dataPrevInicio.current[i] ? dataPrevInicio.current[i].value : null;
             const dataPrevTerminoValue = dataPrevTermino.current[i] ? dataPrevTermino.current[i].value : null;
             const dataFimValue = dataFim.current[i] ? (dataFim.current[i].value !== '' ? dataFim.current[i].value : null) : null;
             const descricaoEtapaValue = descricaoEtapa.current[i] ? descricaoEtapa.current[i].value : null;
-
+    
             if (dataPrevInicioValue && dataPrevTerminoValue && dataPrevInicioValue >= dataPrevTerminoValue) {
                 alert("A data de previsão de início deve ser menor do que a data de previsão de término.");
                 hasInvalidDate = true;
                 break;
             }
-
+    
             if (dataFimValue < dataPrevInicioValue) {
                 alert("A data de fim não pode ser anterior à data de início.");
                 hasInvalidDate = true;
                 break;
             }
-
+    
             if (dataFimValue < dataPrevTerminoValue) {
                 alert("A data de fim não pode ser anterior à data de previsão de término.");
                 hasInvalidDate = true;
                 break;
             }
-
+    
             const etapa = {
                 idObra: idObraValue,
                 idEtapa: idEtapaValue,
@@ -132,9 +168,51 @@ export default function FormEtapas(props) {
             };
             etapasArray.push(etapa);
         }
-
+    
         if (!hasInvalidDate) {
             httpClient.post('/andamentoEtapas/gravar', etapasArray)
+                .then(r => {
+                    status = r.status;
+                    return r.json();
+                })
+                .then(r => {
+                    alert(r.msg);
+                    if (status === 200) {
+                        window.location.reload();
+                    }
+                });
+        }
+    }
+    
+
+
+    function alterarEtapas() {
+        let camposPreenchidos = !camposVazios();
+        if (!camposPreenchidos) {
+            alert("Preencha todos os campos obrigatórios");
+        }
+
+        if (camposPreenchidos) {
+            const dataPrevInicioValue = formatarData(props.etapa.dataPrevInicio);
+            const dataPrevTerminoValue = formatarData(props.etapa.dataPrevTermino);
+            const dataFimValue = formatarData(dataFim.current[0].value);
+
+            if (dataFimValue < dataPrevInicioValue) {
+                alert("A data de fim não pode ser anterior à data de início.");
+                return; // Retorna sem fazer a solicitação HTTP PUT
+            }
+
+            // Se a data de fim for válida, continuar com a solicitação HTTP PUT
+            let status = 0;
+            httpClient.put('/andamentoEtapas/alterar', {
+                idAndamento: props.etapa.idAndamento,
+                idObra: props.etapa.idObra,
+                idEtapa: props.etapa.idEtapa,
+                dataPrevInicio: dataPrevInicioValue,
+                dataPrevTermino: dataPrevTerminoValue,
+                dataFim: dataFimValue,
+                descricaoEtapa: props.etapa.descricaoEtapa
+            })
                 .then(r => {
                     status = r.status;
                     return r.json();
@@ -149,30 +227,6 @@ export default function FormEtapas(props) {
     }
 
 
-    function alterarEtapas() {
-        let status = 0;
-        httpClient.put('/andamentoEtapas/alterar', {
-            idAndamento: props.etapa.idAndamento,
-            idObra: props.etapa.idObra,
-            idEtapa: props.etapa.idEtapa,
-            dataPrevInicio: formatarData(props.etapa.dataPrevInicio),
-            dataPrevTermino: formatarData(props.etapa.dataPrevTermino),
-            dataFim: formatarData(dataFim.current[0].value),
-            descricaoEtapa: props.etapa.descricaoEtapa
-        })
-            .then(r => {
-                status = r.status;
-                return r.json();
-            })
-            .then(r => {
-                alert(r.msg);
-                if (status === 200) {
-                    window.location.href = '/etapas';
-                }
-            })
-
-    }
-
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -181,51 +235,107 @@ export default function FormEtapas(props) {
             </div>
 
             <div>
-                <div className="from-group">
-                    <label>Obra:</label>
-                    <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: 200, textAlign: 'center' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
+                {
+                    obraVazia ?
+                        <div className="from-group">
+                            <label>Obra:*</label>
+                            <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: 200, textAlign: 'center', border: '2px solid red' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
 
-                        <option value={0}>Selecione</option>
-                        {listaObras.map(function (value, index) {
-                            const isSelected = props.etapa && value.idObra === props.etapa.idObra;
-                            return (
-                                <option key={index} value={value.idObra} selected={isSelected}>
-                                    {value.bairro}
-                                </option>
-                            );
-                        })}
-
-                    </select>
-                </div>
-                <br></br>
-
-                {[...Array(etapas.idEtapa + 1)].map((_, index) => (
-                    <div key={index}>
-                        <div className="form-group">
-                            <label>Etapa {index + 1}:</label>
-                            <select defaultValue={props.etapa ? props.etapa.idEtapa : 0} ref={el => idEtapa.current[index] = el} style={{ width: 200, textAlign: 'center' }} className="form-control" disabled={props.etapa != null}>
                                 <option value={0}>Selecione</option>
-                                {listaEtapas.map(function (value, index) {
-                                    const isSelected = props.etapa && value.idEtapa === props.etapa.idEtapa;
-                                    const isDisabled = listaAndamentoEtapas.some(andamentoEtapa => andamentoEtapa.idEtapa === value.idEtapa);
+                                {listaObras.map(function (value, index) {
+                                    const isSelected = props.etapa && value.idObra === props.etapa.idObra;
                                     return (
-                                        <option style={{ textAlign: 'left' }} key={index} value={value.idEtapa} selected={isSelected} disabled={isDisabled}>
-                                            {value.idEtapa} {value.nomeEtapa}
+                                        <option key={index} value={value.idObra} selected={isSelected}>
+                                            {value.bairro}
                                         </option>
                                     );
                                 })}
 
                             </select>
                         </div>
+                        :
+                        <div className="from-group">
+                            <label>Obra:*</label>
+                            <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: 200, textAlign: 'center' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
 
-                        <div className="form-group" style={{ display: 'inline-block', width: '17.5%', marginRight: '10px' }}>
-                            <label>Início:</label>
-                            <input disabled={props.etapa != null} defaultValue={props.etapa ? formatarData(props.etapa.dataPrevInicio) : ''} ref={el => dataPrevInicio.current[index] = el} style={{ width: '80%' }} type="date" className="form-control" placeholder="Início" />
+                                <option value={0}>Selecione</option>
+                                {listaObras.map(function (value, index) {
+                                    const isSelected = props.etapa && value.idObra === props.etapa.idObra;
+                                    return (
+                                        <option key={index} value={value.idObra} selected={isSelected}>
+                                            {value.bairro}
+                                        </option>
+                                    );
+                                })}
+
+                            </select>
                         </div>
-                        <div className="form-group" style={{ display: 'inline-block', width: '35%' }}>
-                            <label>Previsão de Término:</label>
-                            <input disabled={props.etapa != null} defaultValue={props.etapa ? formatarData(props.etapa.dataPrevTermino) : ''} ref={el => dataPrevTermino.current[index] = el} style={{ width: '40%' }} type="date" className="form-control" placeholder="Previsão de Término" />
-                        </div>
+                }
+                <br></br>
+
+                {[...Array(etapas.idEtapa + 1)].map((_, index) => (
+                    <div key={index}>
+                        {
+                            etapaVazia ?
+                                <div className="form-group">
+                                    <label>Etapa* {index + 1}:</label>
+                                    <select defaultValue={props.etapa ? props.etapa.idEtapa : 0} ref={el => idEtapa.current[index] = el} style={{ width: 200, textAlign: 'center', border: '2px solid red' }} className="form-control" disabled={props.etapa != null}>
+                                        <option value={0}>Selecione</option>
+                                        {listaEtapas.map(function (value, index) {
+                                            const isSelected = props.etapa && value.idEtapa === props.etapa.idEtapa;
+                                            const isDisabled = listaAndamentoEtapas.some(andamentoEtapa => andamentoEtapa.idEtapa === value.idEtapa);
+                                            return (
+                                                <option style={{ textAlign: 'left' }} key={index} value={value.idEtapa} selected={isSelected} disabled={isDisabled}>
+                                                    {value.idEtapa} {value.nomeEtapa}
+                                                </option>
+                                            );
+                                        })}
+
+                                    </select>
+                                </div>
+                                :
+                                <div className="form-group">
+                                    <label>Etapa* {index + 1}:</label>
+                                    <select defaultValue={props.etapa ? props.etapa.idEtapa : 0} ref={el => idEtapa.current[index] = el} style={{ width: 200, textAlign: 'center' }} className="form-control" disabled={props.etapa != null}>
+                                        <option value={0}>Selecione</option>
+                                        {listaEtapas.map(function (value, index) {
+                                            const isSelected = props.etapa && value.idEtapa === props.etapa.idEtapa;
+                                            const isDisabled = listaAndamentoEtapas.some(andamentoEtapa => andamentoEtapa.idEtapa === value.idEtapa);
+                                            return (
+                                                <option style={{ textAlign: 'left' }} key={index} value={value.idEtapa} selected={isSelected} disabled={isDisabled}>
+                                                    {value.idEtapa} {value.nomeEtapa}
+                                                </option>
+                                            );
+                                        })}
+
+                                    </select>
+                                </div>
+                        }
+
+                        {
+                            dataPrevInicioVazia ?
+                                <div className="form-group" style={{ display: 'inline-block', width: '17.5%', marginRight: '10px' }}>
+                                    <label>Início:*</label>
+                                    <input disabled={props.etapa != null} defaultValue={props.etapa ? formatarData(props.etapa.dataPrevInicio) : ''} ref={el => dataPrevInicio.current[index] = el} style={{ width: '80%', border: '2px solid red' }} type="date" className="form-control" placeholder="Início" />
+                                </div>
+                                :
+                                <div className="form-group" style={{ display: 'inline-block', width: '17.5%', marginRight: '10px' }}>
+                                    <label>Início:*</label>
+                                    <input disabled={props.etapa != null} defaultValue={props.etapa ? formatarData(props.etapa.dataPrevInicio) : ''} ref={el => dataPrevInicio.current[index] = el} style={{ width: '80%' }} type="date" className="form-control" placeholder="Início" />
+                                </div>
+                        }
+                        {
+                            dataPrevTerminoVazia ?
+                                <div className="form-group" style={{ display: 'inline-block', width: '35%' }}>
+                                    <label>Previsão de Término:*</label>
+                                    <input disabled={props.etapa != null} defaultValue={props.etapa ? formatarData(props.etapa.dataPrevTermino) : ''} ref={el => dataPrevTermino.current[index] = el} style={{ width: '40%', border: '2px solid red' }} type="date" className="form-control" placeholder="Previsão de Término" />
+                                </div>
+                                :
+                                <div className="form-group" style={{ display: 'inline-block', width: '35%' }}>
+                                    <label>Previsão de Término:*</label>
+                                    <input disabled={props.etapa != null} defaultValue={props.etapa ? formatarData(props.etapa.dataPrevTermino) : ''} ref={el => dataPrevTermino.current[index] = el} style={{ width: '40%' }} type="date" className="form-control" placeholder="Previsão de Término" />
+                                </div>
+                        }
 
                         <div style={{ display: 'flex', alignItems: 'baseline' }}>
                             <div className="form-group" style={{ width: '17.5%', marginRight: '10px' }}>
@@ -324,7 +434,7 @@ export default function FormEtapas(props) {
                 <div style={{ display: 'flex', alignItems: 'baseline' }} className="form-group">
                     <div style={{ display: 'inline-block' }}>
                         <button disabled className="btn btn-danger">-</button>
-                        
+
                     </div>
                     <p>Clique para diminuir a quantidade de campos para cadastro de etapas</p>
                     <div style={{ display: 'inline-block', marginLeft: 15 }}>

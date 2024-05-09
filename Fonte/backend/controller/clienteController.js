@@ -70,7 +70,7 @@ class ClientesController{
                 if(ok){
                     res.status(200).json({msg:"Cliente excluído com sucesso!"});
                 }else{
-                    res.status(500).json({msg:"Erro ao excluir o cliente!"});
+                    res.status(500).json({msg:"Erro ao excluir cliente, tente novamente após apagar todos os dados relacionados a ele. Serviços, Parcelas e Obras!"});
                 }
             }else{
                 res.status(400).json({msg:"Parâmetros inválidos!"});

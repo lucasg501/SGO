@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 import Modal from 'react-modal';
+import InputMask from 'react-input-mask';
 
 export default function ParceiroForm(props) {
 
@@ -11,6 +12,22 @@ export default function ParceiroForm(props) {
 
     const [parceiro, setParceiro] = props.parceiro ? useState(props.parceiro) : useState({ idParceiro: 0, nomeParceiro: '', telParceiro: '', idAreaAtuacao: 0 });
     const [listaAreaAtuacao, setListaAreaAtuacao] = useState([]);
+
+    const [nomeVazio, setNomeVazio] = useState(false);
+    const [telVazio, setTelVazio] = useState(false);
+    const [areaVazio, setAreaVazio] = useState(false);
+
+    function camposVazios() {
+
+        let nomeNaoPreenchido = nomeParceiro.current.value == "";
+        let telNaoPreenchido = telParceiro.current.value == "";
+        let areaNaoPreenchido = idAreaAtuacao.current.value == 0;
+
+        setNomeVazio(nomeNaoPreenchido);
+        setTelVazio(telNaoPreenchido);
+        setAreaVazio(areaNaoPreenchido);
+        return nomeNaoPreenchido || telNaoPreenchido || areaNaoPreenchido;
+    }
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
     function openModal() {
@@ -31,30 +48,37 @@ export default function ParceiroForm(props) {
     }
 
     function cadastrarParceiro() {
-        let status = 0;
-
-        if (nomeParceiro.current.value != '' && telParceiro.current.value != '' && idAreaAtuacao.current.value > 0) {
-
-            httpClient.post('/parceiros/gravar', {
-                nomeParceiro: nomeParceiro.current.value,
-                telParceiro: telParceiro.current.value,
-                idAreaAtuacao: idAreaAtuacao.current.value
-            })
-                .then(r => {
-                    status = r.status;
-                    return r.json();
-                })
-                .then(r => {
-                    alert(r.msg);
-                    if (status == 200) {
-                        nomeParceiro.current.value = '';
-                        telParceiro.current.value = '';
-                        idAreaAtuacao.current.value = 0;
-                    }
-                });
-        }
-        else {
+        let camposPreenchidos = !camposVazios();
+        if (!camposPreenchidos) {
             alert('Preencha todos os campos!');
+        }
+
+        if (camposPreenchidos) {
+            let status = 0;
+
+            if (nomeParceiro.current.value != '' && telParceiro.current.value != '' && idAreaAtuacao.current.value > 0) {
+
+                httpClient.post('/parceiros/gravar', {
+                    nomeParceiro: nomeParceiro.current.value,
+                    telParceiro: telParceiro.current.value,
+                    idAreaAtuacao: idAreaAtuacao.current.value
+                })
+                    .then(r => {
+                        status = r.status;
+                        return r.json();
+                    })
+                    .then(r => {
+                        alert(r.msg);
+                        if (status == 200) {
+                            nomeParceiro.current.value = '';
+                            telParceiro.current.value = '';
+                            idAreaAtuacao.current.value = 0;
+                        }
+                    });
+            }
+            else {
+                alert('Preencha todos os campos!');
+            }
         }
     }
 
@@ -94,33 +118,70 @@ export default function ParceiroForm(props) {
             </div>
 
 
-            <div className="form-group">
-                <label>Nome:</label>
-                <input type="text" defaultValue={parceiro.nomeParceiro} className="form-control" ref={nomeParceiro} />
-            </div>
+            {
+                nomeVazio ?
+                    <div className="form-group">
+                        <label>Nome:</label>
+                        <input style={{ border: '2px solid red' }} type="text" defaultValue={parceiro.nomeParceiro} className="form-control" ref={nomeParceiro} />
+                    </div>
+                    :
+                    <div className="form-group">
+                        <label>Nome:</label>
+                        <input type="text" defaultValue={parceiro.nomeParceiro} className="form-control" ref={nomeParceiro} />
+                    </div>
+            }
 
-            <div className="form-group">
-                <label>Telefone:</label>
-                <input type="tel" defaultValue={parceiro.telParceiro} maxLength={14} className="form-control" ref={telParceiro} />
-            </div>
+            {
+                telVazio ?
+                    <div className="form-group">
+                        <label>Telefone:</label>
+                        <InputMask mask='(99) 99999-9999' style={{ border: '2px solid red' }} type="text" defaultValue={parceiro.telParceiro}  className="form-control" ref={telParceiro} />
+                    </div>
+                    :
+                    <div className="form-group">
+                        <label>Telefone:</label>
+                        <InputMask mask='(99) 99999-9999' type="text" defaultValue={parceiro.telParceiro}  className="form-control" ref={telParceiro} />
+                    </div>
+            }
 
-            <div className="form-group">
-                <label>Área de Atuação</label>
-                <select className="form-control" style={{ width: 350, textAlign: 'center' }}
-                    defaultValue={parceiro.idAreaAtuacao} ref={idAreaAtuacao}>
-                    <option value={0}>-- SELECIONE --</option>
-                    {
-                        listaAreaAtuacao.map((areaAtuacao, index) => {
-                            if (parceiro != null && parceiro.idAreaAtuacao == areaAtuacao.idArea) {
-                                return <option selected value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
+            {
+                areaVazio ?
+                    <div className="form-group">
+                        <label>Área de Atuação</label>
+                        <select className="form-control" style={{ width: 350, textAlign: 'center', border: '2px solid red' }}
+                            defaultValue={parceiro.idAreaAtuacao} ref={idAreaAtuacao}>
+                            <option value={0}>-- SELECIONE --</option>
+                            {
+                                listaAreaAtuacao.map((areaAtuacao, index) => {
+                                    if (parceiro != null && parceiro.idAreaAtuacao == areaAtuacao.idArea) {
+                                        return <option selected value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
+                                    }
+                                    else {
+                                        return <option value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
+                                    }
+                                })
                             }
-                            else {
-                                return <option value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
+                        </select>
+                    </div>
+                    :
+                    <div className="form-group">
+                        <label>Área de Atuação</label>
+                        <select className="form-control" style={{ width: 350, textAlign: 'center' }}
+                            defaultValue={parceiro.idAreaAtuacao} ref={idAreaAtuacao}>
+                            <option value={0}>-- SELECIONE --</option>
+                            {
+                                listaAreaAtuacao.map((areaAtuacao, index) => {
+                                    if (parceiro != null && parceiro.idAreaAtuacao == areaAtuacao.idArea) {
+                                        return <option selected value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
+                                    }
+                                    else {
+                                        return <option value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
+                                    }
+                                })
                             }
-                        })
-                    }
-                </select>
-            </div>
+                        </select>
+                    </div>
+            }
 
             <div>
                 <button onClick={parceiro.idParceiro != 0 ? alterarParceiro : cadastrarParceiro}
