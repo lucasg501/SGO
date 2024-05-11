@@ -191,7 +191,8 @@ export default function FormParcelas(props) {
 
                                 <div className="form-group" style={{ textAlign: 'start', fontWeight: 'bold', marginLeft: 30 }}>
                                     <label>Valor (R$):</label>
-                                    <input type="number" className="form-control" defaultValue={parcela.valorParcela ? parcela.valorParcela : 0}
+                                    <input type="number" className="form-control" defaultValue={parcela.valorParcela ? 
+                                        parseFloat(parcela.valorParcela).toFixed(2) : 0}
                                         style={{ width: '80%' }} ref={el => valorParcela.current[parcela.numParcela] = el}
                                         onChange={(e) => {
                                             parcela.valorParcela = e.target.value;

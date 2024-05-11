@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import 'react-calendar/dist/Calendar.css';
 import { Calendar, DateObject } from "react-multi-date-picker";
 import gregorian_pt_br from "react-date-object/locales/gregorian_pt_br";
+import Carregando from '@/app/components/carregando';
 
 export default function GerenciarDiarias({ params: { idFuncionario } }) {
 
@@ -14,6 +15,7 @@ export default function GerenciarDiarias({ params: { idFuncionario } }) {
     const [totalDiarias, setTotalDiarias] = useState("0,00");
     const [valorDiarias, setValorDiarias] = useState(0);
     const [diasConvertidos, setDiasConvertidos] = useState([]);
+    const [carregando, setCarregando] = useState(true);
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
     function openModal() {
@@ -66,6 +68,7 @@ export default function GerenciarDiarias({ params: { idFuncionario } }) {
                     setValorDiarias(r[0].valorDiaria);
                     setTotalDiarias(r[0].valorDiaria * lista.length);
                     converterDias(lista);
+                    setCarregando(false);
                 }
             });
     }
@@ -199,7 +202,7 @@ export default function GerenciarDiarias({ params: { idFuncionario } }) {
                         </div>
                     </div>
                     :
-                    <div>Carregando funcionário...</div>
+                    <Carregando />
             }
             <Modal style={{ content: { width: '500px', margin: 'auto', height: '600px', overflow: 'hidden' } }} isOpen={modalIsOpen} onRequestClose={closeModal}>
                 <div className="input-group" style={{ margin: '20px', display: 'flex', alignItems: 'center' }}>

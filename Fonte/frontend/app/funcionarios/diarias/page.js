@@ -1,5 +1,6 @@
 'use client'
 
+import Carregando from "@/app/components/carregando";
 import httpClient from "@/app/utils/httpClient";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -8,6 +9,7 @@ export default function Diarias() {
 
     const [listaDiarias, setListaDiarias] = useState([]);
     const [listaFuncionarios, setListaFuncionarios] = useState([]);
+    const [carregando, setCarregando] = useState(false);
     const mostrarSomentePagas = useRef(false);
     const mesFiltroDiarias = useRef(0);
     const idFuncDiarias = useRef(0);
@@ -29,6 +31,8 @@ export default function Diarias() {
 
     function carregarDiarias(idFunc) {
 
+        setCarregando(true);
+
         if (idFunc > 0) {
 
             httpClient.get(`/diarias/obterDiariasFuncionario/${idFunc}`)
@@ -36,23 +40,32 @@ export default function Diarias() {
                 return r.json();
             })
             .then(r => {
+
                 let listaCarregar = [];
 
-                r.forEach((diaria) => {
+                if (mesFiltroDiarias.current.value && mostrarSomentePagas.current.value) {
 
-                    let dataDiaria = new Date(diaria.dia);
-                    let mesDiaria = (dataDiaria.getUTCMonth() + 1).toString();
+                    r.forEach((diaria) => {
 
-                    if (mesFiltroDiarias.current.value == "0" || mesDiaria === mesFiltroDiarias.current.value) {
-
-                        if (!mostrarSomentePagas.current.checked || diaria.dataPgto != null) {
-                            listaCarregar.push(diaria);
+                        let dataDiaria = new Date(diaria.dia);
+                        let mesDiaria = (dataDiaria.getUTCMonth() + 1).toString();
+    
+                        if (mesFiltroDiarias.current.value == "0" || mesDiaria === mesFiltroDiarias.current.value) {
+    
+                            if (!mostrarSomentePagas.current.checked || diaria.dataPgto != null) {
+                                listaCarregar.push(diaria);
+                            }
                         }
-                    }
-                });
+                    });
+    
+                    setListaDiarias(listaCarregar);
+                }
+                else {
+                    setListaDiarias(r);
+                }
 
-                setListaDiarias(listaCarregar);
-            });
+                setCarregando(false);
+            })
         }
         else {
             setListaDiarias([]);
@@ -83,6 +96,7 @@ export default function Diarias() {
         <div>
             <h1>Relatório de Diárias</h1>
 
+            
             <div style={{marginTop: 20, marginBottom: 20}}>
                 <label style={{fontWeight: "bold"}}>Selecione um funcionário</label>
                 <select className="form-select" style={{width: 250}}
@@ -105,7 +119,7 @@ export default function Diarias() {
                             
                             <div className="form-group">
                                 <label style={{fontWeight: 'bold'}}>Mês</label>
-                                <select className="form-select" style={{width: 250}} onChange={(e) => carregarDiarias(idFuncDiarias.current.value)} 
+                                <select className="form-select" style={{width: 250}} onChange={() => carregarDiarias(idFuncDiarias.current.value)} 
                                     ref={mesFiltroDiarias}>
                                     <option value={0}>Todos</option>
                                     <option value={1}>Janeiro</option>
@@ -123,13 +137,16 @@ export default function Diarias() {
                                 </select>
                             </div>
                             <div className="form-check" style={{marginLeft: 10}}>
-                                <input type="checkbox" onChange={carregarDiarias(idFuncDiarias.current.value)}
+                                <input type="checkbox" onChange={() => carregarDiarias(idFuncDiarias.current.value)}
                                     ref={mostrarSomentePagas} />
                                 <label style={{fontWeight: 'bold', marginLeft: 3}}>Mostrar somente diárias pagas</label>
                             </div>
                         </div>
 
                         {
+                            carregando ?
+                            <Carregando />
+                            :
                             listaDiarias.length > 0 ?
                             <table style={{textAlign: "center"}} className="table table-responsive">
                                 <thead>

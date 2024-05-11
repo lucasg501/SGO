@@ -1,5 +1,6 @@
 'use client'
 
+import Carregando from "@/app/components/carregando";
 import httpClient from "@/app/utils/httpClient";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -66,41 +67,43 @@ export default function MarcarPagamentoDiaria({params: {idDiaria}}) {
 
     return(
         <div>
-            {diaria ? 
-            <div>
-                <h1>Marcar Parcela como Paga</h1>
-
-                <div style={{marginTop: 30, marginBottom: 30, display: 'inline-flex'}}>
-                    <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold'}}>
-                        <label>Dia:</label>
-                        <input disabled
-                            defaultValue={diaria.dia ? formatarData(diaria.dia) : ''}
-                            style={{ width: '80%' }}
-                            type="date"
-                            className="form-control"
-                        />
-
-                    </div>
-                    <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold'}}>
-                        <label>Data de Pagamento:</label>
-                        <input
-                            style={{ width: '80%' }}
-                            type="date"
-                            className="form-control"
-                            ref={dataPagamento}
-                            defaultValue={formatarData(new Date())}
-                        />
-
-                    </div>
-                </div>
-
+            {
+                diaria ? 
                 <div>
-                    <Link style={{ marginRight: 25 }} href="/funcionarios/diarias"><button className="btn btn-secondary">Voltar</button></Link>
-                    <button className="btn btn-primary" onClick={alterarDiaria}>Marcar</button>
+                    <h1>Marcar Diária como Paga</h1>
+
+                    <div style={{marginTop: 30, marginBottom: 30, display: 'inline-flex'}}>
+                        <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold'}}>
+                            <label>Dia:</label>
+                            <input disabled
+                                defaultValue={diaria.dia ? formatarData(diaria.dia) : ''}
+                                style={{ width: '80%' }}
+                                type="date"
+                                className="form-control"
+                            />
+
+                        </div>
+                        <div className="form-group" style={{textAlign: 'start', fontWeight: 'bold'}}>
+                            <label>Data de Pagamento:</label>
+                            <input
+                                style={{ width: '80%' }}
+                                type="date"
+                                className="form-control"
+                                ref={dataPagamento}
+                                defaultValue={formatarData(new Date())}
+                            />
+
+                        </div>
+                    </div>
+
+                    <div>
+                        <Link style={{ marginRight: 25 }} href="/funcionarios/diarias"><button className="btn btn-secondary">Voltar</button></Link>
+                        <button className="btn btn-primary" onClick={alterarDiaria}>Marcar</button>
+                    </div>
                 </div>
-            </div>
-            :
-            <div>Carregando...</div>}
+                :
+                <Carregando />
+            }
         </div>
     )
 }
