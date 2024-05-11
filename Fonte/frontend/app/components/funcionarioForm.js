@@ -174,8 +174,8 @@ export default function FuncionarioForm(props) {
                     </div>
                     :
                     <div className="form-group">
-                        <label>*Cargo:</label>
-                        <select style={{ width: 250, textAlign: 'center' }} defaultValue={funcionario.cargoFuncionario} className="form-control"
+                        <label>Cargo:*</label>
+                        <select style={{ width: 250, textAlign: 'center' }} defaultValue={funcionario.cargoFuncionario} className="form-select"
                             ref={el => cargoFuncionario.current = el}>
                             <option value={0}>Selecione</option>
                             {

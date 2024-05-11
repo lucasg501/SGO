@@ -1,5 +1,6 @@
 'use client'
 
+import Carregando from "@/app/components/carregando";
 import FormParcelas from "@/app/components/formParcelas";
 import httpClient from "@/app/utils/httpClient";
 import { useEffect, useState } from "react";
@@ -10,6 +11,7 @@ export default function CriarParcelas({params: {idObra}}) {
     const [listaParcelas, setListaParcelas] = useState(null);
     const [totalRecebido, setTotalRecebido] = useState(0);
     const [qtdeParcelasPagas, setQtdeParcelasPagas] = useState(0);
+    const [carregando, setCarregando] = useState(true);
 
     function carregarObra() {
 
@@ -56,6 +58,8 @@ export default function CriarParcelas({params: {idObra}}) {
             else {
                 setListaParcelas([]);
             }
+
+            setCarregando(false);
         })
     }
 
@@ -71,7 +75,7 @@ export default function CriarParcelas({params: {idObra}}) {
                 obra && listaParcelas ? 
                 <FormParcelas obra={obra} parcelas={listaParcelas} valorRecebido={totalRecebido} qtdeParcelasPagas={qtdeParcelasPagas}></FormParcelas>
                 :
-                <div>Carregando...</div>
+                <Carregando />
             }
         </div>
     );

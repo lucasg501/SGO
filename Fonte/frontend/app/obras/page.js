@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
+import Carregando from "../components/carregando";
 
 export default function Obras() {
 
@@ -12,6 +13,7 @@ export default function Obras() {
     const termoBusca = useRef("");
     const [listaEtapas, setListEtapas] = useState([]);
     const [filtroTerminada, setFiltroTerminada] = useState('0'); // Alterado para '0' para tornar "Mostrar Todos" a opção padrão
+    const [carregando, setCarregando] = useState(true);
 
     function carregarEtapas() {
         httpClient.get('/andamentoEtapas/listar')
@@ -32,6 +34,7 @@ export default function Obras() {
                 setListaObras(r);
                 // Chamando a função de filtro diretamente para listar todas as obras no carregamento inicial
                 filtrarObras('0', r);
+                setCarregando(false);
             })
     }
 
@@ -96,7 +99,7 @@ export default function Obras() {
     return (
         <div>
             <h1>Obras</h1>
-
+            
             <div className="card shadow">
                 <div style={{display: 'flex', justifyContent: 'space-between'}} className="card-header">
                     <div style={{display: 'flex', alignItems: 'center'}}>
@@ -121,108 +124,113 @@ export default function Obras() {
                     </div>
                 </div>
 
-                <div className="card-body">
-                    <div className="form-group">
-                        <label>Buscar</label>
-                        <input 
-                            type="text" 
-                            ref={termoBusca} 
-                            placeholder="Digite o bairro da obra..." 
-                            className="form-control"
-                            onChange={(e) => filtrarBusca()} 
-                        />
+                {
+                    carregando ?
+                    <Carregando />
+                    :
+                    <div className="card-body">
+                        <div className="form-group">
+                            <label>Buscar</label>
+                            <input 
+                                type="text" 
+                                ref={termoBusca} 
+                                placeholder="Digite o bairro da obra..." 
+                                className="form-control"
+                                onChange={(e) => filtrarBusca()} 
+                            />
+                        </div>
+
+                        <div className="table-responsive">
+                            <table className="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Endereço</th>
+                                        <th>Bairro</th>
+                                        <th>Cidade</th>
+                                        <th>CEP</th>
+                                        <th>Valor Total</th>
+                                        <th>Data Inicio</th>
+                                        <th style={{ textAlign: 'center' }}>Data Prevista de Término</th>
+                                        <th>Contrato</th>
+                                        <th>Planta</th>
+                                        <th>Cliente</th>
+                                        <th>Terminada</th>
+                                        <th>Editar</th>
+                                        <th>Excluir</th>
+                                        <th>Alocar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {listaBusca.map((value, index) => {
+                                        const cliente = listaClientes.find(cliente => cliente.idCli === value.idCliente);
+                                        const nomeCliente = cliente ? cliente.nomeCli : "Cliente desconhecido";
+
+                                        return (
+                                            <tr key={index}>
+                                                <td>{value.endereco}</td>
+                                                <td>{value.bairro}</td>
+                                                <td>{value.cidade}</td>
+                                                <td>{value.cepObra}</td>
+                                                <td>{parseFloat(value.valorTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                                <td>{formatarData(value.dataInicio)}</td>
+                                                <td>{formatarData(value.dataTermino)}</td>
+                                                <td>
+                                                    {value.contrato ? (
+                                                        <a href={value.contrato} download>{value.contrato}</a>
+                                                    ) : (
+                                                        "Não possui"
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    {value.planta ? (
+                                                        <a href={value.planta} download>{value.planta}</a>
+                                                    ) : (
+                                                        "Não possui"
+                                                    )}
+                                                </td>
+                                                <td>{nomeCliente}</td>
+                                                <td style={{ textAlign: 'center' }}>{value.terminada == 'S' ? 'Sim' : 'Não'}</td>
+                                                <td>
+                                                    {value.terminada === 'S' ? (
+                                                        <span className="btn btn-primary" style={{ pointerEvents: 'none', opacity: 0.5 }}>
+                                                            <i className="fas fa-pen"></i>
+                                                        </span>
+                                                    ) : (
+                                                        <Link className="btn btn-primary" href={`/obras/alterar/${value.idObra}`}>
+                                                            <i className="fas fa-pen"></i>
+                                                        </Link>
+                                                    )}
+
+                                                </td>
+
+                                                <td>
+                                                    <button disabled={value.terminada == 'S'} style={{ marginLeft: 10, marginRight: 10 }} onClick={() => excluirObra(value.idObra)} className="btn btn-danger"><i className="fas fa-trash"></i></button>
+                                                </td>
+
+                                                <td>
+                                                    {value.terminada === 'S' ? (
+                                                        <span>
+                                                            <button className="btn btn-success" disabled>
+                                                                <i className="fas fa-users"></i>
+                                                            </button>
+                                                        </span>
+                                                    ) : (
+                                                        <Link href={`/obras/servicos/${value.idObra}`}>
+                                                            <button className="btn btn-success">
+                                                                <i className="fas fa-users"></i>
+                                                            </button>
+                                                        </Link>
+                                                    )}
+
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-
-                    <div className="table-responsive">
-                        <table className="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Endereço</th>
-                                    <th>Bairro</th>
-                                    <th>Cidade</th>
-                                    <th>CEP</th>
-                                    <th>Valor Total</th>
-                                    <th>Data Inicio</th>
-                                    <th style={{ textAlign: 'center' }}>Data Prevista de Término</th>
-                                    <th>Contrato</th>
-                                    <th>Planta</th>
-                                    <th>Cliente</th>
-                                    <th>Terminada</th>
-                                    <th>Editar</th>
-                                    <th>Excluir</th>
-                                    <th>Alocar</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {listaBusca.map((value, index) => {
-                                    const cliente = listaClientes.find(cliente => cliente.idCli === value.idCliente);
-                                    const nomeCliente = cliente ? cliente.nomeCli : "Cliente desconhecido";
-
-                                    return (
-                                        <tr key={index}>
-                                            <td>{value.endereco}</td>
-                                            <td>{value.bairro}</td>
-                                            <td>{value.cidade}</td>
-                                            <td>{value.cepObra}</td>
-                                            <td>{parseFloat(value.valorTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                                            <td>{formatarData(value.dataInicio)}</td>
-                                            <td>{formatarData(value.dataTermino)}</td>
-                                            <td>
-                                                {value.contrato ? (
-                                                    <a href={value.contrato} download>{value.contrato}</a>
-                                                ) : (
-                                                    "Não possui"
-                                                )}
-                                            </td>
-                                            <td>
-                                                {value.planta ? (
-                                                    <a href={value.planta} download>{value.planta}</a>
-                                                ) : (
-                                                    "Não possui"
-                                                )}
-                                            </td>
-                                            <td>{nomeCliente}</td>
-                                            <td style={{ textAlign: 'center' }}>{value.terminada == 'S' ? 'Sim' : 'Não'}</td>
-                                            <td>
-                                                {value.terminada === 'S' ? (
-                                                    <span className="btn btn-primary" style={{ pointerEvents: 'none', opacity: 0.5 }}>
-                                                        <i className="fas fa-pen"></i>
-                                                    </span>
-                                                ) : (
-                                                    <Link className="btn btn-primary" href={`/obras/alterar/${value.idObra}`}>
-                                                        <i className="fas fa-pen"></i>
-                                                    </Link>
-                                                )}
-
-                                            </td>
-
-                                            <td>
-                                                <button disabled={value.terminada == 'S'} style={{ marginLeft: 10, marginRight: 10 }} onClick={() => excluirObra(value.idObra)} className="btn btn-danger"><i className="fas fa-trash"></i></button>
-                                            </td>
-
-                                            <td>
-                                                {value.terminada === 'S' ? (
-                                                    <span>
-                                                        <button className="btn btn-success" disabled>
-                                                            <i className="fas fa-users"></i>
-                                                        </button>
-                                                    </span>
-                                                ) : (
-                                                    <Link href={`/obras/servicos/${value.idObra}`}>
-                                                        <button className="btn btn-success">
-                                                            <i className="fas fa-users"></i>
-                                                        </button>
-                                                    </Link>
-                                                )}
-
-                                            </td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                }
             </div>
         </div>
     );

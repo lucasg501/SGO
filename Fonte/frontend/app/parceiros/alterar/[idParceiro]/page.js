@@ -1,4 +1,5 @@
 'use client'
+import Carregando from "@/app/components/carregando";
 import ParceiroForm from "@/app/components/parceiroForm";
 import httpClient from "@/app/utils/httpClient";
 import { useEffect, useState } from "react"
@@ -22,7 +23,7 @@ export default function AlterarParceiro({params: {idParceiro}}) {
 
     return(
         <div>
-            {parceiro != null ? <ParceiroForm parceiro={parceiro}></ParceiroForm> : <div>Carregando...</div>}
+            {parceiro != null ? <ParceiroForm parceiro={parceiro}></ParceiroForm> : <Carregando />}
         </div>
     )
 }

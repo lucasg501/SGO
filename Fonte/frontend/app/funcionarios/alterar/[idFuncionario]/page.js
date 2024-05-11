@@ -1,5 +1,6 @@
 'use client'
 
+import Carregando from "@/app/components/carregando";
 import FuncionarioForm from "@/app/components/funcionarioForm";
 import httpClient from "@/app/utils/httpClient";
 import { useEffect, useState } from "react";
@@ -25,7 +26,7 @@ export default function AlterarFuncionario({params: {idFuncionario}}) {
 
     return (
         <div>
-            {funcionario != null ? <FuncionarioForm funcionario={funcionario}></FuncionarioForm> : <div>Carregando...</div>}
+            {funcionario != null ? <FuncionarioForm funcionario={funcionario}></FuncionarioForm> : <Carregando />}
         </div>
     );
 }

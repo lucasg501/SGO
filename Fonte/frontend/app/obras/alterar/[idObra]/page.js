@@ -2,6 +2,7 @@
 import httpClient from "@/app/utils/httpClient";
 import ObraForm from '@/app/components/obraForm';
 import { useEffect, useState } from "react"
+import Carregando from "@/app/components/carregando";
 
 export default function alterarObra({params:{idObra}}){
     const [obra, setObra] = useState(null);
@@ -22,7 +23,7 @@ export default function alterarObra({params:{idObra}}){
 
     return(
         <div>
-            {obra != null ? <ObraForm obra={obra} /> : <div>Carregando...</div>}
+            {obra != null ? <ObraForm obra={obra} /> : <Carregando />}
         </div>
     )
 }

@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
+import Carregando from "../components/carregando";
 
 export default function Parceiros() {
     const [listaParceiros, setListaParceiros] = useState([]);
@@ -9,6 +10,7 @@ export default function Parceiros() {
     const [busca, setBusca] = useState("");
     const [listaBusca, setListaBusca] = useState([]);
     const termoBusca = useRef("");
+    const [carregando, setCarregando] = useState(true);
 
     function carregarParceiros() {
         httpClient.get('/parceiros/listar')
@@ -19,7 +21,7 @@ export default function Parceiros() {
     function carregarAreaAtuacao() {
         httpClient.get('/areaAtuacao/listar')
             .then(r => r.json())
-            .then(r => setListaAtuacao(r))
+            .then(r => { setListaAtuacao(r); setCarregando(false); })
             .catch(error => console.error('Erro ao carregar áreas de atuação:', error));
     }
 
@@ -58,29 +60,63 @@ export default function Parceiros() {
                     <Link href="/parceiros/criar"><button className="btn btn-primary">Cadastrar</button></Link>
                 </div>
 
-                <div className="card-body">
-                    <div className="form-group">
-                        <label>Buscar</label>
-                        <input type="text" ref={termoBusca} placeholder="Digite o nome do parceiro..." className="form-control"
-                        onChange={(e) => filtrarBusca()} />
-                    </div>
+                {
+                    carregando ?
+                    <Carregando />
+                    :
+                    <div className="card-body">
+                        <div className="form-group">
+                            <label>Buscar</label>
+                            <input type="text" ref={termoBusca} placeholder="Digite o nome do parceiro..." className="form-control"
+                            onChange={(e) => filtrarBusca()} />
+                        </div>
 
-                    <div className="table-responsive">
-                        <table className="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Telefone</th>
-                                    <th>Área de Atuação</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
+                        <div className="table-responsive">
+                            <table className="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Telefone</th>
+                                        <th>Área de Atuação</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
 
-                            <tbody>
-                                {
-                                    busca != "" && listaBusca ?
-                                        listaBusca.length > 0 ?
-                                        listaBusca.map((parceiro, index) => (
+                                <tbody>
+                                    {
+                                        busca != "" && listaBusca ?
+                                            listaBusca.length > 0 ?
+                                            listaBusca.map((parceiro, index) => (
+                                                <tr key={index}>
+                                                    <td>{parceiro.nomeParceiro}</td>
+                                                    <td>{parceiro.telParceiro}</td>
+                                                    <td>{getNomeAreaAtuacao(parceiro.idAreaAtuacao)}</td>
+                                                    <td>
+                                                        <Link className="btn btn-primary" href={`/parceiros/alterar/${parceiro.idParceiro}`}>
+                                                            <i className="fas fa-pen"></i>
+                                                        </Link>
+                                                        <button
+                                                            style={{marginLeft: 15}}
+                                                            className="btn btn-danger"
+                                                            onClick={() => {
+                                                                if (confirm(`Deseja excluir o parceiro ${parceiro.nomeParceiro}?`)) {
+                                                                    httpClient.delete(`/parceiros/excluir/${parceiro.idParceiro}`)
+                                                                        .then(() => {
+                                                                            alert('Parceiro excluído com sucesso!');
+                                                                            carregarParceiros();
+                                                                        });
+                                                                }
+                                                            }}
+                                                        >
+                                                            <i className="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                            :
+                                            <div style={{margin: 20}}>Parceiros não encontrados.</div>
+                                        :
+                                        listaParceiros.map((parceiro, index) => (
                                             <tr key={index}>
                                                 <td>{parceiro.nomeParceiro}</td>
                                                 <td>{parceiro.telParceiro}</td>
@@ -107,41 +143,12 @@ export default function Parceiros() {
                                                 </td>
                                             </tr>
                                         ))
-                                        :
-                                        <div style={{margin: 20}}>Parceiros não encontrados.</div>
-                                    :
-                                    listaParceiros.map((parceiro, index) => (
-                                        <tr key={index}>
-                                            <td>{parceiro.nomeParceiro}</td>
-                                            <td>{parceiro.telParceiro}</td>
-                                            <td>{getNomeAreaAtuacao(parceiro.idAreaAtuacao)}</td>
-                                            <td>
-                                                <Link className="btn btn-primary" href={`/parceiros/alterar/${parceiro.idParceiro}`}>
-                                                    <i className="fas fa-pen"></i>
-                                                </Link>
-                                                <button
-                                                    style={{marginLeft: 15}}
-                                                    className="btn btn-danger"
-                                                    onClick={() => {
-                                                        if (confirm(`Deseja excluir o parceiro ${parceiro.nomeParceiro}?`)) {
-                                                            httpClient.delete(`/parceiros/excluir/${parceiro.idParceiro}`)
-                                                                .then(() => {
-                                                                    alert('Parceiro excluído com sucesso!');
-                                                                    carregarParceiros();
-                                                                });
-                                                        }
-                                                    }}
-                                                >
-                                                    <i className="fas fa-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
-                        </table>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     );

@@ -166,7 +166,7 @@ export default function ParceiroForm(props) {
                     :
                     <div className="form-group">
                         <label>Área de Atuação</label>
-                        <select className="form-control" style={{ width: 350, textAlign: 'center' }}
+                        <select className="form-select" style={{ width: 350, textAlign: 'center' }}
                             defaultValue={parceiro.idAreaAtuacao} ref={idAreaAtuacao}>
                             <option value={0}>-- SELECIONE --</option>
                             {

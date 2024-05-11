@@ -2,12 +2,14 @@
 import { useEffect, useState } from "react"
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
+import Carregando from "../components/carregando";
 
 export default function Recebimentos() {
 
     const [listaAcompParcelas, setListaAcompParcelas] = useState([]);
     const [listaObras, setListaObras] = useState([]);
     const [listaParcelasVencidas, setListaParcelasVencidas] = useState([]);
+    const [carregando, setCarregando] = useState(true);
 
     function carregarAcompParcelas() {
 
@@ -38,6 +40,7 @@ export default function Recebimentos() {
         })
         .then(r => {
             setListaParcelasVencidas(r);
+            setCarregando(false);
         });
     }
 
@@ -99,89 +102,94 @@ export default function Recebimentos() {
         <div>
             <h1 style={{marginBottom: 50}}>Recebimentos</h1>
 
-            <div>
-                {
-                    listaObras.map((obra, index) => (
+            {
+                carregando ?
+                <Carregando />
+                :
+                <div>
+                    {
+                        listaObras.map((obra, index) => (
 
-                        <div key={obra.idObra} style={{ marginBottom: 20 }}>
-                            <details style={{ border: '1px solid #ccc', borderRadius: 5, padding: 10 }}>
-                                
-                                <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>
-                                    <a href={`/recebimentos/gravar/${obra.idObra}`}>
-                                        <button style={{marginLeft: 20, marginRight: 20}} className="btn btn-primary">Gerenciar</button>
-                                    </a>
-                                    Obra: {encontrarBairro(Number(obra.idObra))}
+                            <div key={obra.idObra} style={{ marginBottom: 20 }}>
+                                <details style={{ border: '1px solid #ccc', borderRadius: 5, padding: 10 }}>
+                                    
+                                    <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>
+                                        <a href={`/recebimentos/gravar/${obra.idObra}`}>
+                                            <button style={{marginLeft: 20, marginRight: 20}} className="btn btn-primary">Gerenciar</button>
+                                        </a>
+                                        Obra: {encontrarBairro(Number(obra.idObra))}
+                                        {
+                                            haParcelasVencidas(obra.idObra) ? 
+                                            <div style={{color: 'red', textAlign: 'center'}}>
+                                                Há parcela(s) vencida(s) que não foram pagas para esta obra 
+                                            </div>
+                                            :
+                                            <></>
+                                        }
+                                    </summary>
+                                    
+
                                     {
-                                        haParcelasVencidas(obra.idObra) ? 
-                                        <div style={{color: 'red', textAlign: 'center'}}>
-                                            Há parcela(s) vencida(s) que não foram pagas para esta obra 
-                                        </div>
-                                        :
-                                        <></>
+                                        listaAcompParcelas[obra.idObra] ?
+                                        <table className="table table-hover" style={{textAlign: 'center', marginTop: 20}}>
+                                            <thead>
+                                                <tr>
+                                                    <th>Parcela</th>
+                                                    <th>Data de Vencimento</th>
+                                                    <th>Data de Recebimento</th>
+                                                    <th>Valor</th>
+                                                    <th>Marcar como Recebida</th>
+                                                    <th>Cancelar Recebimento</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                {
+                                                    listaAcompParcelas[obra.idObra].map((parcela, index) => {
+
+                                                        return (
+                                                            <tr key={index}>
+                                                                <td>{index + 1}</td>
+                                                                <td>{parcelaEstaVencida(parcela.numParcela) ?
+                                                                    <div style={{color: 'red', fontWeight: 'bold', textDecoration: 'underline'}}>
+                                                                        {formatarData(parcela.dataVencimento)}</div>
+                                                                    :
+                                                                    <div>{formatarData(parcela.dataVencimento)}</div>}</td>
+                                                                <td>{parcela.dataRecebimento ? formatarData(parcela.dataRecebimento) : "Não foi recebida"}</td>
+                                                                <td>R$ {parseFloat(parcela.valorParcela).toFixed(2)}</td>
+                                                                <td>
+                                                                    {
+                                                                        parcela.dataRecebimento ?
+                                                                        <button style={{ margin: 'auto' }} className="btn btn-success" disabled><i className="fas fa-check"></i></button>
+                                                                        :
+                                                                        <Link style={{ margin: 'auto' }} className="btn btn-success" href={`/recebimentos/alterar/${parcela.numParcela}`}><i className="fas fa-check"></i></Link>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    {
+                                                                        parcela.dataRecebimento ?
+                                                                        <button style={{ margin: 'auto' }} className="btn btn-danger" onClick={() => {cancelarRecebimento(parcela.numParcela)}}><i className="fas fa-ban"></i></button>
+                                                                        :
+                                                                        <button style={{ margin: 'auto' }} className="btn btn-danger" disabled><i className="fas fa-ban"></i></button>
+                                                                    }
+                                                                </td>
+
+                                                            </tr>
+                                                        )
+                                                    })
+                                                }
+                                                
+                                            </tbody>
+                                        </table>
+                                        : 
+                                        <div style={{textAlign: 'center'}}><b>Não há parcelas para essa obra</b></div>
                                     }
-                                </summary>
-                                
-
-                                {
-                                    listaAcompParcelas[obra.idObra] ?
-                                    <table className="table table-hover" style={{textAlign: 'center', marginTop: 20}}>
-                                        <thead>
-                                            <tr>
-                                                <th>Parcela</th>
-                                                <th>Data de Vencimento</th>
-                                                <th>Data de Recebimento</th>
-                                                <th>Valor</th>
-                                                <th>Marcar como Recebida</th>
-                                                <th>Cancelar Recebimento</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            {
-                                                listaAcompParcelas[obra.idObra].map((parcela, index) => {
-
-                                                    return (
-                                                        <tr key={index}>
-                                                            <td>{index + 1}</td>
-                                                            <td>{parcelaEstaVencida(parcela.numParcela) ?
-                                                                <div style={{color: 'red', fontWeight: 'bold', textDecoration: 'underline'}}>
-                                                                    {formatarData(parcela.dataVencimento)}</div>
-                                                                :
-                                                                <div>{formatarData(parcela.dataVencimento)}</div>}</td>
-                                                            <td>{parcela.dataRecebimento ? formatarData(parcela.dataRecebimento) : "Não foi recebida"}</td>
-                                                            <td>R$ {parseFloat(parcela.valorParcela).toFixed(2)}</td>
-                                                            <td>
-                                                                {
-                                                                    parcela.dataRecebimento ?
-                                                                    <button style={{ margin: 'auto' }} className="btn btn-success" disabled><i className="fas fa-check"></i></button>
-                                                                    :
-                                                                    <Link style={{ margin: 'auto' }} className="btn btn-success" href={`/recebimentos/alterar/${parcela.numParcela}`}><i className="fas fa-check"></i></Link>
-                                                                }
-                                                            </td>
-                                                            <td>
-                                                                {
-                                                                    parcela.dataRecebimento ?
-                                                                    <button style={{ margin: 'auto' }} className="btn btn-danger" onClick={() => {cancelarRecebimento(parcela.numParcela)}}><i className="fas fa-ban"></i></button>
-                                                                    :
-                                                                    <button style={{ margin: 'auto' }} className="btn btn-danger" disabled><i className="fas fa-ban"></i></button>
-                                                                }
-                                                            </td>
-
-                                                        </tr>
-                                                    )
-                                                })
-                                            }
-                                            
-                                        </tbody>
-                                    </table>
-                                    : 
-                                    <div style={{textAlign: 'center'}}><b>Não há parcelas para essa obra</b></div>
-                                }
-                            </details>
-                        </div>
-                    ))
-                }
-            </div>
+                                </details>
+                            </div>
+                        ))
+                    }
+                </div>
+            }
         </div>
     )
 }

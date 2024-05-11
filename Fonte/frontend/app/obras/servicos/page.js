@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import httpClient from "@/app/utils/httpClient";
 import Link from "next/link";
+import Carregando from "@/app/components/carregando";
 
 export default function Servicos() {
     const [listaServicos, setListaServicos] = useState([]);
@@ -9,6 +10,7 @@ export default function Servicos() {
     const [listaAtuacao, setListaAtuacao] = useState([]);
     const [listaObra, setListaObra] = useState([]);
     const [idParceiroFiltrado, setIdParceiroFiltrado] = useState(null);
+    const [carregando, setCarregando] = useState(true);
 
     // Funções de carregamento de dados
     useEffect(() => {
@@ -46,7 +48,7 @@ export default function Servicos() {
     function carregarObra() {
         httpClient.get('/obras/listar')
             .then(r => r.json())
-            .then(r => setListaObra(r))
+            .then(r => { setListaObra(r); setCarregando(false) })
             .catch(error => console.error("Erro ao carregar obras:", error));
     }
 
@@ -91,53 +93,58 @@ export default function Servicos() {
                     </select>
                 </div>
 
-                <div className="card-body">
-                    <table className="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Parceiro</th>
-                                <th>Descrição</th>
-                                <th>Valor</th>
-                                <th>Obra</th>
-                                <th>Área de Atuação</th>
-                                <th>Data</th>
-                                <th>Alterar</th>
-                                <th>Excluir</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {listaServicos
-                                .filter(servico => !idParceiroFiltrado || servico.idParceiro === parseInt(idParceiroFiltrado))
-                                .map((value, index) => (
-                                    <tr key={index}>
-                                        <td>{obterNomeParceiro(value.idParceiro)}</td>
-                                        <td>{value.descServico}</td>
-                                        <td>R$ {value.valorServico.toFixed(2)}</td>
-                                        <td>{obterBairroObra(value.idObra)}</td>
-                                        <td>{obterAreaAtuacao(value.idParceiro)}</td>
-                                        <td>{value.dataServ == null ? 'N/A' : new Date(value.dataServ).toLocaleDateString()}</td>
-                                        <td>
-                                            <Link className="btn btn-primary" href={`servicos/alterar/${value.idServico}`}>< i className="fas fa-pen"></i></Link>
-                                        </td>
-                                        <td>
-                                            <button className="btn btn-danger" onClick={() => {
-                                                if (confirm('Deseja excluir o serviço e todos os dados relacionados a ele?')) {
-                                                    httpClient.delete(`/servicos/excluir/${value.idServico}`)
-                                                        .then(r => {
-                                                            alert('Serviço excluído com sucesso!');
-                                                            carregarDados();
-                                                        })
-                                                        .catch(error => console.error("Erro ao excluir serviço:", error));
-                                                }
-                                            }}>
-                                                <i className="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                        </tbody>
-                    </table>
-                </div>
+                {
+                    carregando ?
+                    <Carregando />
+                    :
+                    <div className="card-body">
+                        <table className="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Parceiro</th>
+                                    <th>Descrição</th>
+                                    <th>Valor</th>
+                                    <th>Obra</th>
+                                    <th>Área de Atuação</th>
+                                    <th>Data</th>
+                                    <th>Alterar</th>
+                                    <th>Excluir</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {listaServicos
+                                    .filter(servico => !idParceiroFiltrado || servico.idParceiro === parseInt(idParceiroFiltrado))
+                                    .map((value, index) => (
+                                        <tr key={index}>
+                                            <td>{obterNomeParceiro(value.idParceiro)}</td>
+                                            <td>{value.descServico}</td>
+                                            <td>R$ {value.valorServico.toFixed(2)}</td>
+                                            <td>{obterBairroObra(value.idObra)}</td>
+                                            <td>{obterAreaAtuacao(value.idParceiro)}</td>
+                                            <td>{value.dataServ == null ? 'N/A' : new Date(value.dataServ).toLocaleDateString()}</td>
+                                            <td>
+                                                <Link className="btn btn-primary" href={`servicos/alterar/${value.idServico}`}>< i className="fas fa-pen"></i></Link>
+                                            </td>
+                                            <td>
+                                                <button className="btn btn-danger" onClick={() => {
+                                                    if (confirm('Deseja excluir o serviço e todos os dados relacionados a ele?')) {
+                                                        httpClient.delete(`/servicos/excluir/${value.idServico}`)
+                                                            .then(r => {
+                                                                alert('Serviço excluído com sucesso!');
+                                                                carregarDados();
+                                                            })
+                                                            .catch(error => console.error("Erro ao excluir serviço:", error));
+                                                    }
+                                                }}>
+                                                    <i className="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
+                    </div>
+                }
             </div>
         </div>
     )
