@@ -4,6 +4,7 @@ import httpClient from "./utils/httpClient"
 import Link from "next/link";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Carregando from "./components/carregando";
 
 export default function AdminLayout({ children }) {
     const [listaAcompEtapas, setListaAcompEtapas] = useState([]);
@@ -11,6 +12,7 @@ export default function AdminLayout({ children }) {
     const [listaEtapas, setListaEtapas] = useState([]);
     const [obrasNotificadas, setObrasNotificadas] = useState([]);
     const [haParcelasVencidas, setHaParcelasVencidas] = useState(false);
+    const [carregando, setCarregando] = useState(true);
 
     function procurarParcelasVencidas() {
 
@@ -21,6 +23,7 @@ export default function AdminLayout({ children }) {
         .then(r => {
             let achouParcelasVencidas = r.length > 0;
             setHaParcelasVencidas(achouParcelasVencidas);
+            setCarregando(false);
         });
     }
 
@@ -103,114 +106,123 @@ export default function AdminLayout({ children }) {
             <h1>Início</h1>
 
             {
-                haParcelasVencidas ?
-                <div style={{marginTop: 20, marginBottom: 20}}>
-                    <div style={{color: 'red', fontWeight: 'bold'}}>AVISO: Você possui obras com parcelas vencidas.</div>
-                    <a href='/recebimentos'><button className="btn btn-danger">Ir para página de recebimentos</button></a>
-                </div>
+                carregando ?
+                <Carregando />
                 :
-                <></>
+                <div>
+                    {
+                        haParcelasVencidas ?
+                        <div style={{marginTop: 20, marginBottom: 20}}>
+                            <div style={{color: 'red', fontWeight: 'bold'}}>AVISO: Você possui obras com parcelas vencidas.</div>
+                            <a href='/recebimentos'><button className="btn btn-danger">Ir para página de recebimentos</button></a>
+                        </div>
+                        :
+                        <></>
+                    }
+                    <div className="card shadow">
+                        <div className="card-header">
+                            <span className="font-weight-bold text-primary align-middle" style={{fontSize: 20}}>Obras em andamento</span>
+                        </div>
+                        <div className="card-body">
+                            {Object.keys(listaAcompEtapas).map(idObra => {
+                                const obrasFiltradas = listaAcompEtapas[idObra].filter(etapa => etapa.dataFim === '' || etapa.dataFim === null);
+
+                                // Verifica se há obras para exibir após o filtro
+                                if (obrasFiltradas.length > 0) {
+                                    return (
+                                        <div key={idObra} style={{ marginBottom: 20 }}>
+                                            <details style={{ border: '1px solid #ccc', borderRadius: 5, padding: 10 }}>
+                                                <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>Obra: {encontrarBairro(Number(idObra))}</summary>
+                                                <table className="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Etapa</th>
+                                                            <th>Data Início</th>
+                                                            <th style={{ color: 'red' }}>Data Término</th>
+                                                            <th>Descrição</th>
+                                                            <th>Ver Obra</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {obrasFiltradas.map((etapa, index) => (
+                                                            <tr key={index}>
+                                                                <td>{encontrarEtapa(etapa.idEtapa)}</td>
+                                                                <td>{formatarData(etapa.dataPrevInicio)}</td>
+                                                                <td style={{ color: 'red' }}>{formatarData(etapa.dataPrevTermino)}</td>
+                                                                <td>{etapa.descricaoEtapa}</td>
+                                                                <td style={{ display: 'flex', alignContent: 'center' }}>
+                                                                    <Link style={{ margin: 'auto' }} className="btn btn-success" href={`/etapas`}>Ver Obras</Link>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </details>
+                                        </div>
+                                    );
+                                } else {
+                                    return null; // Se não há obras a serem exibidas, retorna null
+                                }
+                            })}
+                        </div>
+                    </div>
+
+                    {/*-----------------------------------------------------------------------------------------------------------------------*/}
+
+                    <div className="card shadow" style={{marginTop: 20, marginBottom: 20}}>
+                        <div style={{ width: '100%' }}>
+                            <div className="card-header">
+                                <span className="font-weight-bold text-primary align-middle" style={{fontSize: 20}}>Etapas perto de expirar</span>
+                            </div>
+                            <div className="card-body">
+                                {Object.keys(listaAcompEtapas).map(idObra => {
+                                    const etapasFiltradas = listaAcompEtapas[idObra].filter(etapa => {
+                                        const tresDiasDepois = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // Hoje + 3 dias
+                                        const dataPrevistaTermino = new Date(etapa.dataPrevTermino);
+                                        const dataFim = etapa.dataFim || ''; // Garante que dataFim seja uma string para a comparação
+                                        return (dataPrevistaTermino.getTime() <= tresDiasDepois.getTime()) && (dataFim === null || dataFim === '');
+                                    });
+
+                                    if (etapasFiltradas.length > 0) {
+                                        // Notifica sobre as etapas perto de expirar
+                                        notificarEtapasPertoExpirar([idObra]);
+
+                                        // Renderiza as etapas filtradas
+                                        return (
+                                            <div key={idObra} style={{ marginBottom: 20, border: '1px solid #ccc', borderRadius: 5, padding: 10, width: '50%' }}>
+                                                <summary style={{ cursor: 'pointer', fontWeight: 'bold', listStyle: 'none' }}>Obra: {encontrarBairro(Number(idObra))}</summary>
+                                                <table className="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style={{ color: 'red' }}>Data Término</th>
+                                                            <th>Ver Etapa</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {etapasFiltradas.map((etapa, index) => (
+                                                            <tr key={index}>
+                                                                <td style={{ color: 'red' }}>{formatarData(etapa.dataPrevTermino)}</td>
+                                                                <td style={{ display: 'flex', alignContent: 'center' }}>
+                                                                    <Link style={{ margin: 'auto' }} className="btn btn-success" href={`/etapas/alterar/${etapa.idAndamento}`}>Ver Etapa</Link>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        );
+                                    } else {
+                                        return null;
+                                    }
+                                })}
+                            </div>
+                            <ToastContainer />
+                        </div>
+                    </div>
+                </div>
             }
-            <div className="card shadow">
-                <div className="card-header">
-                    <span className="font-weight-bold text-primary align-middle" style={{fontSize: 20}}>Obras em andamento</span>
-                </div>
-                <div className="card-body">
-                    {Object.keys(listaAcompEtapas).map(idObra => {
-                        const obrasFiltradas = listaAcompEtapas[idObra].filter(etapa => etapa.dataFim === '' || etapa.dataFim === null);
 
-                        // Verifica se há obras para exibir após o filtro
-                        if (obrasFiltradas.length > 0) {
-                            return (
-                                <div key={idObra} style={{ marginBottom: 20 }}>
-                                    <details style={{ border: '1px solid #ccc', borderRadius: 5, padding: 10 }}>
-                                        <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>Obra: {encontrarBairro(Number(idObra))}</summary>
-                                        <table className="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>Etapa</th>
-                                                    <th>Data Início</th>
-                                                    <th style={{ color: 'red' }}>Data Término</th>
-                                                    <th>Descrição</th>
-                                                    <th>Ver Obra</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {obrasFiltradas.map((etapa, index) => (
-                                                    <tr key={index}>
-                                                        <td>{encontrarEtapa(etapa.idEtapa)}</td>
-                                                        <td>{formatarData(etapa.dataPrevInicio)}</td>
-                                                        <td style={{ color: 'red' }}>{formatarData(etapa.dataPrevTermino)}</td>
-                                                        <td>{etapa.descricaoEtapa}</td>
-                                                        <td style={{ display: 'flex', alignContent: 'center' }}>
-                                                            <Link style={{ margin: 'auto' }} className="btn btn-success" href={`/etapas`}>Ver Obras</Link>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </details>
-                                </div>
-                            );
-                        } else {
-                            return null; // Se não há obras a serem exibidas, retorna null
-                        }
-                    })}
-                </div>
-            </div>
-
-            {/*-----------------------------------------------------------------------------------------------------------------------*/}
-
-            <div className="card shadow" style={{marginTop: 20, marginBottom: 20}}>
-                <div style={{ width: '100%' }}>
-                    <div className="card-header">
-                        <span className="font-weight-bold text-primary align-middle" style={{fontSize: 20}}>Etapas perto de expirar</span>
-                    </div>
-                    <div className="card-body">
-                        {Object.keys(listaAcompEtapas).map(idObra => {
-                            const etapasFiltradas = listaAcompEtapas[idObra].filter(etapa => {
-                                const tresDiasDepois = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // Hoje + 3 dias
-                                const dataPrevistaTermino = new Date(etapa.dataPrevTermino);
-                                const dataFim = etapa.dataFim || ''; // Garante que dataFim seja uma string para a comparação
-                                return (dataPrevistaTermino.getTime() <= tresDiasDepois.getTime()) && (dataFim === null || dataFim === '');
-                            });
-
-                            if (etapasFiltradas.length > 0) {
-                                // Notifica sobre as etapas perto de expirar
-                                notificarEtapasPertoExpirar([idObra]);
-
-                                // Renderiza as etapas filtradas
-                                return (
-                                    <div key={idObra} style={{ marginBottom: 20, border: '1px solid #ccc', borderRadius: 5, padding: 10, width: '50%' }}>
-                                        <summary style={{ cursor: 'pointer', fontWeight: 'bold', listStyle: 'none' }}>Obra: {encontrarBairro(Number(idObra))}</summary>
-                                        <table className="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th style={{ color: 'red' }}>Data Término</th>
-                                                    <th>Ver Etapa</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {etapasFiltradas.map((etapa, index) => (
-                                                    <tr key={index}>
-                                                        <td style={{ color: 'red' }}>{formatarData(etapa.dataPrevTermino)}</td>
-                                                        <td style={{ display: 'flex', alignContent: 'center' }}>
-                                                            <Link style={{ margin: 'auto' }} className="btn btn-success" href={`/etapas/alterar/${etapa.idAndamento}`}>Ver Etapa</Link>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                );
-                            } else {
-                                return null;
-                            }
-                        })}
-                    </div>
-                    <ToastContainer />
-                </div>
-            </div>
+            
         </div>
 
     )

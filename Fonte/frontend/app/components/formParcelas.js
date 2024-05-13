@@ -6,6 +6,7 @@ import Link from "next/link";
 
 export default function FormParcelas(props) {
 
+    const [totalValores, setTotalValores] = useState(props.obra.valorTotal);
     const dataVencimento = useRef([]);
     const valorParcela = useRef([]);
 
@@ -47,16 +48,51 @@ export default function FormParcelas(props) {
         return `${ano}-${mes}-${dia}`;
     };
 
-    function ajustarValoresParcelas(novoValor) {
+    function ajustarValoresParcelas(novoValor, novaParcela) {
 
-        let listaParcelas = parcelas.map(parcela => {
-            valorParcela.current[parcela.numParcela].value = novoValor;
-            return {
-                ...parcela, valorParcela: novoValor
-            };
-        })
+        let total = 0;
+        let listaParcelas = [];
 
-        setParcelas(listaParcelas);
+        if (novaParcela) {
+            
+            listaParcelas = parcelas.map(parcela => {
+                valorParcela.current[parcela.numParcela].value = novoValor;
+                parcela.valorParcela = novoValor;
+                total += parseFloat(novoValor);
+                return {
+                    ...parcela, valorParcela: novoValor
+                };
+            });
+
+            total += parseFloat(novoValor);
+            novaParcela.valorParcela = parseFloat(novoValor) + parseFloat(props.obra.valorTotal) - total;
+        }
+        else {
+            let parcelaExcluir = parcelas[parcelas.length - 1];
+
+            parcelas.map(parcela => {
+                if (parcela.numParcela != parcelaExcluir.numParcela) {
+                    listaParcelas.push(parcela);
+                }
+            });
+
+            listaParcelas.map(parcela => {
+                valorParcela.current[parcela.numParcela].value = novoValor;
+                parcela.valorParcela = novoValor;
+                total += parseFloat(novoValor);
+                return {
+                    ...parcela, valorParcela: novoValor
+                };
+            });
+
+            let valorDiferenca = parseFloat(parseFloat(novoValor) + parseFloat(props.obra.valorTotal) - total).toFixed(2);
+
+            listaParcelas[listaParcelas.length - 1].valorParcela = valorDiferenca;
+            // Atualiza ref de acordo com o objeto
+            valorParcela.current[listaParcelas[listaParcelas.length - 1].numParcela].value = valorDiferenca;
+        }
+
+        return listaParcelas;
     }
 
     function adicionarCampo() {
@@ -69,25 +105,23 @@ export default function FormParcelas(props) {
             numParcela: parcelas.length + 1,
             dataVencimento: data,
             dataRecebimento: null,
-            valorParcela: valor,
+            valorParcela: 0,
             idObra: props.obra.idObra
         };
 
-        ajustarValoresParcelas(valor)
-        setParcelas(parcelasExistentes => [...parcelasExistentes, novaParcela]);
+        let listaAjustada = ajustarValoresParcelas(valor, novaParcela);
+
+        setParcelas([...listaAjustada, novaParcela]);
     };
 
     function removerCampo() {
         if (parcelas.length > 1) {
 
-            let parcelaExcluir = parcelas[parcelas.length - 1];
-
             let valor = parseFloat((props.obra.valorTotal - props.valorRecebido) / (parcelas.length - 1)).toFixed(2);
-            ajustarValoresParcelas(valor);
 
-            setParcelas((listaParcelas) =>
-                listaParcelas.filter(parcela => parcela.numParcela != parcelaExcluir.numParcela)
-            );
+            let listaAjustada = ajustarValoresParcelas(valor);
+
+            setParcelas(listaAjustada);
         }
     };
 
