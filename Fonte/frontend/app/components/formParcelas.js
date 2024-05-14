@@ -53,19 +53,22 @@ export default function FormParcelas(props) {
         let total = 0;
         let listaParcelas = [];
 
+        let arredondado = Math.ceil(novoValor).toFixed(2);
+
         if (novaParcela) {
             
             listaParcelas = parcelas.map(parcela => {
-                valorParcela.current[parcela.numParcela].value = novoValor;
-                parcela.valorParcela = novoValor;
-                total += parseFloat(novoValor);
+                
+                valorParcela.current[parcela.numParcela].value = arredondado;
+                parcela.valorParcela = arredondado;
+                total += parseFloat(arredondado);
                 return {
-                    ...parcela, valorParcela: novoValor
+                    ...parcela, valorParcela: arredondado
                 };
             });
 
-            total += parseFloat(novoValor);
-            novaParcela.valorParcela = parseFloat(novoValor) + parseFloat(props.obra.valorTotal) - total;
+            total += parseFloat(arredondado);
+            novaParcela.valorParcela = parseFloat(arredondado) + parseFloat(props.obra.valorTotal - props.valorRecebido) - total;
         }
         else {
             let parcelaExcluir = parcelas[parcelas.length - 1];
@@ -77,15 +80,16 @@ export default function FormParcelas(props) {
             });
 
             listaParcelas.map(parcela => {
-                valorParcela.current[parcela.numParcela].value = novoValor;
-                parcela.valorParcela = novoValor;
-                total += parseFloat(novoValor);
+                
+                valorParcela.current[parcela.numParcela].value = arredondado;
+                parcela.valorParcela = arredondado;
+                total += parseFloat(arredondado);
                 return {
-                    ...parcela, valorParcela: novoValor
+                    ...parcela, valorParcela: arredondado
                 };
             });
 
-            let valorDiferenca = parseFloat(parseFloat(novoValor) + parseFloat(props.obra.valorTotal) - total).toFixed(2);
+            let valorDiferenca = parseFloat(parseFloat(arredondado) + parseFloat(props.obra.valorTotal - props.valorRecebido) - total).toFixed(2);
 
             listaParcelas[listaParcelas.length - 1].valorParcela = valorDiferenca;
             // Atualiza ref de acordo com o objeto
