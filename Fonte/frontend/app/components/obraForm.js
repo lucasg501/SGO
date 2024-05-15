@@ -35,6 +35,8 @@ export default function ObraForm(props) {
     const [dataTerminoVazio, setDataTerminoVazio] = useState(false);
     const [cepVazio, setCepVazio] = useState(false);
 
+    const [gravando, setGravando] = useState(false);
+
     function camposVazios() {
 
         let clienteNaoPreenchido = idCliente.current == 0;
@@ -118,6 +120,8 @@ export default function ObraForm(props) {
             alert("Preencha corretamente todos os campos!");
         }
         if (camposPreenchidos) {
+
+            setGravando(true);
             let status = 0;
             const inicio = new Date(dataInicio.current.value);
             const termino = new Date(dataTermino.current.value);
@@ -147,6 +151,8 @@ export default function ObraForm(props) {
                     })
                     .then(r => {
                         alert(r.msg);
+                        setGravando(false);
+
                         if (status == 200) {
                             window.location.href = '/obras';
                         }
@@ -168,6 +174,8 @@ export default function ObraForm(props) {
         }
 
         if (camposPreenchidos) {
+
+            setGravando(true);
             let status = 0;
             const inicio = new Date(dataInicio.current.value);
             const termino = new Date(dataTermino.current.value);
@@ -199,6 +207,8 @@ export default function ObraForm(props) {
                     })
                     .then((r) => {
                         alert(r.msg);
+                        setGravando(false);
+
                         if (status == 200) {
                             window.location.href = '/obras';
                         }
@@ -416,8 +426,11 @@ export default function ObraForm(props) {
             </div>
 
             <div>
-                <button className="btn btn-primary" onClick={obra.idObra == 0 ? cadastrarObra : alterarObra}>{obra.idObra == 0 ? 'Cadastrar' : 'Alterar'}</button>
-                <Link style={{ marginLeft: 15 }} href={'/obras'}><button className="btn btn-secondary">Voltar</button></Link>
+                {
+                    gravando ? <p style={{fontWeight: 'bold'}}>Aguardando gravação...</p> : <></>
+                }
+                <button className="btn btn-primary" onClick={obra.idObra == 0 ? cadastrarObra : alterarObra} disabled={gravando}>{obra.idObra == 0 ? 'Cadastrar' : 'Alterar'}</button>
+                <Link style={{ marginLeft: 15 }} href={'/obras'}><button className="btn btn-secondary" disabled={gravando}>Voltar</button></Link>
             </div>
 
             <Modal style={{ content: { width: '500px', margin: 'auto' } }} isOpen={modalIsOpen} onRequestClose={closeModal}>

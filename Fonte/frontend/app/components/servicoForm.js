@@ -15,7 +15,9 @@ export default function ServicoForm({ params: { idObra } }) {
     const [bairroObra, setBairroObra] = useState('');
     const [listaServicos, setListaServicos] = useState([]);
     const [listaTotalParceiros, setListaTotalParceiros] = useState([]);
+    
     const [carregando, setCarregando] = useState(true);
+    const [gravando, setGravando] = useState(false);
 
     function listarAtuacao() {
         httpClient.get('/areaAtuacao/listar')
@@ -98,6 +100,8 @@ export default function ServicoForm({ params: { idObra } }) {
         }
     
         if (idAtuacao.current.value > 0 && parceiroSelecionado > 0 && descricaoServico.current.value !== "" && valor > 0) {
+            
+            setGravando(true);
             let status = 0;
     
             httpClient.post('/servicos/gravar', {
@@ -113,6 +117,8 @@ export default function ServicoForm({ params: { idObra } }) {
                 })
                 .then(r => {
                     alert(r.msg);
+                    setGravando(false);
+
                     if (status === 200) {
                         descricaoServico.current.value = "";
                         valorServico.current.value = 0;
@@ -188,8 +194,11 @@ export default function ServicoForm({ params: { idObra } }) {
                 </div>
 
                 <div style={{ marginTop: 20 }}>
-                    <button onClick={alocarParceiro} className="btn btn-primary">Alocar</button>
-                    <a href="/obras"><button style={{ marginLeft: 50 }} className="btn btn-danger">Cancelar</button></a>
+                    {
+                        gravando ? <p style={{fontWeight: 'bold'}}>Aguardando gravação...</p> : <></>
+                    }
+                    <button onClick={alocarParceiro} className="btn btn-primary" disabled={gravando}>Alocar</button>
+                    <a href="/obras"><button style={{ marginLeft: 50 }} className="btn btn-danger" disabled={gravando}>Cancelar</button></a>
                 </div>
 
                 <br />

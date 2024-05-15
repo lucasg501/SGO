@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import httpClient from "../utils/httpClient";
 import Modal from 'react-modal';
 import InputMask from 'react-input-mask';
+import Carregando from "./carregando";
 
 export default function ParceiroForm(props) {
 
@@ -16,6 +17,9 @@ export default function ParceiroForm(props) {
     const [nomeVazio, setNomeVazio] = useState(false);
     const [telVazio, setTelVazio] = useState(false);
     const [areaVazio, setAreaVazio] = useState(false);
+    
+    const [carregando, setCarregando] = useState(true);
+    const [gravando, setGravando] = useState(false);
 
     function camposVazios() {
 
@@ -44,6 +48,7 @@ export default function ParceiroForm(props) {
             })
             .then(r => {
                 setListaAreaAtuacao(r);
+                setCarregando(false);
             });
     }
 
@@ -54,9 +59,12 @@ export default function ParceiroForm(props) {
         }
 
         if (camposPreenchidos) {
+
             let status = 0;
 
             if (nomeParceiro.current.value != '' && telParceiro.current.value != '' && idAreaAtuacao.current.value > 0) {
+
+                setGravando(true);
 
                 httpClient.post('/parceiros/gravar', {
                     nomeParceiro: nomeParceiro.current.value,
@@ -69,6 +77,8 @@ export default function ParceiroForm(props) {
                     })
                     .then(r => {
                         alert(r.msg);
+                        setGravando(false);
+
                         if (status == 200) {
                             nomeParceiro.current.value = '';
                             telParceiro.current.value = '';
@@ -85,6 +95,9 @@ export default function ParceiroForm(props) {
     function alterarParceiro() {
         let status = 0;
         if (nomeParceiro.current.value != "" && telParceiro.current.value != "" && idAreaAtuacao.current.value > 0) {
+            
+            setGravando(true);
+
             httpClient.put('/parceiros/alterar', {
 
                 idParceiro: parceiro.idParceiro,
@@ -98,6 +111,8 @@ export default function ParceiroForm(props) {
                 })
                 .then(r => {
                     alert(r.msg);
+                    setGravando(false);
+
                     if (status == 200) {
                         window.location.href = '/parceiros';
                     }
@@ -111,83 +126,94 @@ export default function ParceiroForm(props) {
 
     return (
         <div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <h1>{parceiro.idParceiro == 0 ? 'Cadastrar Novo Parceiro' : 'Alterar Parceiro'}</h1>
-                <button onClick={openModal} className="btn btn-info" style={{ marginLeft: 10 }}>Ajuda</button>
-            </div>
-
-
             {
-                nomeVazio ?
-                    <div className="form-group">
-                        <label>Nome:</label>
-                        <input style={{ border: '2px solid red' }} type="text" defaultValue={parceiro.nomeParceiro} className="form-control" ref={nomeParceiro} />
+                carregando ?
+                <Carregando />
+                :
+                <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <h1>{parceiro.idParceiro == 0 ? 'Cadastrar Novo Parceiro' : 'Alterar Parceiro'}</h1>
+                        <button onClick={openModal} className="btn btn-info" style={{ marginLeft: 10 }}>Ajuda</button>
                     </div>
-                    :
-                    <div className="form-group">
-                        <label>Nome:</label>
-                        <input type="text" defaultValue={parceiro.nomeParceiro} className="form-control" ref={nomeParceiro} />
+
+
+                    {
+                        nomeVazio ?
+                            <div className="form-group">
+                                <label>Nome:</label>
+                                <input style={{ border: '2px solid red' }} type="text" defaultValue={parceiro.nomeParceiro} className="form-control" ref={nomeParceiro} />
+                            </div>
+                            :
+                            <div className="form-group">
+                                <label>Nome:</label>
+                                <input type="text" defaultValue={parceiro.nomeParceiro} className="form-control" ref={nomeParceiro} />
+                            </div>
+                    }
+
+                    {
+                        telVazio ?
+                            <div className="form-group">
+                                <label>Telefone:</label>
+                                <InputMask mask='(99) 99999-9999' style={{ border: '2px solid red' }} type="text" defaultValue={parceiro.telParceiro}  className="form-control" ref={telParceiro} />
+                            </div>
+                            :
+                            <div className="form-group">
+                                <label>Telefone:</label>
+                                <InputMask mask='(99) 99999-9999' type="text" defaultValue={parceiro.telParceiro}  className="form-control" ref={telParceiro} />
+                            </div>
+                    }
+
+                    {
+                        areaVazio ?
+                            <div className="form-group">
+                                <label>Área de Atuação</label>
+                                <select className="form-control" style={{ width: 350, textAlign: 'center', border: '2px solid red' }}
+                                    defaultValue={parceiro.idAreaAtuacao} ref={idAreaAtuacao}>
+                                    <option value={0}>-- SELECIONE --</option>
+                                    {
+                                        listaAreaAtuacao.map((areaAtuacao, index) => {
+                                            if (parceiro != null && parceiro.idAreaAtuacao == areaAtuacao.idArea) {
+                                                return <option selected value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
+                                            }
+                                            else {
+                                                return <option value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
+                                            }
+                                        })
+                                    }
+                                </select>
+                            </div>
+                            :
+                            <div className="form-group">
+                                <label>Área de Atuação</label>
+                                <select className="form-select" style={{ width: 350, textAlign: 'center' }}
+                                    defaultValue={parceiro.idAreaAtuacao} ref={idAreaAtuacao}>
+                                    <option value={0}>-- SELECIONE --</option>
+                                    {
+                                        listaAreaAtuacao.map((areaAtuacao, index) => {
+                                            if (parceiro != null && parceiro.idAreaAtuacao == areaAtuacao.idArea) {
+                                                return <option selected value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
+                                            }
+                                            else {
+                                                return <option value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
+                                            }
+                                        })
+                                    }
+                                </select>
+                            </div>
+                    }
+
+                    <div>
+                        {
+                            gravando ? <p style={{fontWeight: 'bold'}}>Aguardando gravação...</p> : <></>
+                        }
+                        <button onClick={parceiro.idParceiro != 0 ? alterarParceiro : cadastrarParceiro}
+                            className="btn btn-primary" disabled={gravando}>{parceiro.idParceiro != 0 ? 'Alterar' : 'Cadastrar'}</button>
+                        <a href="/parceiros"><button style={{ marginLeft: 50 }} className="btn btn-danger" disabled={gravando}>Cancelar</button></a>
                     </div>
+                </div>
             }
 
-            {
-                telVazio ?
-                    <div className="form-group">
-                        <label>Telefone:</label>
-                        <InputMask mask='(99) 99999-9999' style={{ border: '2px solid red' }} type="text" defaultValue={parceiro.telParceiro}  className="form-control" ref={telParceiro} />
-                    </div>
-                    :
-                    <div className="form-group">
-                        <label>Telefone:</label>
-                        <InputMask mask='(99) 99999-9999' type="text" defaultValue={parceiro.telParceiro}  className="form-control" ref={telParceiro} />
-                    </div>
-            }
-
-            {
-                areaVazio ?
-                    <div className="form-group">
-                        <label>Área de Atuação</label>
-                        <select className="form-control" style={{ width: 350, textAlign: 'center', border: '2px solid red' }}
-                            defaultValue={parceiro.idAreaAtuacao} ref={idAreaAtuacao}>
-                            <option value={0}>-- SELECIONE --</option>
-                            {
-                                listaAreaAtuacao.map((areaAtuacao, index) => {
-                                    if (parceiro != null && parceiro.idAreaAtuacao == areaAtuacao.idArea) {
-                                        return <option selected value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
-                                    }
-                                    else {
-                                        return <option value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
-                                    }
-                                })
-                            }
-                        </select>
-                    </div>
-                    :
-                    <div className="form-group">
-                        <label>Área de Atuação</label>
-                        <select className="form-select" style={{ width: 350, textAlign: 'center' }}
-                            defaultValue={parceiro.idAreaAtuacao} ref={idAreaAtuacao}>
-                            <option value={0}>-- SELECIONE --</option>
-                            {
-                                listaAreaAtuacao.map((areaAtuacao, index) => {
-                                    if (parceiro != null && parceiro.idAreaAtuacao == areaAtuacao.idArea) {
-                                        return <option selected value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
-                                    }
-                                    else {
-                                        return <option value={areaAtuacao.idArea}>{areaAtuacao.nomeAtuacao}</option>
-                                    }
-                                })
-                            }
-                        </select>
-                    </div>
-            }
-
-            <div>
-                <button onClick={parceiro.idParceiro != 0 ? alterarParceiro : cadastrarParceiro}
-                    className="btn btn-primary">{parceiro.idParceiro != 0 ? 'Alterar' : 'Cadastrar'}</button>
-                <a href="/parceiros"><button style={{ marginLeft: 50 }} className="btn btn-danger">Cancelar</button></a>
-            </div>
+            
 
             <Modal style={{ content: { width: '500px', margin: 'auto' } }} isOpen={modalIsOpen} onRequestClose={closeModal}>
                 <div>

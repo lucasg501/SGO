@@ -14,6 +14,8 @@ export default function ServicoForm(props) {
     const [bairroObra, setBairroObra] = useState('');
     const [nomeAtuacao, setNomeAtuacao] = useState('');
 
+    const [gravando, setGravando] = useState(false);
+
     function carregarObras() {
         httpClient.get('/obras/listar')
             .then(r => r.json())
@@ -51,7 +53,10 @@ export default function ServicoForm(props) {
     function alterarAlocacao() {
         const valor = parseFloat(valorServico.current.value);
         if (idParceiro.current.value > 0 && descricaoServico.current.value !== "" && valor > 0) {
+
+            setGravando(true);
             let status = 0;
+            
             httpClient.put('/servicos/alterar', {
                 idServico: props.servico.idServico,
                 descServico: descricaoServico.current.value,
@@ -65,6 +70,8 @@ export default function ServicoForm(props) {
                 })
                 .then(r => {
                     alert(r.msg);
+                    setGravando(false);
+
                     if (status === 200) {
                         window.location.href = '/obras/servicos';
                     }
@@ -109,8 +116,13 @@ export default function ServicoForm(props) {
                 <input type="number" className="form-control" defaultValue={servico.valorServico} ref={valorServico}></input>
             </div>
 
-            <button onClick={alterarAlocacao} className="btn btn-primary">Alterar</button>
-            <a href="/obras"><button style={{ marginLeft: 50 }} className="btn btn-danger">Cancelar</button></a>
+            <div>
+                {
+                    gravando ? <p style={{fontWeight: 'bold'}}>Aguardando gravação...</p> : <></>
+                }
+            </div>
+            <button onClick={alterarAlocacao} className="btn btn-primary" disabled={gravando}>Alterar</button>
+            <a href="/obras"><button style={{ marginLeft: 50 }} className="btn btn-danger" disabled={gravando}>Cancelar</button></a>
 
         </div>
     );

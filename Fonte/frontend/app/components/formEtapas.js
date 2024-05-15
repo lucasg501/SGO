@@ -19,6 +19,8 @@ export default function FormEtapas(props) {
     const [dataPrevInicioVazia, setDataPrevInicioVazia] = useState(false);
     const [dataPrevTerminoVazia, setDataPrevTerminoVazia] = useState(false);
 
+    const [gravando, setGravando] = useState(false);
+
 
     function camposVazios() {
 
@@ -126,7 +128,7 @@ export default function FormEtapas(props) {
             alert("Preencha todos os campos obrigatórios");
             return;
         }
-    
+        
         let status = 0;
         let etapasArray = [];
         let hasInvalidDate = false;
@@ -170,6 +172,9 @@ export default function FormEtapas(props) {
         }
     
         if (!hasInvalidDate) {
+
+            setGravando(true);
+
             httpClient.post('/andamentoEtapas/gravar', etapasArray)
                 .then(r => {
                     status = r.status;
@@ -177,6 +182,8 @@ export default function FormEtapas(props) {
                 })
                 .then(r => {
                     alert(r.msg);
+                    setGravando(false);
+
                     if (status === 200) {
                         window.location.reload();
                     }
@@ -371,8 +378,11 @@ export default function FormEtapas(props) {
             <br></br>
 
             <div>
-                <Link style={{ marginRight: 25 }} href="/etapas"><button className="btn btn-secondary">Voltar</button></Link>
-                <button className="btn btn-primary" onClick={props.etapa == null ? gravarEtapas : alterarEtapas}>Gravar</button>
+                {
+                    gravando ? <p style={{fontWeight: 'bold'}}>Aguardando gravação...</p> : <></>
+                }
+                <Link style={{ marginRight: 25 }} href="/etapas"><button className="btn btn-secondary" disabled={gravando}>Voltar</button></Link>
+                <button className="btn btn-primary" onClick={props.etapa == null ? gravarEtapas : alterarEtapas} disabled={gravando}>Gravar</button>
             </div>
 
             <br></br><br></br>

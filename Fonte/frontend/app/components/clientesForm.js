@@ -1,5 +1,6 @@
 'use client'
 import httpClient from "@/app/utils/httpClient";
+import Link from "next/link";
 import { useRef, useState } from "react";
 import InputMask from 'react-input-mask';
 import Modal from 'react-modal';
@@ -25,6 +26,7 @@ export default function ClienteForm(props) {
     const [bairroVazio, setBairroVazio] = useState(false);
     const [cidadeVazio, setCidadeVazio] = useState(false);
     const [cepVazio, setCepVazio] = useState(false);
+    const [gravando, setGravando] = useState(false);
 
     function camposVazios() {
 
@@ -62,6 +64,8 @@ export default function ClienteForm(props) {
             alert("Preencha corretamente todos os campos!");
         }
         if (camposPreenchidos) {
+
+            setGravando(true);
             let status = 0;
             if (nomeCli.current.value !== '' && telCli.current.value !== '' && emailCli.current.value !== '' && rgCli.current.value !== '' && cpfCli.current.value !== '' && enderecoCli.current.value !== '' && bairroCli.current.value !== '' && cidadeCli.current.value !== '' && cepCli.current.value !== '') {
                 httpClient.post('/clientes/gravar', {
@@ -81,6 +85,8 @@ export default function ClienteForm(props) {
                     })
                     .then(r => {
                         alert(r.msg);
+                        setGravando(false);
+
                         if (status === 200) {
                             window.location.href = '/clientes';
                         }
@@ -99,6 +105,8 @@ export default function ClienteForm(props) {
         }
 
         if (camposPreenchidos) {
+
+            setGravando(true);
             let status = 0;
             if (nomeCli.current.value !== '' && telCli.current.value !== '' && emailCli.current.value !== '' && rgCli.current.value !== '' && cpfCli.current.value !== '' && enderecoCli.current.value !== '' && bairroCli.current.value !== '' && cidadeCli.current.value !== '' && cepCli.current.value !== '') {
                 httpClient.put('/clientes/alterar', {
@@ -119,6 +127,8 @@ export default function ClienteForm(props) {
                     })
                     .then(r => {
                         alert(r.msg);
+                        setGravando(false);
+
                         if (status === 200) {
                             window.location.href = '/clientes';
                         }
@@ -304,8 +314,11 @@ export default function ClienteForm(props) {
         </div>
 
         <div style={{ marginTop: 30 }}>
-            <button onClick={cliente.idCli !== 0 ? alterarCliente : cadastrarCliente} className="btn btn-primary">{cliente.idCli !== 0 ? 'Alterar' : 'Cadastrar'}</button>
-            <a href="/clientes"><button style={{ marginLeft: 50 }} className="btn btn-danger">Cancelar</button></a>
+            {
+                gravando ? <p style={{fontWeight: 'bold'}}>Aguardando gravação...</p> : <></>
+            }
+            <button onClick={cliente.idCli !== 0 ? alterarCliente : cadastrarCliente} className="btn btn-primary" disabled={gravando}>{cliente.idCli !== 0 ? 'Alterar' : 'Cadastrar'}</button>
+            <Link href="/clientes"><button style={{ marginLeft: 50 }} className="btn btn-danger" disabled={gravando}>Cancelar</button></Link>
         </div>
 
         <Modal style={{ content: { width: '500px', margin: 'auto' } }} isOpen={modalIsOpen} onRequestClose={closeModal}>

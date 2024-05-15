@@ -9,6 +9,7 @@ export default function FormParcelas(props) {
     const [totalValores, setTotalValores] = useState(props.obra.valorTotal);
     const dataVencimento = useRef([]);
     const valorParcela = useRef([]);
+    const [gravando, setGravando] = useState(false);
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
     function openModal() {
@@ -147,6 +148,8 @@ export default function FormParcelas(props) {
 
         if (datasPreenchidas()) {
 
+            setGravando(true);
+
             let status = 0;
             let parcelasArray = [];
 
@@ -173,6 +176,7 @@ export default function FormParcelas(props) {
                 })
                 .then(r => {
                     alert(r.msg);
+                    setGravando(false);
 
                     if (status === 200) {
                         window.location.href = '/recebimentos';
@@ -254,8 +258,11 @@ export default function FormParcelas(props) {
                 </div>
 
                 <div style={{marginTop: 40}}>
-                    <Link style={{ marginRight: 25 }} href="/recebimentos"><button className="btn btn-secondary">Cancelar</button></Link>
-                    <button className="btn btn-primary" onClick={props.parcela == null ? gravarParcelas : alterarParcela}>Gravar</button>
+                    {
+                        gravando ? <p style={{fontWeight: 'bold'}}>Aguardando gravação...</p> : <></>
+                    }
+                    <Link style={{ marginRight: 25 }} href="/recebimentos"><button className="btn btn-secondary" disabled={gravando}>Cancelar</button></Link>
+                    <button className="btn btn-primary" onClick={props.parcela == null ? gravarParcelas : alterarParcela} disabled={gravando}>Gravar</button>
                 </div>
             </div>
 
