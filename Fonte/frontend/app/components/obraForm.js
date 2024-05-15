@@ -21,6 +21,7 @@ export default function ObraForm(props) {
     const [clienteInput, setClienteInput] = useState('');
     const [selectedCliente, setSelectedCliente] = useState(null);
     const [listaClientes, setListaClientes] = useState([]);
+    const [listaEtapas, setListaEtapas] = useState([]);
     useEffect(() => {
         carregarClientes();
     }, []);
@@ -118,17 +119,49 @@ export default function ObraForm(props) {
         let camposPreenchidos = !camposVazios();
         if (!camposPreenchidos) {
             alert("Preencha corretamente todos os campos!");
+            return;
         }
-        if (camposPreenchidos) {
 
-            setGravando(true);
-            let status = 0;
-            const inicio = new Date(dataInicio.current.value);
-            const termino = new Date(dataTermino.current.value);
+        // Adiciona o estado de "gravando"
+        setGravando(true);
+        const inicio = new Date(dataInicio.current.value);
+        const termino = new Date(dataTermino.current.value);
 
+        if (terminada.current.checked) {
+            const idObraAtual = idObra.current;
+
+            httpClient.get(`/andamentoEtapas/obterEtapasPorObra/${idObraAtual}`)
+                .then(r => {
+                    if (r.status !== 200) {
+                        throw new Error('Erro ao obter as etapas da obra.');
+                    }
+                    return r.json();
+                })
+                .then(listaEtapas => {
+                    const etapaIncompleta = listaEtapas.some(etapa => etapa.dataFim === null);
+
+                    if (etapaIncompleta) {
+                        alert('Para marcar como finalizada, primeiro finalize todas as etapas ligadas a esta obra!');
+                        setGravando(false);
+                        return;
+                    }
+                    prosseguirCadastro(inicio, termino);
+                })
+                .catch(error => {
+                    console.error('Erro ao verificar etapas:', error);
+                    alert('Erro ao verificar etapas. Por favor, tente novamente.');
+                    setGravando(false);
+                });
+        } else {
+            // Continua com o cadastro se a obra não estiver marcada como finalizada
+            prosseguirCadastro(inicio, termino);
+        }
+
+        function prosseguirCadastro(inicio, termino) {
             if (endereco.current.value !== '' && bairro.current.value !== '' && cidade.current.value !== '' && inicio && termino && idCliente.current > 0 && cepObra.current.value !== '') {
                 if (termino < inicio) {
                     alert('A data de término não pode ser menor que a data de início.');
+                    setGravando(false); // Para o estado de "gravando"
                     return;
                 }
 
@@ -160,52 +193,84 @@ export default function ObraForm(props) {
                     .catch(error => {
                         console.error('Erro ao cadastrar obra:', error);
                         alert('Erro ao cadastrar obra. Por favor, tente novamente.');
+                        setGravando(false); // Para o estado de "gravando" em caso de erro
                     });
             } else {
                 alert('Preencha todos os campos!');
+                setGravando(false); // Para o estado de "gravando"
             }
         }
     }
+
 
     function alterarObra() {
         let camposPreenchidos = !camposVazios();
         if (!camposPreenchidos) {
             alert("Preencha corretamente todos os campos!");
+            return; // Adicione um retorno aqui para parar a execução se os campos não estiverem preenchidos
         }
 
-        if (camposPreenchidos) {
+        // Adiciona o estado de "gravando"
+        setGravando(true);
+        const inicio = new Date(dataInicio.current.value);
+        const termino = new Date(dataTermino.current.value);
 
-            setGravando(true);
-            let status = 0;
-            const inicio = new Date(dataInicio.current.value);
-            const termino = new Date(dataTermino.current.value);
+        if (terminada.current.checked) {
+            const idObraAtual = obra.idObra;
 
+            httpClient.get(`/andamentoEtapas/obterEtapasPorObra/${idObraAtual}`)
+                .then(r => {
+                    if (r.status !== 200) {
+                        throw new Error('Erro ao obter as etapas da obra.');
+                    }
+                    return r.json();
+                })
+                .then(listaEtapas => {
+                    const etapaIncompleta = listaEtapas.some(etapa => etapa.dataFim === null);
+
+                    if (etapaIncompleta) {
+                        alert('Para marcar como finalizada, primeiro finalize todas as etapas ligadas a esta obra!');
+                        setGravando(false);
+                        return;
+                    }
+                    prosseguirAlteracao(inicio, termino);
+                })
+                .catch(error => {
+                    console.error('Erro ao verificar etapas:', error);
+                    alert('Erro ao verificar etapas. Por favor, tente novamente.');
+                    setGravando(false);
+                });
+        } else {
+            prosseguirAlteracao(inicio, termino);
+        }
+
+        function prosseguirAlteracao(inicio, termino) {
             if (endereco.current.value !== '' && bairro.current.value !== '' && cidade.current.value !== '' && inicio && termino && idCliente.current > 0 && cepObra.current.value !== '') {
                 if (termino < inicio) {
                     alert('A data de término não pode ser menor que a data de início.');
+                    setGravando(false); // Para o estado de "gravando"
                     return;
                 }
 
-                httpClient
-                    .put('/obras/alterar', {
-                        idObra: obra.idObra,
-                        endereco: endereco.current.value,
-                        bairro: bairro.current.value,
-                        cidade: cidade.current.value,
-                        valorTotal: valorTotal.current.value,
-                        dataInicio: inicio.toISOString().split('T')[0],
-                        dataTermino: termino.toISOString().split('T')[0],
-                        contrato: contrato.current.value,
-                        planta: planta.current.value,
-                        idCliente: idCliente.current,
-                        cepObra: cepObra.current.value,
-                        terminada: terminada.current.checked ? 'S' : 'N'
-                    })
-                    .then((r) => {
+                httpClient.put('/obras/alterar', {
+                    idObra: obra.idObra,
+                    endereco: endereco.current.value,
+                    bairro: bairro.current.value,
+                    cidade: cidade.current.value,
+                    valorTotal: valorTotal.current.value,
+                    dataInicio: inicio.toISOString().split('T')[0], // Formata para o formato YYYY-MM-DD
+                    dataTermino: termino.toISOString().split('T')[0], // Formata para o formato YYYY-MM-DD
+                    contrato: contrato.current.value,
+                    planta: planta.current.value,
+                    idCliente: idCliente.current,
+                    cepObra: cepObra.current.value,
+                    terminada: terminada.current.checked ? 'S' : 'N'
+                })
+                    .then(r => {
                         status = r.status;
                         return r.json();
                     })
-                    .then((r) => {
+                    .then(r => {
                         alert(r.msg);
                         setGravando(false);
 
@@ -213,15 +278,18 @@ export default function ObraForm(props) {
                             window.location.href = '/obras';
                         }
                     })
-                    .catch((error) => {
+                    .catch(error => {
                         console.error('Erro ao alterar obra:', error);
                         alert('Erro ao alterar obra. Por favor, tente novamente.');
+                        setGravando(false); // Para o estado de "gravando" em caso de erro
                     });
             } else {
                 alert('Preencha todos os campos!');
+                setGravando(false); // Para o estado de "gravando"
             }
         }
     }
+
 
 
     function carregarClientes() {
@@ -369,7 +437,7 @@ export default function ObraForm(props) {
 
             </div>
 
-            <div className="form-row" style={{alignItems: 'center'}}>
+            <div className="form-row" style={{ alignItems: 'center' }}>
                 {
                     valorTotalVazio ?
                         <div className="form-group col-md-6">
@@ -385,7 +453,7 @@ export default function ObraForm(props) {
 
                 <div style={{ display: 'inline-block' }} className="form-group col-md-4">
                     <label>Concluída:</label>
-                    <input ref={terminada} style={{ marginLeft: 15}} type="checkbox"></input>
+                    <input ref={terminada} style={{ marginLeft: 15 }} type="checkbox"></input>
                 </div>
             </div>
 
@@ -427,7 +495,7 @@ export default function ObraForm(props) {
 
             <div>
                 {
-                    gravando ? <p style={{fontWeight: 'bold'}}>Aguardando gravação...</p> : <></>
+                    gravando ? <p style={{ fontWeight: 'bold' }}>Aguardando gravação...</p> : <></>
                 }
                 <button className="btn btn-primary" onClick={obra.idObra == 0 ? cadastrarObra : alterarObra} disabled={gravando}>{obra.idObra == 0 ? 'Cadastrar' : 'Alterar'}</button>
                 <Link style={{ marginLeft: 15 }} href={'/obras'}><button className="btn btn-secondary" disabled={gravando}>Voltar</button></Link>

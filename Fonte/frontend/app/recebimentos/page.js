@@ -3,6 +3,8 @@ import { useEffect, useState } from "react"
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
 import Carregando from "../components/carregando";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 export default function Recebimentos() {
 
@@ -31,6 +33,42 @@ export default function Recebimentos() {
                 setListaAcompParcelas(parcelasPorObra);
             });
     }
+
+    function gerarPDF(idObra) {
+        if (!listaAcompParcelas[idObra] || listaAcompParcelas[idObra].length === 0) {
+            alert("Não há informações para gerar o PDF.");
+            return;
+        }
+    
+        const doc = new jsPDF();
+    
+        // Título do PDF
+        doc.text("Detalhes das Parcelas", 10, 10);
+    
+        // Nome da obra (bairro)
+        const bairroObra = encontrarBairro(idObra);
+        doc.text(`Obra: ${bairroObra}`, 10, 20);
+    
+        // Cabeçalho da tabela
+        const headers = ["Parcela", "Data de Vencimento", "Data de Recebimento", "Valor"];
+        const data = listaAcompParcelas[idObra].map((parcela, index) => [
+            index + 1,
+            formatarData(parcela.dataVencimento),
+            parcela.dataRecebimento ? formatarData(parcela.dataRecebimento) : "Não foi recebida",
+            `R$ ${parseFloat(parcela.valorParcela).toFixed(2)}`
+        ]);
+    
+        // Adiciona a tabela ao PDF
+        doc.autoTable({
+            head: [headers],
+            body: data,
+            startY: 30
+        });
+    
+        // Salva o PDF
+        doc.save(`detalhes_parcelas_${bairroObra}.pdf`);
+    }
+    
 
     function procurarParcelasVencidas() {
 
@@ -117,6 +155,13 @@ export default function Recebimentos() {
                                         <a href={`/recebimentos/gravar/${obra.idObra}`}>
                                             <button style={{marginLeft: 20, marginRight: 20}} className="btn btn-primary">Gerenciar</button>
                                         </a>
+                                        <button
+                                        style={{ marginLeft: 20, marginRight: 20 }}
+                                        className="btn btn-primary"
+                                        onClick={() => gerarPDF(obra.idObra)}
+                                    >
+                                        Gerar PDF
+                                    </button>
                                         Obra: {encontrarBairro(Number(obra.idObra))}
                                         {
                                             haParcelasVencidas(obra.idObra) ? 

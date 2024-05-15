@@ -84,7 +84,25 @@ export default function FormEtapas(props) {
                 idEtapa: prevState.idEtapa - 1
             }));
         }
+
+        // Verificações adicionadas para garantir que as referências existam
+        if (idEtapa.current && idEtapa.current.length > 0) {
+            idEtapa.current.pop(); // Remove a referência do último elemento
+        }
+        if (dataPrevInicio.current && dataPrevInicio.current.length > 0) {
+            dataPrevInicio.current.pop(); // Remove a referência do último elemento
+        }
+        if (dataPrevTermino.current && dataPrevTermino.current.length > 0) {
+            dataPrevTermino.current.pop(); // Remove a referência do último elemento
+        }
+        if (dataFim.current && dataFim.current.length > 0) {
+            dataFim.current.pop(); // Remove a referência do último elemento
+        }
+        if (descricaoEtapa.current && descricaoEtapa.current.length > 0) {
+            descricaoEtapa.current.pop(); // Remove a referência do último elemento
+        }
     };
+
 
     function listarObras() {
         httpClient.get('/obras/listar')
@@ -118,48 +136,49 @@ export default function FormEtapas(props) {
             alert("Preencha todos os campos obrigatórios");
             return;
         }
-    
+
+        // Verificações adicionadas para garantir que as referências não sejam nulas antes de acessar suas propriedades
         if (
-            idObra.current[0].value === "0" || 
-            idEtapa.current.some(ref => ref.value === "0") || 
-            dataPrevInicio.current.some(ref => ref.value === "") || 
-            dataPrevTermino.current.some(ref => ref.value === "")
+            (idObra.current && idObra.current[0] && idObra.current[0].value === "0") ||
+            (idEtapa.current && idEtapa.current.some(ref => ref && ref.value === "0")) ||
+            (dataPrevInicio.current && dataPrevInicio.current.some(ref => ref && ref.value === "")) ||
+            (dataPrevTermino.current && dataPrevTermino.current.some(ref => ref && ref.value === ""))
         ) {
             alert("Preencha todos os campos obrigatórios");
             return;
         }
-        
+
         let status = 0;
         let etapasArray = [];
         let hasInvalidDate = false;
-    
-        const idObraValue = idObra.current[0] ? idObra.current[0].value : null;
-    
+
+        const idObraValue = idObra.current && idObra.current[0] ? idObra.current[0].value : null;
+
         for (let i = 0; i < etapas.idEtapa + 1; i++) {
-            const idEtapaValue = idEtapa.current[i] ? idEtapa.current[i].value : null;
-            const dataPrevInicioValue = dataPrevInicio.current[i] ? dataPrevInicio.current[i].value : null;
-            const dataPrevTerminoValue = dataPrevTermino.current[i] ? dataPrevTermino.current[i].value : null;
-            const dataFimValue = dataFim.current[i] ? (dataFim.current[i].value !== '' ? dataFim.current[i].value : null) : null;
-            const descricaoEtapaValue = descricaoEtapa.current[i] ? descricaoEtapa.current[i].value : null;
-    
+            const idEtapaValue = idEtapa.current && idEtapa.current[i] ? idEtapa.current[i].value : null;
+            const dataPrevInicioValue = dataPrevInicio.current && dataPrevInicio.current[i] ? dataPrevInicio.current[i].value : null;
+            const dataPrevTerminoValue = dataPrevTermino.current && dataPrevTermino.current[i] ? dataPrevTermino.current[i].value : null;
+            const dataFimValue = dataFim.current && dataFim.current[i] ? (dataFim.current[i].value !== '' ? dataFim.current[i].value : null) : null;
+            const descricaoEtapaValue = descricaoEtapa.current && descricaoEtapa.current[i] ? descricaoEtapa.current[i].value : null;
+
             if (dataPrevInicioValue && dataPrevTerminoValue && dataPrevInicioValue >= dataPrevTerminoValue) {
                 alert("A data de previsão de início deve ser menor do que a data de previsão de término.");
                 hasInvalidDate = true;
                 break;
             }
-    
+
             if (dataFimValue < dataPrevInicioValue) {
                 alert("A data de fim não pode ser anterior à data de início.");
                 hasInvalidDate = true;
                 break;
             }
-    
+
             if (dataFimValue < dataPrevTerminoValue) {
                 alert("A data de fim não pode ser anterior à data de previsão de término.");
                 hasInvalidDate = true;
                 break;
             }
-    
+
             const etapa = {
                 idObra: idObraValue,
                 idEtapa: idEtapaValue,
@@ -170,7 +189,7 @@ export default function FormEtapas(props) {
             };
             etapasArray.push(etapa);
         }
-    
+
         if (!hasInvalidDate) {
 
             setGravando(true);
@@ -190,7 +209,7 @@ export default function FormEtapas(props) {
                 });
         }
     }
-    
+
 
 
     function alterarEtapas() {
@@ -242,48 +261,48 @@ export default function FormEtapas(props) {
             </div>
 
             <div>
-            {
-    obraVazia ?
-        <div className="from-group">
-            <label>Obra:*</label>
-            <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: 200, textAlign: 'center', border: '2px solid red' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
+                {
+                    obraVazia ?
+                        <div className="from-group">
+                            <label>Obra:*</label>
+                            <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: 200, textAlign: 'center', border: '2px solid red' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
 
-                <option value={0}>Selecione</option>
-                {listaObras.map(function (value, index) {
-                    if (value.terminada !== 'S') { // Verifica se a obra não está terminada
-                        const isSelected = props.etapa && value.idObra === props.etapa.idObra;
-                        return (
-                            <option key={index} value={value.idObra} selected={isSelected}>
-                                {value.bairro}
-                            </option>
-                        );
-                    }
-                    return null; // Retorna null para não renderizar nada se a obra estiver terminada
-                })}
+                                <option value={0}>Selecione</option>
+                                {listaObras.map(function (value, index) {
+                                    if (value.terminada !== 'S') { // Verifica se a obra não está terminada
+                                        const isSelected = props.etapa && value.idObra === props.etapa.idObra;
+                                        return (
+                                            <option key={index} value={value.idObra} selected={isSelected}>
+                                                {value.bairro}
+                                            </option>
+                                        );
+                                    }
+                                    return null; // Retorna null para não renderizar nada se a obra estiver terminada
+                                })}
 
-            </select>
-        </div>
-        :
-        <div className="from-group">
-            <label>Obra:*</label>
-            <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: 200, textAlign: 'center' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
+                            </select>
+                        </div>
+                        :
+                        <div className="from-group">
+                            <label>Obra:*</label>
+                            <select onChange={() => listarAndamentoEtapas(idObra.current[0].value)} ref={el => idObra.current[0] = el} style={{ width: 200, textAlign: 'center' }} defaultValue={props.etapa ? props.etapa.idObra : 0} className="form-control" disabled={props.etapa != null}>
 
-                <option value={0}>Selecione</option>
-                {listaObras.map(function (value, index) {
-                    if (value.terminada !== 'S') { // Verifica se a obra não está terminada
-                        const isSelected = props.etapa && value.idObra === props.etapa.idObra;
-                        return (
-                            <option key={index} value={value.idObra} selected={isSelected}>
-                                {value.bairro}
-                            </option>
-                        );
-                    }
-                    return null; // Retorna null para não renderizar nada se a obra estiver terminada
-                })}
+                                <option value={0}>Selecione</option>
+                                {listaObras.map(function (value, index) {
+                                    if (value.terminada !== 'S') { // Verifica se a obra não está terminada
+                                        const isSelected = props.etapa && value.idObra === props.etapa.idObra;
+                                        return (
+                                            <option key={index} value={value.idObra} selected={isSelected}>
+                                                {value.bairro}
+                                            </option>
+                                        );
+                                    }
+                                    return null; // Retorna null para não renderizar nada se a obra estiver terminada
+                                })}
 
-            </select>
-        </div>
-}
+                            </select>
+                        </div>
+                }
 
                 <br></br>
 
@@ -379,7 +398,7 @@ export default function FormEtapas(props) {
 
             <div>
                 {
-                    gravando ? <p style={{fontWeight: 'bold'}}>Aguardando gravação...</p> : <></>
+                    gravando ? <p style={{ fontWeight: 'bold' }}>Aguardando gravação...</p> : <></>
                 }
                 <Link style={{ marginRight: 25 }} href="/etapas"><button className="btn btn-secondary" disabled={gravando}>Voltar</button></Link>
                 <button className="btn btn-primary" onClick={props.etapa == null ? gravarEtapas : alterarEtapas} disabled={gravando}>Gravar</button>
@@ -387,19 +406,27 @@ export default function FormEtapas(props) {
 
             <br></br><br></br>
             <h3>Etapas já cadastradas</h3>
-            <table>
-                <tbody>
+            <table className="table">
+                <thead>
                     <tr>
                         <th>Nº</th>
                         <th>Descrição</th>
+                        <th>Data Inicio</th>
+                        <th>Data Prev. Término</th>
+                        <th>Data Fim</th>
                     </tr>
+                </thead>
+                <tbody>
                     {
                         listaAndamentoEtapas.map(function (value, index) {
                             if (value.idObra == idObra.current[0].value) {
                                 return (
                                     <tr key={index}>
-                                        <th>{value.idEtapa}</th>
-                                        <th>{value.descricaoEtapa}</th>
+                                        <td>{value.idEtapa}</td>
+                                        <td>{value.descricaoEtapa}</td>
+                                        <td>{new Date(value.dataPrevInicio).toLocaleDateString('pt-BR')}</td>
+                                        <td>{new Date(value.dataPrevTermino).toLocaleDateString('pt-BR')}</td>
+                                        <td>{value.DataFim == null ? 'N/A' : new Date(value.dataFim).toLocaleDateString('pt-BR')}</td>
                                     </tr>
                                 );
                             }

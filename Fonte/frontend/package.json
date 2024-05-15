@@ -13,6 +13,8 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "cookie": "^0.6.0",
     "date-fns": "^3.6.0",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "next": "latest",
     "node": "^18.20.2",
     "react": "latest",
