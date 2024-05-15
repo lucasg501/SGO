@@ -5,7 +5,7 @@ class FuncionarioController {
     async gravar(req, res) {
 
         try {
-            if (req.body.nomeFuncionario != "" && req.body.telFuncionario.length == 14 && req.body.cargoFuncionario != "") {
+            if (req.body.nomeFuncionario != "" && req.body.telFuncionario.length == 15 && req.body.cargoFuncionario != "") {
 
                 let funcModel = new FuncionarioModel(0, req.body.nomeFuncionario, req.body.telFuncionario, req.body.cargoFuncionario);
 
