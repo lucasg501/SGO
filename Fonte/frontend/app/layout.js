@@ -194,6 +194,10 @@ export default function RootLayout({ children }) {
                         <button disabled className='btn btn-danger'><i className='fas fa-ban'></i></button>
                         <p>Clique nesse ícone quando quiser cancelar um recebimento ou pagamento *Localizado na tela de listagem de recebimentos e diárias*</p>
                     </div>
+                    <div>
+                        <button disabled className='btn btn-primary'>Gerar Pdf</button>
+                        <p>Gera um pdf com os dados de diárias, serviços ou parcelas</p>
+                    </div>
                     <button className='btn btn-danger' style={{ marginTop: 10 }} onClick={() => setIsModalOpen(false)}>Fechar</button>
                 </Modal>
             </body>
