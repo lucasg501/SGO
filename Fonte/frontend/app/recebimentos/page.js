@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import httpClient from "../utils/httpClient";
 import Link from "next/link";
 import Carregando from "../components/carregando";
@@ -12,6 +12,7 @@ export default function Recebimentos() {
     const [listaObras, setListaObras] = useState([]);
     const [listaParcelasVencidas, setListaParcelasVencidas] = useState([]);
     const [carregando, setCarregando] = useState(true);
+    const termoBusca = useRef("");
 
     function carregarAcompParcelas() {
 
@@ -86,14 +87,17 @@ export default function Recebimentos() {
         httpClient.get('/obras/listar')
             .then(r => r.json())
             .then(r => {
-                setListaObras(r);
-            });
-    }
+                let lista = [];
 
-    // Função para encontrar o bairro correspondente ao idObra
-    function encontrarBairro(idObra) {
-        const obra = listaObras.find(obra => obra.idObra === idObra);
-        return obra ? obra.bairro : "Desconhecido";
+                r.map((obra) => {
+
+                    if (termoBusca.current.value == "" || obra.bairro.toLowerCase().includes(termoBusca.current.value.toLowerCase())) {
+                        lista.push(obra);
+                    }
+                });
+
+                setListaObras(lista);
+            });
     }
 
     // Função para formatar a data no formato dd/mm/aaaa
@@ -145,27 +149,38 @@ export default function Recebimentos() {
                 <Carregando />
                 :
                 <div>
+                    <div className="card form-group" style={{padding: 20}}>
+                        <label>Buscar</label>
+                        <input type="text" ref={termoBusca} placeholder="Digite o bairro da obra..." className="form-control"
+                        onChange={carregarObras} />
+                    </div>
                     {
                         listaObras.map((obra, index) => (
 
                             <div key={obra.idObra} style={{ marginBottom: 20 }}>
                                 <details style={{ border: '1px solid #ccc', borderRadius: 5, padding: 10 }}>
                                     
-                                    <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>
-                                        <a href={`/recebimentos/gravar/${obra.idObra}`}>
-                                            <button style={{marginLeft: 20, marginRight: 20}} className="btn btn-primary">Gerenciar</button>
-                                        </a>
-                                        <button
-                                        style={{ marginLeft: 20, marginRight: 20 }}
-                                        className="btn btn-primary"
-                                        onClick={() => gerarPDF(obra.idObra)}
-                                    >
-                                        Gerar PDF
-                                    </button>
-                                        Obra: {encontrarBairro(Number(obra.idObra))}
+                                    <summary style={{ cursor: 'pointer' }}>
+                                        <div style={{display: 'inline-flex', alignItems: 'center'}}>
+                                            <a href={`/recebimentos/gravar/${obra.idObra}`}>
+                                                <button style={{marginLeft: 20, marginRight: 20}} className="btn btn-primary">Gerenciar</button>
+                                            </a>
+                                            <button
+                                            style={{ marginLeft: 20, marginRight: 20 }}
+                                            className="btn btn-primary"
+                                            onClick={() => gerarPDF(obra.idObra)}
+                                            >
+                                                Gerar PDF
+                                            </button>
+                                            <div>
+                                                <span><b>Obra:</b> {obra.bairro}</span><br/>
+                                                <span><b>Endereço:</b> {obra.endereco}</span>
+                                            </div>
+                                        </div>
                                         {
                                             haParcelasVencidas(obra.idObra) ? 
-                                            <div style={{color: 'red', textAlign: 'center'}}>
+                                            <div style={{color: 'red', textAlign: 'center', fontWeight: 'bold', marginTop: 10}}>
+                                                <hr/>
                                                 Há parcela(s) vencida(s) que não foram pagas para esta obra 
                                             </div>
                                             :

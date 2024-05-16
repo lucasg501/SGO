@@ -41,7 +41,7 @@ class DiariaController {
                 }
             }
             else {
-                res.status(500).json({msg: "Não foi possível iniciar a gravação: Erro na exclusão das diárias!"});
+                res.status(400).json({msg: "Parâmetros inválidos!"});
             }
         }
         catch(ex) {

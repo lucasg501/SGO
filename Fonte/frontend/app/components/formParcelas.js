@@ -27,6 +27,10 @@ export default function FormParcelas(props) {
         return `${ano}-${mes}-${dia}`;
     };
 
+    function formatarDataCabecario(data) {
+        return new Date(data).toLocaleDateString('pt-BR');
+    }
+
     const [parcelas, setParcelas] = useState(props.parcelas.length > 0 ? props.parcelas : [{
         numParcela: 1,
         dataVencimento: formatarData(props.obra.dataInicio),
@@ -199,10 +203,11 @@ export default function FormParcelas(props) {
             <div className="card" style={{ padding: 20 }}>
                 <h2><b>Obra: {props.obra.bairro}</b></h2>
                 <div><b>Data de Início:</b> {formatarData(props.obra.dataInicio)}</div>
-                <div><b>Data Prevista de Término:</b> {formatarData(props.obra.dataTermino)}</div>
+                <div><b>Data Prevista de Término:</b> {formatarDataCabecario(props.obra.dataTermino)}</div>
                 <div><b>Valor:</b> R$ {parseFloat(props.obra.valorTotal).toFixed(2).replace('.', ',')}</div>
                 <div><b>Quantidade de parcelas pagas desta obra:</b> {props.qtdeParcelasPagas}</div>
                 <div><b>Total recebido desta obra:</b> R$ {parseFloat(props.valorRecebido).toFixed(2).replace('.', ',')}</div>
+                <div><b>Valor a receber:</b> R$ {parseFloat(props.obra.valorTotal - props.valorRecebido).toFixed(2).replace('.', ',')}</div>
             </div>
 
             <div>
