@@ -151,6 +151,7 @@ export default function FormParcelas(props) {
             setGravando(true);
 
             let status = 0;
+            let possuiParcelas = props.parcelas.length > 0;
             let parcelasArray = [];
 
             for (let i = 0; i < parcelas.length; i++) {
@@ -169,7 +170,7 @@ export default function FormParcelas(props) {
                 parcelasArray.push(parcela);
             }
 
-            httpClient.post('/parcelas/gravar', parcelasArray)
+            httpClient.post('/parcelas/gravar', { parcelasArray, possuiParcelas })
                 .then(r => {
                     status = r.status;
                     return r.json();

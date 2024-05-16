@@ -5,18 +5,21 @@ class ParcelaController {
     async gravar(req, res) {
 
         try {
-            if (req.body.length > 0) {
+            if (req.body.parcelasArray.length > 0) {
 
-                let idObraExcluir = req.body[0].idObra;
-                
-                let parcelaModel = new ParcelaModel();
-                let ok = await parcelaModel.excluirParcelasObra(idObraExcluir);
+                let idObraExcluir = req.body.parcelasArray[0].idObra;
+                let ok = true;
+
+                if (req.body.possuiParcelas) {
+                    let parcelaModel = new ParcelaModel();
+                    ok = await parcelaModel.excluirParcelasObra(idObraExcluir);
+                }
 
                 if (ok) {
 
                     const promises = [];
 
-                    for (const parcela of req.body) {
+                    for (const parcela of req.body.parcelasArray) {
 
                         const {
                             dataVencimento,
