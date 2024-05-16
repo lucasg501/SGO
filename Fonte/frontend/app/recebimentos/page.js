@@ -23,6 +23,7 @@ export default function Recebimentos() {
 
                 // Organize as parcelas por obra
                 r.forEach(parcela => {
+                    
                     if (parcelasPorObra[parcela.idObra]) {
                         parcelasPorObra[parcela.idObra].push(parcela);
                     } else {
@@ -91,7 +92,8 @@ export default function Recebimentos() {
 
                 r.map((obra) => {
 
-                    if (termoBusca.current.value == "" || obra.bairro.toLowerCase().includes(termoBusca.current.value.toLowerCase())) {
+                    if (termoBusca.current.value == "" ||
+                     (termoBusca.current && obra.bairro.toLowerCase().includes(termoBusca.current.value.toLowerCase()))) {
                         lista.push(obra);
                     }
                 });
@@ -179,7 +181,7 @@ export default function Recebimentos() {
                                         </div>
                                         {
                                             haParcelasVencidas(obra.idObra) ? 
-                                            <div style={{color: 'red', textAlign: 'center', fontWeight: 'bold', marginTop: 10}}>
+                                            <div style={{color: 'red', textAlign: 'center', fontWeight: 'bold'}}>
                                                 <hr/>
                                                 Há parcela(s) vencida(s) que não foram pagas para esta obra 
                                             </div>
