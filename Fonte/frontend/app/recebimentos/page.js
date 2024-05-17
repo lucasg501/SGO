@@ -33,6 +33,7 @@ export default function Recebimentos() {
 
                 // Atualize as informações das obras
                 setListaAcompParcelas(parcelasPorObra);
+                setCarregando(false);
             });
     }
 
@@ -80,7 +81,6 @@ export default function Recebimentos() {
         })
         .then(r => {
             setListaParcelasVencidas(r);
-            setCarregando(false);
         });
     }
 

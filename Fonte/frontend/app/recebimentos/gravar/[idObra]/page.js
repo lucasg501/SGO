@@ -11,7 +11,6 @@ export default function CriarParcelas({params: {idObra}}) {
     const [listaParcelas, setListaParcelas] = useState(null);
     const [totalRecebido, setTotalRecebido] = useState(0);
     const [qtdeParcelasPagas, setQtdeParcelasPagas] = useState(0);
-    const [carregando, setCarregando] = useState(true);
 
     function carregarObra() {
 
@@ -58,8 +57,6 @@ export default function CriarParcelas({params: {idObra}}) {
             else {
                 setListaParcelas([]);
             }
-
-            setCarregando(false);
         })
     }
 

@@ -210,67 +210,80 @@ export default function FormParcelas(props) {
                 <div><b>Valor a receber:</b> R$ {parseFloat(props.obra.valorTotal - props.valorRecebido).toFixed(2).replace('.', ',')}</div>
             </div>
 
-            <div>
-                <br></br>
+            {
+                parseFloat(props.obra.valorTotal - props.valorRecebido) > 0 ?
+                <div>
+                    <br></br>
 
-                {
-                    parcelas.map((parcela, index) => (
-                        <div key={index} className="card" style={{ marginBottom: 20, width: '37.5%', textAlign: 'center' }}>
-                            <div className="form-group card-header">
-                                <label><b>Parcela {index + 1}</b></label>
-                            </div>
-
-                            <div className="form-group" style={{ display: 'inline-flex', marginTop: 10, padding: 15, }}>
-
-                                <div className="form-group" style={{ textAlign: 'start', fontWeight: 'bold' }}>
-                                    <label>Vencimento:</label>
-                                    <input
-                                        defaultValue={parcela.dataVencimento ? formatarData(parcela.dataVencimento) : ''}
-                                        style={{ width: '80%' }}
-                                        type="date"
-                                        className="form-control"
-                                        ref={el => dataVencimento.current[index] = el}
-                                        onChange={(e) => {
-                                            parcela.dataVencimento = e.target.value
-                                        }}
-                                    />
-
-                                </div>
-
-                                <div className="form-group" style={{ textAlign: 'start', fontWeight: 'bold', marginLeft: 30 }}>
-                                    <label>Valor (R$):</label>
-                                    <input type="number" className="form-control" defaultValue={parcela.valorParcela ? 
-                                        parseFloat(parcela.valorParcela).toFixed(2) : 0}
-                                        style={{ width: '80%' }} ref={el => valorParcela.current[parcela.numParcela] = el}
-                                        onChange={(e) => {
-                                            parcela.valorParcela = e.target.value;
-                                        }}
-                                        disabled
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    ))
-                }
-
-                <div className="form-group">
-                    <div style={{ display: 'inline-block' }}>
-                        <button className="btn btn-danger" onClick={removerCampo}>-</button>
-                    </div>
-
-                    <div style={{ display: 'inline-block', marginLeft: 15 }}>
-                        <button className="btn btn-primary" onClick={adicionarCampo}>+</button>
-                    </div>
-                </div>
-
-                <div style={{marginTop: 40}}>
                     {
-                        gravando ? <p style={{fontWeight: 'bold'}}>Aguardando gravação...</p> : <></>
+                        parcelas.map((parcela, index) => (
+                            <div key={index} className="card" style={{ marginBottom: 20, width: '37.5%', textAlign: 'center' }}>
+                                <div className="form-group card-header">
+                                    <label><b>Parcela {index + 1}</b></label>
+                                </div>
+
+                                <div className="form-group" style={{ display: 'inline-flex', marginTop: 10, padding: 15, }}>
+
+                                    <div className="form-group" style={{ textAlign: 'start', fontWeight: 'bold' }}>
+                                        <label>Vencimento:</label>
+                                        <input
+                                            defaultValue={parcela.dataVencimento ? formatarData(parcela.dataVencimento) : ''}
+                                            style={{ width: '80%' }}
+                                            type="date"
+                                            className="form-control"
+                                            ref={el => dataVencimento.current[index] = el}
+                                            onChange={(e) => {
+                                                parcela.dataVencimento = e.target.value
+                                            }}
+                                        />
+
+                                    </div>
+
+                                    <div className="form-group" style={{ textAlign: 'start', fontWeight: 'bold', marginLeft: 30 }}>
+                                        <label>Valor (R$):</label>
+                                        <input type="number" className="form-control" defaultValue={parcela.valorParcela ? 
+                                            parseFloat(parcela.valorParcela).toFixed(2) : 0}
+                                            style={{ width: '80%' }} ref={el => valorParcela.current[parcela.numParcela] = el}
+                                            onChange={(e) => {
+                                                parcela.valorParcela = e.target.value;
+                                            }}
+                                            disabled
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ))
                     }
-                    <Link style={{ marginRight: 25 }} href="/recebimentos"><button className="btn btn-secondary" disabled={gravando}>Cancelar</button></Link>
-                    <button className="btn btn-primary" onClick={props.parcela == null ? gravarParcelas : alterarParcela} disabled={gravando}>Gravar</button>
+
+                    <div className="form-group">
+                        <div style={{ display: 'inline-block' }}>
+                            <button className="btn btn-danger" onClick={removerCampo}>-</button>
+                        </div>
+
+                        <div style={{ display: 'inline-block', marginLeft: 15 }}>
+                            <button className="btn btn-primary" onClick={adicionarCampo}>+</button>
+                        </div>
+                    </div>
+
+                    <div style={{marginTop: 40}}>
+                        {
+                            gravando ? <p style={{fontWeight: 'bold'}}>Aguardando gravação...</p> : <></>
+                        }
+                        <Link style={{ marginRight: 25 }} href="/recebimentos"><button className="btn btn-secondary" disabled={gravando}>Cancelar</button></Link>
+                        <button className="btn btn-primary" onClick={props.parcela == null ? gravarParcelas : alterarParcela} disabled={gravando}>Gravar</button>
+                    </div>
                 </div>
-            </div>
+                :
+                <div style={{marginTop: 20}}>
+                    <div style={{marginBottom: 20}}>
+                        Obra já está com cobertura total do recebimento. <br/> 
+                        Para gerenciar, <b style={{textDecoration: 'underline'}}>é preciso ter pelo menos uma parcela a receber.</b> <br/>
+                    </div>
+                    <Link href="/recebimentos"><button className="btn btn-secondary">Voltar</button></Link>
+                </div>
+            }
+
+            
 
             <Modal style={{ content: { width: '500px', margin: 'auto', height: '500px' } }} isOpen={modalIsOpen} onRequestClose={closeModal}>
                 <div className="card" style={{ marginBottom: '20px', width: '100%', textAlign: 'center' }}>
