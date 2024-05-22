@@ -13,6 +13,7 @@ export default function Recebimentos() {
     const [listaParcelasVencidas, setListaParcelasVencidas] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const termoBusca = useRef("");
+    const filtroObras = useRef("");
 
     function carregarAcompParcelas() {
 
@@ -94,7 +95,18 @@ export default function Recebimentos() {
 
                     if (termoBusca.current.value == "" ||
                      (termoBusca.current && obra.bairro.toLowerCase().includes(termoBusca.current.value.toLowerCase()))) {
-                        lista.push(obra);
+
+                        if (filtroObras.current.value == "MOSTRAR TODAS") {
+                            lista.push(obra);
+                        }
+                        
+                        if (filtroObras.current.value == "MOSTRAR SOMENTE OBRAS NÃO FINALIZADAS" && obra.terminada == 'N') {
+                            lista.push(obra);
+                        }
+
+                        if (filtroObras.current.value == "MOSTRAR SOMENTE OBRAS FINALIZADAS" && obra.terminada == 'S') {
+                            lista.push(obra);
+                        }
                     }
                 });
 
@@ -150,12 +162,24 @@ export default function Recebimentos() {
                 carregando ?
                 <Carregando />
                 :
-                <div>
-                    <div className="card form-group" style={{padding: 20}}>
-                        <label>Buscar</label>
-                        <input type="text" ref={termoBusca} placeholder="Digite o bairro da obra..." className="form-control"
-                        onChange={carregarObras} />
+                <div className="card" style={{padding: 20}}>
+                    <div className="card-header" style={{marginBottom: 20}}>
+                        <div className="form-group">
+                            <label style={{fontWeight: 'bold'}}>Buscar</label>
+                            <input type="text" ref={termoBusca} placeholder="Digite o bairro da obra..." className="form-control"
+                            onChange={carregarObras} />
+                        </div>
+                        <div className="form-group">
+                            <label style={{fontWeight: 'bold'}}>Filtro de Obras</label>
+                            <select ref={filtroObras} className="form-select"
+                            onChange={carregarObras} style={{width: 500}}>
+                                <option value={"MOSTRAR TODAS"}>MOSTRAR TODAS</option>
+                                <option value={"MOSTRAR SOMENTE OBRAS NÃO FINALIZADAS"}>MOSTRAR SOMENTE OBRAS NÃO FINALIZADAS</option>
+                                <option value={"MOSTRAR SOMENTE OBRAS FINALIZADAS"}>MOSTRAR SOMENTE OBRAS FINALIZADAS</option>
+                            </select>
+                        </div>
                     </div>
+                    <div className="card-body">
                     {
                         listaObras.map((obra, index) => (
 
@@ -176,7 +200,13 @@ export default function Recebimentos() {
                                             </button>
                                             <div>
                                                 <span><b>Obra:</b> {obra.bairro}</span><br/>
-                                                <span><b>Endereço:</b> {obra.endereco}</span>
+                                                <span><b>Endereço:</b> {obra.endereco}</span><br/>
+                                                {
+                                                    obra.terminada == 'S' ?
+                                                    <span className="text-primary"><b>Terminada:</b> Sim</span>
+                                                    :
+                                                    <span><b>Terminada:</b> Não</span>
+                                                }
                                             </div>
                                         </div>
                                         {
@@ -250,6 +280,7 @@ export default function Recebimentos() {
                             </div>
                         ))
                     }
+                    </div>
                 </div>
             }
         </div>
