@@ -202,7 +202,7 @@ export default function FormParcelas(props) {
 
             <div className="card" style={{ padding: 20 }}>
                 <h2><b>Obra: {props.obra.bairro}</b></h2>
-                <div><b>Data de Início:</b> {formatarData(props.obra.dataInicio)}</div>
+                <div><b>Data de Início:</b> {formatarDataCabecario(props.obra.dataInicio)}</div>
                 <div><b>Data Prevista de Término:</b> {formatarDataCabecario(props.obra.dataTermino)}</div>
                 <div><b>Valor:</b> R$ {parseFloat(props.obra.valorTotal).toFixed(2).replace('.', ',')}</div>
                 <div><b>Quantidade de parcelas pagas desta obra:</b> {props.qtdeParcelasPagas}</div>
