@@ -118,6 +118,19 @@ class obraModel{
             return false;
         }
     }
+
+    /*async criarPdf(idObra){
+        let sql = `SELECT * FROM tb_Obras 
+        INNER JOIN tb_Parcelas ON tb_Obras.idObra = tb_Parcelas.idObra
+        INNER JOIN tb_Servicos ON tb_Obras.idObra = tb_Servicos.idObra
+        WHERE tb_Obras.idObra = ?`;
+        let valores = [idObra];
+        let rows = await banco.ExecutaComando(sql, valores);
+        if(rows.length > 0){
+            let obra = new obraModel(rows[i]['idObra'],rows[i]['endereco'],rows[i]['bairro'],rows[i]['cidade'],rows[i]['valorTotal'],rows[i]['dataInicio'],rows[i]['dataTermino'],rows[i]['contrato'],rows[i]['planta'],rows[i]['idCliente'],rows[i]['cep'],rows[i]['terminada'],rows[i]['numParcela'],rows[i]['dataVencimento'],rows[i]['dataRecebimento'],rows[i]['valorParcela'],rows[i]['idObra'],rows[i]['idServico'],)
+        }
+
+    }*/
     
     
 }
