@@ -38,6 +38,11 @@ export default function Recebimentos() {
             });
     }
 
+    function encontrarBairro(idObra) {
+        const obra = listaObras.find(obra => obra.idObra === idObra);
+        return obra ? obra.bairro : "Bairro desconhecido";
+    }
+
     function gerarPDF(idObra) {
         if (!listaAcompParcelas[idObra] || listaAcompParcelas[idObra].length === 0) {
             alert("Não há informações para gerar o PDF.");
