@@ -139,16 +139,18 @@ export default function Obras() {
         parcelas.forEach((parcela, index) => {
             doc.text(`Parcela ${index + 1}: R$ ${parcela.valorParcela.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 10, 50 + (index * 10));
         });
-        
+
         doc.text('Serviços:', 10, 60 + (parcelas.length * 10));
         servicos.forEach((servico, index) => {
             doc.text(`Serviço ${servico.descServico}: R$ ${servico.valorServico.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 10, 70 + (parcelas.length * 10) + (index * 10));
         });
-        
+
 
         // Adicionar a soma dos valores das parcelas e dos serviços ao final do PDF
         doc.text(`Total das Parcelas: R$ ${somaParcelas.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 10, 80 + (parcelas.length * 10) + (servicos.length * 10));
         doc.text(`Total dos Serviços: R$ ${somaServicos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 10, 90 + (parcelas.length * 10) + (servicos.length * 10));
+        const totalObra = somaParcelas + somaServicos;
+        doc.text(`Total da obra: R$ ${totalObra.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 10, 100 + (parcelas.length * 10) + (servicos.length * 10));
 
 
         doc.save(`obra_${obra.bairro + '_' + obra.endereco}.pdf`);
